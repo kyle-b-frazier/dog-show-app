@@ -28,6 +28,13 @@
             pointer-events: none;
         }
         .trade-banner:hover .dog-art { opacity: 0.8; }
+        /* real photo as a faded watermark over the banner color */
+        .trade-banner .banner-photo {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; object-position: center bottom;
+            opacity: 0.42; transition: opacity 0.2s ease; pointer-events: none;
+        }
+        .trade-banner:hover .banner-photo { opacity: 0.58; }
         .trade-banner::before {
             content: ""; position: absolute; inset: 0;
             background: radial-gradient(ellipse at 50% 88%, rgba(255,255,255,0.42), rgba(255,255,255,0) 62%), linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(0,0,0,0.18));
@@ -41,16 +48,11 @@
     <header class="bg-amber-900 text-amber-50 shadow-md border-b-4 border-orange-800">
         <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-3">
-                <template x-if="activeGroup !== null">
-                    <button @click="activeGroup = null" class="bg-amber-800 hover:bg-amber-700 text-amber-100 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1">
-                        <span>← Back to All Groups</span>
-                    </button>
-                </template>
                 <div>
                     <h1 class="text-lg font-bold tracking-tight flex items-center gap-2">
                         🍂 Thanksgiving Dog Show Ballot
                     </h1>
-                    <p class="text-amber-200 text-xs">Make your group picks and lock in Best In Show</p>
+                    <p x-show="activeGroup === null" class="text-amber-200 text-xs">Make your group picks and lock in Best In Show</p>
                 </div>
             </div>
             
@@ -72,7 +74,7 @@
         <div x-show="activeGroup === null" class="space-y-8">
             <div class="text-center max-w-2xl mx-auto space-y-1">
                 <h2 class="text-2xl font-bold tracking-tight text-stone-900">National Dog Show Ballot</h2>
-                <p class="text-xs text-stone-600">Select any group banner below to make your Top Pick and Shortlist selections.</p>
+                <p class="text-xs text-stone-600">Tap a group to make your picks.</p>
             </div>
 
             <!-- Side-by-Side Trade Show Banners Grid -->
@@ -82,7 +84,8 @@
                          :aria-label="'Open ' + group.name + ' group ballot'"
                          class="trade-banner h-[28rem] lg:h-[36rem] rounded-xl shadow-md border-2 border-amber-900/20 cursor-pointer overflow-hidden flex flex-col justify-start gap-6 p-4 transition transform hover:-translate-y-1.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500"
                          :style="`background-color: ${group.color}`">
-                        <img class="dog-art" :src="'images/' + group.id + '.svg'" alt="" aria-hidden="true">
+                        <img x-show="!group.photoFailed" class="banner-photo" :src="'images/banners/' + group.id + '.jpg'" alt="" aria-hidden="true" @error="group.photoFailed = true">
+                        <img x-show="group.photoFailed" class="dog-art" :src="'images/' + group.id + '.svg'" alt="" aria-hidden="true">
 
                         <!-- Top: progress badge -->
                         <div class="relative z-10 flex justify-center">
@@ -110,11 +113,11 @@
                         <div class="text-amber-300 text-sm tracking-[0.5em]">★ ★ ★ ★ ★</div>
                         <div class="inline-block bg-amber-400 text-amber-950 text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Grand Finale</div>
                         <h3 class="text-4xl sm:text-5xl font-black tracking-tight text-white">🏆 Best In Show</h3>
-                        <p class="text-amber-200 text-sm max-w-xl mx-auto">Crown your overall champion from your seven group Top Picks.</p>
+                        <p class="text-amber-200 text-sm max-w-xl mx-auto">Crown your overall champion from your group winners.</p>
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                             <span class="text-sm font-bold px-4 py-2 rounded-xl shadow"
                                   :class="ballot.bestInShow ? 'bg-emerald-600 text-white' : 'bg-amber-950/60 text-amber-200 border border-amber-700'"
-                                  x-text="ballot.bestInShow ? '👑 Your Champion: ' + ballot.bestInShow : getAllTopPicks().length + ' of 7 group Top Picks chosen'">
+                                  x-text="ballot.bestInShow ? '👑 Your Champion: ' + ballot.bestInShow : getAllTopPicks().length + ' of 7 group winners chosen'">
                             </span>
                             <span class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-black px-6 py-2.5 rounded-xl text-sm shadow-lg"
                                   x-text="ballot.bestInShow ? 'Change Pick →' : 'Make Your Pick →'"></span>
@@ -126,46 +129,44 @@
 
         <!-- GROUP DETAIL VIEW -->
         <template x-for="group in groups" :key="group.id">
-            <div x-show="activeGroup === group.id" class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-6 max-w-4xl mx-auto">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-stone-100 pb-4 gap-3">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <button @click="activeGroup = null" class="text-xs font-bold text-amber-800 hover:underline">← All Groups</button>
-                            <span class="text-stone-300">/</span>
-                            <span class="text-xs uppercase tracking-wider font-semibold text-stone-500" x-text="group.name + ' Group'"></span>
-                        </div>
-                        <h2 class="text-2xl font-bold text-stone-900 mt-1" x-text="group.name + ' Group Ballot'"></h2>
-                        <p class="text-xs text-stone-500 mt-0.5">Pick 1 Top Choice (5 pts) & 4 Shortlist contenders (2 pts each).</p>
-                    </div>
-                    <div class="text-xs font-semibold px-3 py-1.5 rounded-full" 
-                         :class="getPicksCount(group.id) === 5 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'">
-                        <span x-text="getPicksCount(group.id)"></span> / 5 Selected
+            <div x-show="activeGroup === group.id" class="max-w-6xl mx-auto space-y-5">
+                <div class="flex items-center justify-between gap-3">
+                    <button @click="activeGroup = null" class="text-sm font-bold text-amber-900 hover:underline">← All Groups</button>
+                    <div class="text-sm font-bold px-3 py-1.5 rounded-full"
+                         :class="getPicksCount(group.id) === 5 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'">
+                        <span x-text="getPicksCount(group.id)"></span> / 5
                     </div>
                 </div>
 
-                <!-- Search Input for Breeds -->
                 <div>
-                    <input type="text" x-model="searchQuery" placeholder="Search breeds..." class="w-full px-4 py-2.5 border border-stone-200 rounded-xl text-sm bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    <h2 class="text-3xl font-black text-stone-900" x-text="group.name"></h2>
+                    <p class="text-sm text-stone-600 mt-1">Pick <b>1 group winner</b> and <b>4 other contenders</b>.</p>
                 </div>
 
-                <!-- Breed List -->
-                <div class="max-h-[480px] overflow-y-auto pr-2 space-y-2">
-                    <template x-for="breed in filteredBreeds(group.breeds)" :key="breed">
-                        <div class="flex items-center justify-between p-3.5 rounded-xl border transition text-sm"
-                             :class="getBreedStatusClass(group.id, breed)">
-                            <span class="font-semibold text-stone-800 text-sm" x-text="breed"></span>
-                            <div class="flex items-center gap-2">
-                                <button @click="setTopPick(group.id, breed)" 
-                                        class="px-3 py-1.5 text-xs font-semibold rounded-lg transition"
-                                        :class="isTopPick(group.id, breed) ? 'bg-amber-900 text-white shadow-sm' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'">
-                                    <span x-text="isTopPick(group.id, breed) ? '★ Top Pick' : 'Top Pick'"></span>
-                                </button>
-                                <button @click="toggleShortlist(group.id, breed)" 
-                                        class="px-3 py-1.5 text-xs font-semibold rounded-lg transition"
-                                        :class="isShortlist(group.id, breed) ? 'bg-orange-700 text-white shadow-sm' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
-                                        :disabled="isTopPick(group.id, breed)">
-                                    <span x-text="isShortlist(group.id, breed) ? '✓ Shortlist' : 'Shortlist'"></span>
-                                </button>
+                <!-- Breed photo cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <template x-for="breed in group.breeds" :key="breed">
+                        <div class="rounded-xl border-2 bg-white overflow-hidden shadow-sm transition flex flex-col"
+                             :class="isTopPick(group.id, breed) ? 'border-amber-500 ring-2 ring-amber-300' : (isShortlist(group.id, breed) ? 'border-orange-400' : 'border-stone-200')">
+                            <div class="relative aspect-[4/3] bg-stone-200 flex items-center justify-center text-4xl text-stone-400">
+                                <span aria-hidden="true">🐾</span>
+                                <img :src="'images/breeds/' + slug(breed) + '.jpg'" :alt="breed" loading="lazy"
+                                     @error="$el.classList.add('hidden')"
+                                     class="absolute inset-0 w-full h-full object-cover">
+                                <span x-show="isTopPick(group.id, breed)" class="absolute top-2 left-2 bg-amber-500 text-amber-950 text-[11px] font-black px-2 py-0.5 rounded-full shadow">★ WINNER</span>
+                                <span x-show="isShortlist(group.id, breed)" class="absolute top-2 left-2 bg-orange-600 text-white text-[11px] font-black px-2 py-0.5 rounded-full shadow">✓ CONTENDER</span>
+                            </div>
+                            <div class="p-2.5 space-y-2 flex-1 flex flex-col justify-between">
+                                <h3 class="font-bold text-stone-900 text-sm leading-tight" x-text="breed"></h3>
+                                <div class="grid grid-cols-2 gap-1.5">
+                                    <button @click="setTopPick(group.id, breed)"
+                                            class="py-1.5 text-xs font-bold rounded-lg transition"
+                                            :class="isTopPick(group.id, breed) ? 'bg-amber-500 text-amber-950' : 'bg-stone-100 text-stone-700 hover:bg-amber-100'">★ Winner</button>
+                                    <button @click="toggleShortlist(group.id, breed)"
+                                            class="py-1.5 text-xs font-bold rounded-lg transition disabled:opacity-30"
+                                            :class="isShortlist(group.id, breed) ? 'bg-orange-600 text-white' : 'bg-stone-100 text-stone-700 hover:bg-orange-100'"
+                                            :disabled="isTopPick(group.id, breed)">+ Contender</button>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -178,13 +179,13 @@
             <div class="border-b border-stone-100 pb-4">
                 <button @click="activeGroup = null" class="text-xs font-bold text-amber-800 hover:underline mb-1 inline-block">← All Groups</button>
                 <h2 class="text-2xl font-bold text-stone-900">🏆 Best In Show Prediction</h2>
-                <p class="text-xs text-stone-500 mt-0.5">Select your overall champion from your group Top Picks across all categories.</p>
+                <p class="text-xs text-stone-500 mt-0.5">Choose your overall champion.</p>
             </div>
 
             <div class="space-y-4">
                 <template x-if="getAllTopPicks().length === 0">
                     <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 text-xs flex items-center gap-3">
-                        <span>⚠️ You need to select a **Top Pick** in at least one group before you can pick your Best In Show winner.</span>
+                        <span>⚠️ Pick a group winner first.</span>
                     </div>
                 </template>
                 <template x-if="getAllTopPicks().length > 0">
@@ -216,11 +217,11 @@
             </div>
             <ul class="space-y-2.5 text-stone-700 text-sm">
                 <li class="flex justify-between border-b border-stone-50 pb-2">
-                    <span>Group Winner (Top Pick):</span>
+                    <span>Group Winner:</span>
                     <span class="font-bold text-amber-900">5 pts</span>
                 </li>
                 <li class="flex justify-between border-b border-stone-50 pb-2">
-                    <span>Group Shortlist (Other 4):</span>
+                    <span>Group Contenders (other 4):</span>
                     <span class="font-bold text-amber-900">2 pts each</span>
                 </li>
                 <li class="flex justify-between border-b border-stone-50 pb-2">
@@ -228,7 +229,7 @@
                     <span class="font-bold text-amber-900">20 pts</span>
                 </li>
                 <li class="flex justify-between">
-                    <span>Best In Show (Shortlist Match):</span>
+                    <span>Best In Show (Contender Match):</span>
                     <span class="font-bold text-amber-900">5 pts</span>
                 </li>
             </ul>
@@ -298,6 +299,10 @@
                     } catch (e) {
                         console.warn("Firebase initialization skipped or offline mode.", e);
                     }
+                },
+
+                slug(breed) {
+                    return breed.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
                 },
 
                 filteredBreeds(breeds) {
