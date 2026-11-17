@@ -17,20 +17,20 @@
         window.firebaseModules = { initializeApp, getAuth, signInAnonymously, onAuthStateChanged, getFirestore, doc, setDoc, getDoc };
     </script>
     <style>
-        .group-card {
+        .trade-banner {
             background-size: cover;
             background-position: center;
             position: relative;
         }
-        .group-card::before {
+        .trade-banner::before {
             content: "";
             position: absolute;
             inset: 0;
-            background: rgba(255, 255, 255, 0.72);
+            background: rgba(255, 255, 255, 0.70);
             transition: background 0.2s ease;
         }
-        .group-card:hover::before {
-            background: rgba(255, 255, 255, 0.52);
+        .trade-banner:hover::before {
+            background: rgba(255, 255, 255, 0.50);
         }
     </style>
 </head>
@@ -38,11 +38,11 @@
 
     <!-- Header -->
     <header class="bg-amber-900 text-amber-50 shadow-md border-b-4 border-orange-800">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-3">
                 <template x-if="activeGroup !== null">
                     <button @click="activeGroup = null" class="bg-amber-800 hover:bg-amber-700 text-amber-100 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1">
-                        <span>← Back to Groups</span>
+                        <span>← Back to All Groups</span>
                     </button>
                 </template>
                 <div>
@@ -65,42 +65,48 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
         
-        <!-- HOME PAGE: Grid of Group Categories -->
-        <div x-show="activeGroup === null" class="space-y-6">
-            <div class="text-center max-w-xl mx-auto space-y-1">
-                <h2 class="text-2xl font-bold tracking-tight text-stone-900">Select an AKC Group</h2>
-                <p class="text-xs text-stone-600">Choose a category below to make your Top Pick and 4 Shortlist selections.</p>
+        <!-- HOME PAGE: All 7 Trade Show Banners Side by Side + Separate Best In Show -->
+        <div x-show="activeGroup === null" class="space-y-8">
+            <div class="text-center max-w-2xl mx-auto space-y-1">
+                <h2 class="text-2xl font-bold tracking-tight text-stone-900">National Dog Show Ballot</h2>
+                <p class="text-xs text-stone-600">Select any group banner below to make your Top Pick and Shortlist selections.</p>
             </div>
 
-            <!-- Group Cards Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+            <!-- Side-by-Side Trade Show Banners Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 pt-2">
                 <template x-for="group in groups" :key="group.id">
                     <div @click="activeGroup = group.id" 
-                         class="group-card h-48 rounded-2xl shadow-sm border border-stone-200 cursor-pointer overflow-hidden flex flex-col justify-between p-6 transition transform hover:-translate-y-1 hover:shadow-md relative"
+                         class="trade-banner h-96 rounded-2xl shadow-sm border border-stone-200 cursor-pointer overflow-hidden flex flex-col justify-between p-4 transition transform hover:-translate-y-1.5 hover:shadow-lg relative"
                          :style="`background-image: url('${group.image}')`">
                         
-                        <div class="relative z-10 flex justify-between items-start">
-                            <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-stone-900/10 text-stone-900 backdrop-blur-xs" x-text="group.id.toUpperCase()"></span>
-                            <span class="text-xs px-2.5 py-1 rounded-full font-semibold shadow-xs"
+                        <!-- Top Badge -->
+                        <div class="relative z-10 flex flex-col items-center gap-1">
+                            <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-stone-900/10 text-stone-900 backdrop-blur-xs" x-text="group.id.toUpperCase()"></span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold shadow-xs whitespace-nowrap"
                                   :class="isGroupComplete(group.id) ? 'bg-emerald-700 text-white' : 'bg-stone-900 text-amber-100'"
-                                  x-text="getPicksCount(group.id) + '/5 Selected'">
+                                  x-text="getPicksCount(group.id) + '/5'">
                             </span>
                         </div>
 
-                        <div class="relative z-10 flex justify-between items-end">
-                            <h3 class="text-2xl font-black text-stone-900 tracking-tight capitalize" x-text="group.name"></h3>
-                            <span class="text-xs font-bold text-stone-900 bg-amber-100/90 px-3 py-1 rounded-lg shadow-xs">View Picks →</span>
+                        <!-- Vertical Title Center/Bottom -->
+                        <div class="relative z-10 text-center my-auto">
+                            <h3 class="text-xl sm:text-2xl font-black text-stone-900 tracking-tight capitalize [writing-mode:horizontal-tb] lg:[writing-mode:vertical-lr] lg:rotate-180 mx-auto" x-text="group.name"></h3>
+                        </div>
+
+                        <!-- Bottom Action -->
+                        <div class="relative z-10 text-center">
+                            <span class="text-[11px] font-bold text-stone-900 bg-amber-100/90 px-3 py-1 rounded-lg shadow-xs block">View →</span>
                         </div>
                     </div>
                 </template>
             </div>
 
             <!-- Best In Show Separate Distinct Section -->
-            <div class="pt-4">
+            <div class="pt-2">
                 <div @click="activeGroup = 'best-in-show'" 
-                     class="cursor-pointer bg-gradient-to-r from-amber-900 via-orange-900 to-amber-950 text-amber-50 rounded-2xl shadow-lg border-2 border-amber-400 p-6 flex flex-col sm:flex-row justify-between items-center gap-4 transition transform hover:scale-[1.01] hover:shadow-xl relative overflow-hidden">
+                     class="cursor-pointer bg-gradient-to-r from-amber-900 via-orange-900 to-amber-950 text-amber-50 rounded-2xl shadow-xl border-2 border-amber-400 p-6 flex flex-col sm:flex-row justify-between items-center gap-4 transition transform hover:scale-[1.01] hover:shadow-2xl relative overflow-hidden">
                     
                     <div class="space-y-1 text-center sm:text-left relative z-10">
                         <div class="inline-block bg-amber-400 text-amber-950 text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full mb-1">Grand Finale</div>
@@ -109,7 +115,7 @@
                     </div>
 
                     <div class="flex items-center gap-3 relative z-10">
-                        <span class="text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm"
+                        <span class="text-xs font-semibold px-3.5 py-1.5 rounded-lg shadow-sm"
                               :class="ballot.bestInShow ? 'bg-emerald-600 text-white' : 'bg-amber-800 text-amber-200'"
                               x-text="ballot.bestInShow ? 'Champion: ' + ballot.bestInShow : 'Pending Selection'">
                         </span>
@@ -257,7 +263,7 @@
                     { id: 'working', name: 'Working', image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80', breeds: ['Rottweiler', 'Boxer', 'Siberian Husky', 'Doberman Pinscher', 'Great Dane', 'Bernese Mountain Dog', 'Mastiff', 'Newfoundland', 'Samoyed', 'Alaskan Malamute', 'Standard Schnauzer', 'Giant Schnauzer', 'Leonberger', 'Akita', 'Bullmastiff'] },
                     { id: 'terrier', name: 'Terrier', image: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=600&q=80', breeds: ['Russell Terrier', 'Scottish Terrier', 'Border Terrier', 'Airedale Terrier', 'West Highland White Terrier', 'Miniature Schnauzer', 'Staffordshire Bull Terrier', 'Smooth Fox Terrier', 'Wire Fox Terrier', 'Cairn Terrier', 'Rat Terrier', 'Bull Terrier', 'Welsh Terrier', 'Bedlington Terrier'] },
                     { id: 'toy', name: 'Toy', image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=600&q=80', breeds: ['Cavalier King Charles Spaniel', 'Pomeranian', 'Yorkshire Terrier', 'Pug', 'Shih Tzu', 'Chihuahua', 'Havanese', 'Maltese', 'Papillon', 'Pekingese', 'Brussels Griffon', 'Italian Greyhound', 'Miniature Pinscher', 'Silky Terrier'] },
-                    { id: 'non-sporting', name: 'Non-Sporting', image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=600&q=80', breeds: ['French Bulldog', 'Poodle (Standard)', 'Poodle (Miniature)', 'Bulldog', 'Bichon Frise', 'Dalmatian', 'Boston Terrier', 'Shiba Inu', 'Chinese Shar-Peri', 'Coton de Tulear', 'Lhasa Apso', 'Schipperke', 'Tibetan Terrier', 'Keeshond'] },
+                    { id: 'non-sporting', name: 'Non-Sporting', image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=600&q=80', breeds: ['French Bulldog', 'Poodle (Standard)', 'Poodle (Miniature)', 'Bulldog', 'Bichon Frise', 'Dalmatian', 'Boston Terrier', 'Shiba Inu', 'Chinese Shar-Pei', 'Coton de Tulear', 'Lhasa Apso', 'Schipperke', 'Tibetan Terrier', 'Keeshond'] },
                     { id: 'herding', name: 'Herding', image: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=600&q=80', breeds: ['German Shepherd Dog', 'Border Collie', 'Australian Shepherd', 'Pembroke Welsh Corgi', 'Cardigan Welsh Corgi', 'Collie (Rough)', 'Collie (Smooth)', 'Belgian Malinois', 'Shetland Sheepdog', 'Australian Cattle Dog', 'Old English Sheepdog', 'Bouvier des Flandres', 'Pyrenean Shepherd'] }
                 ],
                 ballot: {
@@ -376,7 +382,6 @@
                     setTimeout(() => { this.notification = ''; }, 3000);
                 },
 
-                async saveBallot,
                 async saveBallot() {
                     if (!this.user || !this.db) {
                         this.showNotification("Ballot saved locally.");
