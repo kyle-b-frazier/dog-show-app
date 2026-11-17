@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Dog Show Ballot Challenge</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        window.firebaseModules = { initializeApp, getAuth, signInAnonymously, onAuthStateChanged, getFirestore, doc, setDoc, getDoc };
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col" x-data="dogShowApp()">
+
+    <!-- Header -->
+    <header class="bg-indigo-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight">🦃 Thanksgiving Dog Show Ballot Challenge</h1>
+                <p class="text-indigo-200 text-sm mt-1">Make your group picks, lock in your Best In Show, and compete for the top score!</p>
+            </div>
+            <div class="flex items-center gap-3 bg-indigo-800 px-4 py-2 rounded-lg border border-indigo-700">
+                <template x-if="user">
+                    <div class="text-sm">
+                        <span class="text-indigo-300">Connected as:</span>
+                        <span class="font-mono text-xs bg-indigo-950 px-2 py-1 rounded ml-1" x-text="user.uid.substring(0,8) + '...'"></span>
+                    </div>
+                </template>
+                <template x-if="!user">
+                    <span class="text-sm text-indigo-200">Connecting to Firebase...</span>
+                </template>
+                <button @click="saveBallot()" :disabled="saving" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded font-medium text-sm transition disabled:opacity-50">
+                    <span x-text="saving ? 'Saving...' : 'Save Ballot'"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-4 gap-8">
+
+        <!-- Navigation & Scoring Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <h2 class="font-bold text-lg text-slate-900 mb-3 border-b pb-2">AKC Groups</h2>
+                <nav class="space-y-1">
+                    <template x-for="group in groups" :key="group.id">
+                        <button @click="activeGroup = group.id"
+                                :class="activeGroup === group.id ? 'bg-indigo-50 text-indigo-700 font-semibold border-indigo-500' : 'text-slate-600 hover:bg-slate-50 border-transparent'"
+                                class="w-full text-left px-3 py-2.5 rounded-lg border-l-4 transition flex justify-between items-center text-sm">
+                            <span x-text="group.name"></span>
+                            <span class="text-xs px-2 py-0.5 rounded-full"
+                                  :class="isGroupComplete(group.id) ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'"
+                                  x-text="getPicksCount(group.id) + '/5'">
+                            </span>
+                        </button>
+                    </template>
+                    <button @click="activeGroup = 'best-in-show'"
+                            :class="activeGroup === 'best-in-show' ? 'bg-amber-50 text-amber-800 font-semibold border-amber-500' : 'text-slate-600 hover:bg-slate-50 border-transparent'"
+                            class="w-full text-left px-3 py-2.5 rounded-lg border-l-4 transition flex justify-between items-center text-sm mt-4">
+                        <span class="font-bold">🏆 Best In Show</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full"
+                              :class="ballot.bestInShow ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'"
+                              x-text="ballot.bestInShow ? 'Picked' : 'Pending'">
+                        </span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Scoring Reference Card -->
+            <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-xl shadow-sm p-5 text-sm space-y-2">
+                <h3 class="font-bold text-amber-300">📊 Scoring System</h3>
+                <ul class="space-y-1 text-slate-300 text-xs">
+                    <li>• **Group Winner (Top Pick):** 5 pts</li>
+                    <li>• **Group Shortlist (Other 4):** 2 pts each</li>
+                    <li>• **Best In Show (Exact Match):** 20 pts</li>
+                    <li>• **Best In Show (Shortlist Match):** 5 pts</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Group / Ballot Editor Panel -->
+        <div class="lg:col-span-3 space-y-6">
+
+            <!-- Group View -->
+            <template x-for="group in groups" :key="group.id">
+                <div x-show="activeGroup === group.id" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900" x-text="group.name + ' Group'"></h2>
+                            <p class="text-sm text-slate-500">Select <span class="font-semibold text-indigo-600">1 Top Pick</span> (5 pts if wins group) and <span class="font-semibold text-indigo-600">4 Shortlist breeds</span> (2 pts each if group winner).</p>
+                        </div>
+                        <div class="text-right text-sm font-medium" :class="getPicksCount(group.id) === 5 ? 'text-emerald-600' : 'text-amber-600'">
+                            <span x-text="getPicksCount(group.id)"></span> / 5 Selected
+                        </div>
+                    </div>
+
+                    <!-- Search Input for Breeds -->
+                    <div>
+                        <input type="text" x-model="searchQuery" placeholder="Search breeds in this group..." class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <!-- Breed List Table / Grid -->
+                    <div class="max-h-[550px] overflow-y-auto pr-2 space-y-2">
+                        <template x-for="breed in filteredBreeds(group.breeds)" :key="breed">
+                            <div class="flex items-center justify-between p-3 rounded-lg border transition"
+                                 :class="getBreedStatusClass(group.id, breed)">
+                                <span class="font-medium text-slate-800 text-sm" x-text="breed"></span>
+                                <div class="flex items-center gap-2">
+                                    <button @click="setTopPick(group.id, breed)"
+                                            class="px-3 py-1 text-xs font-semibold rounded-md transition"
+                                            :class="isTopPick(group.id, breed) ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'">
+                                        <span x-text="isTopPick(group.id, breed) ? '⭐ Top Pick' : 'Set Top Pick'"></span>
+                                    </button>
+                                    <button @click="toggleShortlist(group.id, breed)"
+                                            class="px-3 py-1 text-xs font-semibold rounded-md transition"
+                                            :class="isShortlist(group.id, breed) ? 'bg-amber-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                                            :disabled="isTopPick(group.id, breed)">
+                                        <span x-text="isShortlist(group.id, breed) ? '✓ Shortlist' : 'Add Shortlist'"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Best In Show View -->
+            <div x-show="activeGroup === 'best-in-show'" class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+                <div class="border-b pb-4">
+                    <h2 class="text-2xl font-bold text-slate-900">🏆 Best In Show Prediction</h2>
+                    <p class="text-sm text-slate-500 mt-1">Select your overall champion from your group <span class="font-semibold text-indigo-600">Top Picks</span> across all categories.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <template x-if="getAllTopPicks().length === 0">
+                        <div class="bg-amber-50 border border-amber-200 p-4 rounded-lg text-amber-800 text-sm">
+                            ⚠️ You must select a **Top Pick** in at least one group before you can select your Best In Show candidate.
+                        </div>
+                    </template>
+                    <template x-if="getAllTopPicks().length > 0">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <template x-for="pick in getAllTopPicks()" :key="pick.breed">
+                                <div @click="ballot.bestInShow = pick.breed"
+                                     class="p-4 rounded-xl border-2 cursor-pointer transition flex items-center justify-between"
+                                     :class="ballot.bestInShow === pick.breed ? 'border-amber-500 bg-amber-50/50 shadow-sm' : 'border-slate-200 hover:border-slate-300'">
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wider font-bold text-indigo-600" x-text="pick.groupName"></span>
+                                        <h4 class="font-bold text-slate-900 text-lg" x-text="pick.breed"></h4>
+                                    </div>
+                                    <input type="radio" name="bestInShow" :checked="ballot.bestInShow === pick.breed" class="h-4 w-4 text-amber-600 focus:ring-amber-500">
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Status Notification -->
+    <div x-show="notification" x-transition class="fixed bottom-4 right-4 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-lg text-sm z-50 flex items-center gap-3">
+        <span x-text="notification"></span>
+    </div>
+
+    <!-- Application Controller Logic -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dogShowApp', () => ({
+                user: null,
+                db: null,
+                saving: false,
+                notification: '',
+                activeGroup: 'sporting',
+                searchQuery: '',
+                groups: [
+                    { id: 'sporting', name: 'Sporting', breeds: ['Labrador Retriever', 'Golden Retriever', 'German Shorthaired Pointer', 'English Springer Spaniel', 'Brittany', 'Vizsla', 'Cocker Spaniel', 'Weimaraner', 'Irish Setter', 'English Setter', 'Clumber Spaniel', 'Flat-Coated Retriever', 'Nova Scotia Duck Tolling Retriever', 'Gordon Setter', 'Pointer'] },
+                    { id: 'hound', name: 'Hound', breeds: ['Beagle', 'Whippet', 'Rhodesian Ridgeback', 'Bloodhound', 'Basset Hound', 'Basenji', 'Saluki', 'Greyhound', 'Borzoi', 'Afghan Hound', 'Treeing Walker Coonhound', 'Black and Tan Coonhound', 'Ibizan Hound', 'Norwegian Elkhound'] },
+                    { id: 'working', name: 'Working', breeds: ['Rottweiler', 'Boxer', 'Siberian Husky', 'Doberman Pinscher', 'Great Dane', 'Bernese Mountain Dog', 'Mastiff', 'Newfoundland', 'Samoyed', 'Alaskan Malamute', 'Standard Schnauzer', 'Giant Schnauzer', 'Leonberger', 'Akita', 'Bullmastiff'] },
+                    { id: 'terrier', name: 'Terrier', breeds: ['Russell Terrier', 'Scottish Terrier', 'Border Terrier', 'Airedale Terrier', 'West Highland White Terrier', 'Miniature Schnauzer', 'Staffordshire Bull Terrier', 'Smooth Fox Terrier', 'Wire Fox Terrier', 'Cairn Terrier', 'Rat Terrier', 'Bull Terrier', 'Welsh Terrier', 'Bedlington Terrier'] },
+                    { id: 'toy', name: 'Toy', breeds: ['Cavalier King Charles Spaniel', 'Pomeranian', 'Yorkshire Terrier', 'Pug', 'Shih Tzu', 'Chihuahua', 'Havanese', 'Maltese', 'Papillon', 'Pekingese', 'Brussels Griffon', 'Italian Greyhound', 'Miniature Pinscher', 'Silky Terrier'] },
+                    { id: 'non-sporting', name: 'Non-Sporting', breeds: ['French Bulldog', 'Poodle (Standard)', 'Poodle (Miniature)', 'Bulldog', 'Bichon Frise', 'Dalmatian', 'Boston Terrier', 'Shiba Inu', 'Chinese Shar-Pei', 'Coton de Tulear', 'Lhasa Apso', 'Schipperke', 'Tibetan Terrier', 'Keeshond'] },
+                    { id: 'herding', name: 'Herding', breeds: ['German Shepherd Dog', 'Border Collie', 'Australian Shepherd', 'Pembroke Welsh Corgi', 'Cardigan Welsh Corgi', 'Collie (Rough)', 'Collie (Smooth)', 'Belgian Malinois', 'Shetland Sheepdog', 'Australian Cattle Dog', 'Old English Sheepdog', 'Bouvier des Flandres', 'Pyrenean Shepherd'] }
+                ],
+                ballot: {
+                    picks: {}, // format: { sporting: { topPick: 'Labrador Retriever', shortlist: [...] } }
+                    bestInShow: null
+                },
+
+                async init() {
+                    const { initializeApp, getAuth, signInAnonymously, onAuthStateChanged, getFirestore, doc, getDoc } = window.firebaseModules;
+
+                    // Initialize Firebase with demo placeholder config (User can replace with production credentials)
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyDummyKeyForTemplateDemoOnly",
+                        authDomain: "dog-show-ballot.firebaseapp.com",
+                        projectId: "dog-show-ballot"
+                    };
+
+                    try {
+                        const app = initializeApp(firebaseConfig);
+                        const auth = getAuth(app);
+                        this.db = getFirestore(app);
+
+                        onAuthStateChanged(auth, async (user) => {
+                            if (user) {
+                                this.user = user;
+                                await this.loadUserBallot();
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        });
+                    } catch (e) {
+                        console.warn("Firebase initialization skipped or running in offline mock mode.", e);
+                    }
+                },
+
+                filteredBreeds(breeds) {
+                    if (!this.searchQuery) return breeds;
+                    return breeds.filter(b => b.toLowerCase().includes(this.searchQuery.toLowerCase()));
+                },
+
+                getGroupPicks(groupId) {
+                    if (!this.ballot.picks[groupId]) {
+                        this.ballot.picks[groupId] = { topPick: null, shortlist: [] };
+                    }
+                    return this.ballot.picks[groupId];
+                },
+
+                getPicksCount(groupId) {
+                    const gp = this.getGroupPicks(groupId);
+                    let count = gp.topPick ? 1 : 0;
+                    count += gp.shortlist.length;
+                    return count;
+                },
+
+                isGroupComplete(groupId) {
+                    return this.getPicksCount(groupId) === 5;
+                },
+
+                isTopPick(groupId, breed) {
+                    return this.getGroupPicks(groupId).topPick === breed;
+                },
+
+                isShortlist(groupId, breed) {
+                    return this.getGroupPicks(groupId).shortlist.includes(breed);
+                },
+
+                setTopPick(groupId, breed) {
+                    const gp = this.getGroupPicks(groupId);
+                    // Remove from shortlist if present
+                    gp.shortlist = gp.shortlist.filter(b => b !== breed);
+
+                    if (gp.topPick === breed) {
+                        gp.topPick = null;
+                    } else {
+                        gp.topPick = breed;
+                    }
+
+                    // Clear BIS if top pick is removed and it matched BIS
+                    if (this.ballot.bestInShow === breed && gp.topPick !== breed) {
+                        this.ballot.bestInShow = null;
+                    }
+                },
+
+                toggleShortlist(groupId, breed) {
+                    const gp = this.getGroupPicks(groupId);
+                    if (gp.topPick === breed) return; // Top pick cannot be shortlist
+
+                    const index = gp.shortlist.indexOf(breed);
+                    if (index > -1) {
+                        gp.shortlist.splice(index, 1);
+                    } else {
+                        if (gp.shortlist.length < 4 && (gp.topPick ? 1 : 0) + gp.shortlist.length < 5) {
+                            gp.shortlist.push(breed);
+                        } else {
+                            this.showNotification("You can only select up to 5 total breeds per group (1 top pick + 4 shortlist).");
+                        }
+                    }
+                },
+
+                getBreedStatusClass(groupId, breed) {
+                    if (this.isTopPick(groupId, breed)) return 'bg-indigo-50 border-indigo-300';
+                    if (this.isShortlist(groupId, breed)) return 'bg-amber-50/50 border-amber-300';
+                    return 'bg-white border-slate-200 hover:border-slate-300';
+                },
+
+                getAllTopPicks() {
+                    let tops = [];
+                    for (const g of this.groups) {
+                        const gp = this.ballot.picks[g.id];
+                        if (gp && gp.topPick) {
+                            tops.push({ groupName: g.name, breed: gp.topPick });
+                        }
+                    }
+                    return tops;
+                },
+
+                showNotification(msg) {
+                    this.notification = msg;
+                    setTimeout(() => { this.notification = ''; }, 4000);
+                },
+
+                async saveBallot() {
+                    if (!this.user || !this.db) {
+                        this.showNotification("Ballot saved locally (Offline mode active).");
+                        return;
+                    }
+
+                    this.saving = true;
+                    try {
+                        const { doc, setDoc } = window.firebaseModules;
+                        await setDoc(doc(this.db, "ballots", this.user.uid), {
+                            uid: this.user.uid,
+                            ballot: this.ballot,
+                            updatedAt: new Date().toISOString()
+                        });
+                        this.showNotification("✅ Ballot successfully saved to Firebase!");
+                    } catch (e) {
+                        console.error("Error saving ballot:", e);
+                        this.showNotification("⚠️ Error saving ballot to Firebase.");
+                    } finally {
+                        this.saving = false;
+                    }
+                },
+
+                async loadUserBallot() {
+                    if (!this.user || !this.db) return;
+                    try {
+                        const { doc, getDoc } = window.firebaseModules;
+                        const docSnap = await getDoc(doc(this.db, "ballots", this.user.uid));
+                        if (docSnap.exists()) {
+                            this.ballot = docSnap.data().ballot;
+                            this.showNotification("📥 Loaded your saved ballot from Firebase.");
+                        }
+                    } catch (e) {
+                        console.error("Error loading ballot:", e);
+                    }
+                }
+            }));
+        });
+    </script>
+</body>
+</html>
