@@ -80,7 +80,7 @@
             <!-- Side-by-Side Trade Show Banners Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 pt-2">
                 <template x-for="group in groups" :key="group.id">
-                    <div @click="activeGroup = group.id" @keydown.enter="activeGroup = group.id" role="button" tabindex="0"
+                    <div @click="activeGroup = group.id; searchQuery = ''" @keydown.enter="activeGroup = group.id; searchQuery = ''" role="button" tabindex="0"
                          :aria-label="'Open ' + group.name + ' group ballot'"
                          class="trade-banner h-[28rem] lg:h-[36rem] rounded-xl shadow-md border-2 border-amber-900/20 cursor-pointer overflow-hidden flex flex-col justify-start gap-6 p-4 transition transform hover:-translate-y-1.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500"
                          :style="`background-color: ${group.color}`">
@@ -143,9 +143,12 @@
                     <p class="text-sm text-stone-600 mt-1">Pick <b>1 group winner</b> and <b>4 other contenders</b>.</p>
                 </div>
 
+                <input type="search" x-model="searchQuery" placeholder="🔍 Search" aria-label="Search breeds"
+                       class="w-full sm:w-64 px-3 py-2 border border-stone-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-600">
+
                 <!-- Breed photo cards -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                    <template x-for="breed in group.breeds" :key="breed">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                    <template x-for="breed in filteredBreeds(group.breeds)" :key="breed">
                         <div class="rounded-xl border-2 bg-white overflow-hidden shadow-sm transition flex flex-col"
                              :class="isTopPick(group.id, breed) ? 'border-amber-500 ring-2 ring-amber-300' : (isShortlist(group.id, breed) ? 'border-orange-400' : 'border-stone-200')">
                             <div class="relative aspect-[4/3] bg-stone-200 flex items-center justify-center text-4xl text-stone-400">
@@ -257,14 +260,17 @@
                 activeGroup: null,
                 searchQuery: '',
                 showScoringModal: false,
+                // Breed lists = NBC Sports 2025 National Dog Show list + 2026 debut breeds
+                // (Basset Fauve de Bretagne, Teddy Roosevelt Terrier, Russian Tsvetnaya Bolonka).
+                // NOT verified against the official 2026 entry list.
                 groups: [
-                    { id: 'sporting', name: 'Sporting', color: '#3f6b4f', breeds: ['Labrador Retriever', 'Golden Retriever', 'German Shorthaired Pointer', 'English Springer Spaniel', 'Brittany', 'Vizsla', 'Cocker Spaniel', 'Weimaraner', 'Irish Setter', 'English Setter', 'Clumber Spaniel', 'Flat-Coated Retriever', 'Nova Scotia Duck Tolling Retriever', 'Gordon Setter', 'Pointer'] },
-                    { id: 'hound', name: 'Hound', color: '#b45f1e', breeds: ['Beagle', 'Whippet', 'Rhodesian Ridgeback', 'Bloodhound', 'Basset Hound', 'Basenji', 'Saluki', 'Greyhound', 'Borzoi', 'Afghan Hound', 'Treeing Walker Coonhound', 'Black and Tan Coonhound', 'Ibizan Hound', 'Norwegian Elkhound'] },
-                    { id: 'working', name: 'Working', color: '#7a2e1d', breeds: ['Rottweiler', 'Boxer', 'Siberian Husky', 'Doberman Pinscher', 'Great Dane', 'Bernese Mountain Dog', 'Mastiff', 'Newfoundland', 'Samoyed', 'Alaskan Malamute', 'Standard Schnauzer', 'Giant Schnauzer', 'Leonberger', 'Akita', 'Bullmastiff'] },
-                    { id: 'terrier', name: 'Terrier', color: '#27407a', breeds: ['Russell Terrier', 'Scottish Terrier', 'Border Terrier', 'Airedale Terrier', 'West Highland White Terrier', 'Miniature Schnauzer', 'Staffordshire Bull Terrier', 'Smooth Fox Terrier', 'Wire Fox Terrier', 'Cairn Terrier', 'Rat Terrier', 'Bull Terrier', 'Welsh Terrier', 'Bedlington Terrier'] },
-                    { id: 'toy', name: 'Toy', color: '#a43a6b', breeds: ['Cavalier King Charles Spaniel', 'Pomeranian', 'Yorkshire Terrier', 'Pug', 'Shih Tzu', 'Chihuahua', 'Havanese', 'Maltese', 'Papillon', 'Pekingese', 'Brussels Griffon', 'Italian Greyhound', 'Miniature Pinscher', 'Silky Terrier'] },
-                    { id: 'non-sporting', name: 'Non-Sporting', color: '#5b3f8c', breeds: ['French Bulldog', 'Poodle (Standard)', 'Poodle (Miniature)', 'Bulldog', 'Bichon Frise', 'Dalmatian', 'Boston Terrier', 'Shiba Inu', 'Chinese Shar-Pei', 'Coton de Tulear', 'Lhasa Apso', 'Schipperke', 'Tibetan Terrier', 'Keeshond'] },
-                    { id: 'herding', name: 'Herding', color: '#1f7a72', breeds: ['German Shepherd Dog', 'Border Collie', 'Australian Shepherd', 'Pembroke Welsh Corgi', 'Cardigan Welsh Corgi', 'Collie (Rough)', 'Collie (Smooth)', 'Belgian Malinois', 'Shetland Sheepdog', 'Australian Cattle Dog', 'Old English Sheepdog', 'Bouvier des Flandres', 'Pyrenean Shepherd'] }
+                    { id: 'sporting', name: 'Sporting', color: '#3f6b4f', breeds: ['Barbet', 'Boykin Spaniel', 'Bracco Italiano', 'Brittany', 'Chesapeake Bay Retriever', 'Clumber Spaniel', 'Cocker Spaniel (ASCOB)', 'Cocker Spaniel (Black)', 'Cocker Spaniel (Parti-Color)', 'Curly-Coated Retriever', 'English Cocker Spaniel', 'English Setter', 'English Springer Spaniel', 'Field Spaniel', 'Flat-Coated Retriever', 'German Shorthaired Pointer', 'German Wirehaired Pointer', 'Golden Retriever', 'Gordon Setter', 'Irish Red & White Setter', 'Irish Setter', 'Irish Water Spaniel', 'Labrador Retriever', 'Lagotto Romagnolo', 'Nova Scotia Duck Tolling Retriever', 'Pointer', 'Spinone Italiano', 'Sussex Spaniel', 'Vizsla', 'Weimaraner', 'Welsh Springer Spaniel', 'Wirehaired Pointing Griffon', 'Wirehaired Vizsla'] },
+                    { id: 'hound', name: 'Hound', color: '#b45f1e', breeds: ['Afghan Hound', 'American English Coonhound', 'American Foxhound', 'Azawakh', 'Basenji', 'Basset Fauve de Bretagne', 'Basset Hound', 'Beagle (13 inches)', 'Beagle (15 inches)', 'Black and Tan Coonhound', 'Bloodhound', 'Borzoi', 'Cirneco dell’Etna', 'Dachshund (Longhaired)', 'Dachshund (Smooth)', 'Dachshund (Wirehaired)', 'English Foxhound', 'Greyhound', 'Ibizan Hound', 'Irish Wolfhound', 'Otterhound', 'Petit Basset Griffon Vendeen', 'Pharaoh Hound', 'Portuguese Podengo Pequeno', 'Redbone Coonhound', 'Rhodesian Ridgeback', 'Saluki', 'Scottish Deerhound', 'Sloughi', 'Treeing Walker Coonhound', 'Whippet'] },
+                    { id: 'working', name: 'Working', color: '#7a2e1d', breeds: ['Akita', 'Alaskan Malamute', 'Bernese Mountain Dog', 'Black Russian Terrier', 'Boxer', 'Bullmastiff', 'Cane Corso', 'Chinook', 'Danish-Swedish Farmdog', 'Doberman Pinscher', 'Dogo Argentino', 'Dogue de Bordeaux', 'German Pinscher', 'Giant Schnauzer', 'Great Dane', 'Great Pyrenees', 'Greater Swiss Mountain Dog', 'Komondor', 'Leonberger', 'Mastiff', 'Neapolitan Mastiff', 'Newfoundland', 'Portuguese Water Dog', 'Rottweiler', 'Saint Bernard', 'Samoyed', 'Siberian Husky', 'Standard Schnauzer', 'Tibetan Mastiff'] },
+                    { id: 'terrier', name: 'Terrier', color: '#27407a', breeds: ['Airedale Terrier', 'American Hairless Terrier', 'American Staffordshire Terrier', 'Australian Terrier', 'Bedlington Terrier', 'Border Terrier', 'Cairn Terrier', 'Colored Bull Terrier', 'Dandie Dinmont Terrier', 'Glen of Imaal Terrier', 'Irish Terrier', 'Kerry Blue Terrier', 'Lakeland Terrier', 'Manchester Terrier (Standard)', 'Miniature Bull Terrier', 'Miniature Schnauzer', 'Norfolk Terrier', 'Norwich Terrier', 'Parson Russell Terrier', 'Rat Terrier', 'Russell Terrier', 'Scottish Terrier', 'Sealyham Terrier', 'Skye Terrier', 'Smooth Fox Terrier', 'Soft Coated Wheaten Terrier', 'Staffordshire Bull Terrier', 'Teddy Roosevelt Terrier', 'Welsh Terrier', 'West Highland Terrier', 'White Bull Terrier'] },
+                    { id: 'toy', name: 'Toy', color: '#a43a6b', breeds: ['Biewer Terrier', 'Brussels Griffon', 'Cavalier King Charles Spaniel', 'Chinese Crested', 'English Toy Spaniel (B&PC)', 'English Toy Spaniel (KC&R)', 'Havanese', 'Italian Greyhound', 'Japanese Chin', 'Long Coat Chihuahua', 'Maltese', 'Miniature Pinscher', 'Papillon', 'Pekingese', 'Pomeranian', 'Pug', 'Russian Toy', 'Russian Tsvetnaya Bolonka', 'Shih Tzu', 'Silky Terrier', 'Smooth Coat Chihuahua', 'Toy Fox Terrier', 'Toy Manchester Terrier', 'Toy Poodle', 'Yorkshire Terrier'] },
+                    { id: 'non-sporting', name: 'Non-Sporting', color: '#5b3f8c', breeds: ['American Eskimo', 'Bichon Frise', 'Boston Terrier', 'Bulldog', 'Chinese Shar-Pei', 'Chow Chow', 'Coton de Tulear', 'Dalmatian', 'French Bulldog', 'Keeshond', 'Lhasa Apso', 'Löwchen', 'Norwegian Lundehund', 'Poodle (Miniature)', 'Poodle (Standard)', 'Schipperke', 'Shiba Inu', 'Tibetan Spaniel', 'Tibetan Terrier', 'Xoloitzcuintli'] },
+                    { id: 'herding', name: 'Herding', color: '#1f7a72', breeds: ['Australian Cattle Dog', 'Australian Shepherd', 'Bearded Collie', 'Beauceron', 'Belgian Malinois', 'Belgian Sheepdog', 'Belgian Tervuren', 'Bergamasco', 'Berger Picard', 'Border Collie', 'Bouvier des Flandres', 'Briard', 'Canaan Dog', 'Cardigan Welsh Corgi', 'Collie (Rough)', 'Collie (Smooth)', 'Entlebucher Mountain Dog', 'Finnish Lapphund', 'German Shepherd Dog', 'Icelandic Sheepdog', 'Lancashire Heeler', 'Miniature American Shepherd', 'Mudi', 'Norwegian Buhund', 'Old English Sheepdog', 'Pembroke Welsh Corgi', 'Polish Lowland Sheepdog', 'Puli', 'Pumi', 'Pyrenean Shepherd', 'Shetland Sheepdog', 'Spanish Water Dog', 'Swedish Vallhund'] }
                 ],
                 ballot: {
                     picks: {},
@@ -302,7 +308,7 @@
                 },
 
                 slug(breed) {
-                    return breed.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                    return breed.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
                 },
 
                 filteredBreeds(breeds) {
