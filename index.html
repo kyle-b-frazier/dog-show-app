@@ -84,8 +84,9 @@
                          :aria-label="'Open ' + group.name + ' group ballot'"
                          class="trade-banner h-[28rem] lg:h-[36rem] rounded-xl shadow-md border-2 border-amber-900/20 cursor-pointer overflow-hidden flex flex-col justify-start gap-6 p-4 transition transform hover:-translate-y-1.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500"
                          :style="`background-color: ${group.color}`">
-                        <img x-show="photos[group.bannerBreed] && !group.photoFailed" class="banner-photo" :src="photos[group.bannerBreed]?.url" alt="" aria-hidden="true" referrerpolicy="no-referrer" @error="group.photoFailed = true">
-                        <img x-show="!photos[group.bannerBreed] || group.photoFailed" class="dog-art" :src="'images/' + group.id + '.svg'" alt="" aria-hidden="true">
+                        <img x-show="!group.photoFailed" class="banner-photo" :src="'images/photos/' + group.bannerBreed + '.jpg'" alt="" aria-hidden="true" referrerpolicy="no-referrer"
+                             @error="if (!$el.dataset.remote && photos[group.bannerBreed]) { $el.dataset.remote = 1; $el.src = photos[group.bannerBreed].url } else { group.photoFailed = true }">
+                        <img x-show="group.photoFailed" class="dog-art" :src="'images/' + group.id + '.svg'" alt="" aria-hidden="true">
 
                         <!-- Top: progress badge -->
                         <div class="relative z-10 flex justify-center">
@@ -153,8 +154,8 @@
                              :class="isTopPick(group.id, breed) ? 'border-amber-500 ring-2 ring-amber-300' : (isShortlist(group.id, breed) ? 'border-orange-400' : 'border-stone-200')">
                             <div class="relative aspect-[4/3] bg-stone-200 flex items-center justify-center text-4xl text-stone-400">
                                 <span aria-hidden="true">🐾</span>
-                                <img x-show="photos[slug(breed)]" :src="photos[slug(breed)]?.url" :alt="breed" loading="lazy" referrerpolicy="no-referrer"
-                                     @error="$el.style.display = 'none'"
+                                <img :src="'images/photos/' + slug(breed) + '.jpg'" :alt="breed" loading="lazy" referrerpolicy="no-referrer"
+                                     @error="if (!$el.dataset.remote && photos[slug(breed)]) { $el.dataset.remote = 1; $el.src = photos[slug(breed)].url } else { $el.style.display = 'none' }"
                                      class="absolute inset-0 w-full h-full object-cover">
                                 <span x-show="isTopPick(group.id, breed)" class="absolute top-2 left-2 bg-amber-500 text-amber-950 text-[11px] font-black px-2 py-0.5 rounded-full shadow">★ WINNER</span>
                                 <span x-show="isShortlist(group.id, breed)" class="absolute top-2 left-2 bg-orange-600 text-white text-[11px] font-black px-2 py-0.5 rounded-full shadow">✓ CONTENDER</span>

@@ -28,4 +28,5 @@ jobs:
           git add images/photos photo-candidates 2>/dev/null || true
           if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
           git commit -m "Fetch dog photos from Wikimedia"
-          git push
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
