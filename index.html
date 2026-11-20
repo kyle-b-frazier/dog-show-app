@@ -12,9 +12,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         
-        window.firebaseModules = { initializeApp, getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, getFirestore, doc, setDoc, getDoc };
+        window.firebaseModules = { initializeApp, getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, getFirestore, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp };
     </script>
     <style>
         .trade-banner { position: relative; }
@@ -42,7 +42,7 @@
                     <h1 class="text-lg font-bold tracking-tight flex items-center gap-2">
                         🍂 Thanksgiving Dog Show Ballot
                     </h1>
-                    <p x-show="activeGroup === null" class="text-amber-200 text-xs">Make your group picks and lock in Best In Show</p>
+                    <p x-show="view === 'ballot' && activeGroup === null" class="text-amber-200 text-xs">Make your group picks and lock in Best In Show</p>
                 </div>
             </div>
             
@@ -50,9 +50,16 @@
                 <button @click="showScoringModal = true" class="bg-orange-800 hover:bg-orange-700 text-amber-100 px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-orange-700">
                     📊 How Scoring Works
                 </button>
-                <button @click="saveBallot()" :disabled="saving" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3.5 py-1.5 rounded-lg font-medium text-xs transition disabled:opacity-50">
-                    <span x-text="saving ? 'Saving...' : 'Save Ballot'"></span>
-                </button>
+                <template x-if="user">
+                    <nav class="flex items-center gap-1.5">
+                        <button @click="goMyBallots()" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+                                :class="view === 'my' ? 'bg-amber-50 text-amber-900' : 'bg-amber-800 hover:bg-amber-700 text-amber-100'">📋 My Ballots</button>
+                        <button @click="view = 'leaderboard'" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+                                :class="view === 'leaderboard' ? 'bg-amber-50 text-amber-900' : 'bg-amber-800 hover:bg-amber-700 text-amber-100'">🏆 Leaderboard</button>
+                        <button x-show="isAdmin" @click="openAdmin()" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition"
+                                :class="view === 'admin' ? 'bg-amber-50 text-amber-900' : 'bg-red-800 hover:bg-red-700 text-white'">🔧 Admin</button>
+                    </nav>
+                </template>
                 <template x-if="authReady && !user">
                     <button @click="signIn()" class="bg-white hover:bg-amber-50 text-stone-800 px-3 py-1.5 rounded-lg font-semibold text-xs transition flex items-center gap-1.5 shadow-sm">
                         <svg width="14" height="14" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>
@@ -72,6 +79,28 @@
 
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+
+        <!-- ======================= BALLOT EDITOR ======================= -->
+        <div x-show="view === 'ballot'">
+
+        <!-- Which ballot am I editing? -->
+        <div class="max-w-6xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm"
+             :class="currentBallotId ? 'bg-white border border-stone-200 shadow-sm' : 'bg-amber-100/70 border border-amber-200'">
+            <template x-if="currentBallotId">
+                <div class="flex items-center gap-2">
+                    <span class="text-stone-500">Ballot:</span>
+                    <span class="font-black text-stone-900 text-base" x-text="currentBallotName"></span>
+                    <span class="text-xs" :class="saveState === 'error' ? 'text-red-600' : 'text-stone-400'"
+                          x-text="locked ? '🔒 Locked' : (saveState === 'saving' ? 'Saving…' : (saveState === 'error' ? '⚠️ Not saved, check connection' : (saveState === 'saved' ? '✓ Saved' : '')))"></span>
+                </div>
+            </template>
+            <template x-if="!currentBallotId">
+                <span class="text-amber-900" x-text="authReady ? 'Sign in to save your ballot and join the leaderboard.' : 'Your picks are saved in this browser.'"></span>
+            </template>
+            <button x-show="currentBallotId" @click="goMyBallots()" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-1.5 rounded-lg text-xs font-bold">Done ✓</button>
+            <button x-show="!currentBallotId && authReady && !user" @click="signIn()" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-1.5 rounded-lg text-xs font-bold">Sign in with Google</button>
+        </div>
+        <div x-show="locked" class="max-w-6xl mx-auto -mt-3 mb-6 rounded-xl bg-stone-800 text-white text-sm px-4 py-2.5">🔒 Ballots are locked. Judging has started, so picks can no longer be changed.</div>
         
         <!-- HOME PAGE: All 7 Trade Show Banners Side by Side + Separate Best In Show -->
         <div x-show="activeGroup === null" class="space-y-8">
@@ -197,7 +226,7 @@
                 <template x-if="getAllTopPicks().length > 0">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <template x-for="pick in getAllTopPicks()" :key="pick.breed">
-                            <div @click="ballot.bestInShow = pick.breed" 
+                            <div @click="setBestInShowPick(pick.breed)" 
                                  class="p-4 rounded-xl border-2 cursor-pointer transition flex items-center justify-between"
                                  :class="ballot.bestInShow === pick.breed ? 'border-amber-700 bg-amber-50/70 shadow-sm' : 'border-stone-200 hover:border-stone-300'">
                                 <div>
@@ -212,7 +241,141 @@
             </div>
         </div>
 
+        </div>
+        <!-- ===================== END BALLOT EDITOR ===================== -->
+
+        <!-- ========================= MY BALLOTS ========================= -->
+        <div x-show="view === 'my'" class="max-w-3xl mx-auto space-y-5" style="display:none">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 class="text-3xl font-black text-stone-900">My Ballots</h2>
+                    <p class="text-sm text-stone-600">One ballot per person. Add one for each family member.</p>
+                </div>
+                <button x-show="!locked" @click="createBallot()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-bold shadow">+ New ballot</button>
+            </div>
+            <div x-show="locked" class="rounded-xl bg-stone-800 text-white text-sm px-4 py-2.5">🔒 Ballots are locked. Judging has started.</div>
+            <template x-if="myBallots.length === 0">
+                <div class="rounded-2xl border-2 border-dashed border-stone-300 p-10 text-center text-stone-500">
+                    No ballots yet. <button x-show="!locked" @click="createBallot()" class="font-bold text-amber-900 underline">Create your first ballot</button>
+                </div>
+            </template>
+            <div class="space-y-3">
+                <template x-for="b in myBallots" :key="b.id">
+                    <div class="bg-white rounded-xl border border-stone-200 shadow-sm p-4 flex flex-wrap items-center gap-4">
+                        <div class="flex-1 min-w-[10rem]">
+                            <div class="font-black text-lg text-stone-900" x-text="b.name"></div>
+                            <div class="text-xs text-stone-500">
+                                <span x-text="ballotProgress(b) + ' of 36 picks'"></span>
+                                <span x-show="b.bestInShow"> · 🏆 <span x-text="b.bestInShow"></span></span>
+                            </div>
+                        </div>
+                        <div x-show="resultsAnnounced()" class="text-right">
+                            <div class="text-2xl font-black text-amber-900" x-text="scoreBallot(b).total"></div>
+                            <div class="text-[10px] uppercase tracking-wider text-stone-500">points</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button @click="openBallot(b)" class="bg-amber-900 hover:bg-amber-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold" x-text="locked ? 'View' : 'Edit picks'"></button>
+                            <button x-show="!locked" @click="renameBallot(b)" class="bg-stone-100 hover:bg-stone-200 text-stone-700 px-3 py-1.5 rounded-lg text-xs font-semibold">Rename</button>
+                            <button x-show="!locked" @click="deleteBallot(b)" class="bg-stone-100 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-semibold">Delete</button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- ========================= LEADERBOARD ========================= -->
+        <div x-show="view === 'leaderboard'" class="max-w-5xl mx-auto space-y-6" style="display:none">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <h2 class="text-3xl font-black text-stone-900">🏆 Leaderboard</h2>
+                    <p class="text-sm text-stone-600">Updates live as results are announced.</p>
+                </div>
+                <span class="text-xs font-semibold px-3 py-1.5 rounded-full" :class="locked ? 'bg-stone-800 text-white' : 'bg-emerald-100 text-emerald-800'"
+                      x-text="locked ? '🔒 Ballots locked' : 'Ballots open'"></span>
+            </div>
+
+            <!-- Results so far -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+                <template x-for="g in groups" :key="g.id">
+                    <div class="rounded-lg p-2.5 text-white text-xs" :style="`background-color: ${g.color}`">
+                        <div class="font-bold uppercase tracking-wide opacity-80" x-text="g.name"></div>
+                        <div class="font-black text-sm leading-tight mt-0.5" x-text="results.groupWinners[g.id] || '—'"></div>
+                    </div>
+                </template>
+                <div class="rounded-lg p-2.5 text-xs bg-amber-400 text-amber-950 col-span-2 sm:col-span-4 lg:col-span-1">
+                    <div class="font-bold uppercase tracking-wide opacity-80">Best in Show</div>
+                    <div class="font-black text-sm leading-tight mt-0.5" x-text="results.bestInShow || '—'"></div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                <template x-if="leaderboard().length === 0">
+                    <div class="p-8 text-center text-stone-500 text-sm">No ballots yet.</div>
+                </template>
+                <template x-for="(row, i) in leaderboard()" :key="row.id">
+                    <div class="flex items-center gap-3 px-4 py-3 border-b border-stone-100 last:border-0"
+                         :class="row.ownerUid === (user && user.uid) ? 'bg-amber-50' : ''">
+                        <div class="w-8 text-center font-black text-lg" :class="row.rank === 1 && resultsAnnounced() ? 'text-amber-500' : 'text-stone-400'" x-text="row.rank"></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-bold text-stone-900 truncate" x-text="row.name"></div>
+                            <div class="text-xs text-stone-500 truncate" x-text="'by ' + (row.ownerName || 'someone') + (row.bestInShow ? ' · 🏆 ' + row.bestInShow : '')"></div>
+                        </div>
+                        <div class="hidden sm:flex gap-1">
+                            <template x-for="g in groups" :key="g.id">
+                                <span class="w-6 h-6 rounded text-[10px] font-black flex items-center justify-center" :title="g.name"
+                                      :class="row.score.groups[g.id] === 5 ? 'bg-emerald-600 text-white' : (row.score.groups[g.id] === 2 ? 'bg-emerald-200 text-emerald-900' : (results.groupWinners[g.id] ? 'bg-stone-100 text-stone-400' : 'bg-stone-50 text-stone-300'))"
+                                      x-text="results.groupWinners[g.id] ? row.score.groups[g.id] : '·'"></span>
+                            </template>
+                        </div>
+                        <div class="w-14 text-right text-2xl font-black text-amber-900" x-text="row.score.total"></div>
+                    </div>
+                </template>
+            </div>
+            <p class="text-xs text-stone-500">Squares show points per group (5 = picked the winner, 2 = winner was a contender). Best in Show: 20 for an exact pick, 5 if it was one of your group picks.</p>
+        </div>
+
+        <!-- ============================ ADMIN ============================ -->
+        <div x-show="view === 'admin' && isAdmin" class="max-w-3xl mx-auto space-y-5" style="display:none">
+            <div>
+                <h2 class="text-3xl font-black text-stone-900">🔧 Results (admin)</h2>
+                <p class="text-sm text-stone-600">Enter winners as they're announced. Every change goes live on the leaderboard immediately.</p>
+            </div>
+            <div class="bg-white rounded-xl border border-stone-200 shadow-sm p-4 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <div class="font-bold text-stone-900" x-text="locked ? '🔒 Ballots are locked' : '🔓 Ballots are open'"></div>
+                    <div class="text-xs text-stone-500">Lock before judging starts so nobody can change picks.</div>
+                </div>
+                <button @click="setLocked(!locked)" class="px-4 py-2 rounded-lg text-sm font-bold"
+                        :class="locked ? 'bg-stone-200 text-stone-800 hover:bg-stone-300' : 'bg-stone-800 text-white hover:bg-stone-700'"
+                        x-text="locked ? 'Unlock ballots' : 'Lock ballots'"></button>
+            </div>
+            <div class="bg-white rounded-xl border border-stone-200 shadow-sm divide-y divide-stone-100">
+                <template x-for="g in groups" :key="g.id">
+                    <div class="p-4 flex flex-wrap items-center gap-3">
+                        <div class="w-28 font-bold" x-text="g.name"></div>
+                        <select class="flex-1 min-w-[12rem] border border-stone-300 rounded-lg px-2 py-1.5 text-sm"
+                                :value="results.groupWinners[g.id] || ''" @change="setGroupWinner(g.id, $event.target.value)">
+                            <option value="">— not announced —</option>
+                            <template x-for="b in g.breeds" :key="b"><option :value="b" x-text="b" :selected="results.groupWinners[g.id] === b"></option></template>
+                        </select>
+                    </div>
+                </template>
+                <div class="p-4 flex flex-wrap items-center gap-3 bg-amber-50">
+                    <div class="w-28 font-black">Best in Show</div>
+                    <select class="flex-1 min-w-[12rem] border border-amber-400 rounded-lg px-2 py-1.5 text-sm"
+                            :value="results.bestInShow || ''" @change="setBestInShowResult($event.target.value)">
+                        <option value="">— not announced —</option>
+                        <template x-for="b in Object.values(results.groupWinners).filter(Boolean)" :key="b"><option :value="b" x-text="b" :selected="results.bestInShow === b"></option></template>
+                    </select>
+                </div>
+            </div>
+            <p class="text-xs text-stone-500" x-text="'Ballots entered: ' + allBallots.length"></p>
+        </div>
     </main>
+
+    <footer class="text-center text-xs text-stone-500 py-6">
+        Dog photos from Wikimedia Commons · <a href="credits.html" class="underline hover:text-stone-700">Photo credits</a>
+    </footer>
 
     <!-- Scoring Popup Modal -->
     <div x-show="showScoringModal" style="display: none;" class="fixed inset-0 bg-stone-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -227,15 +390,15 @@
                     <span class="font-bold text-amber-900">5 pts</span>
                 </li>
                 <li class="flex justify-between border-b border-stone-50 pb-2">
-                    <span>Group Contenders (other 4):</span>
-                    <span class="font-bold text-amber-900">2 pts each</span>
+                    <span>Group winner is one of your 4 contenders:</span>
+                    <span class="font-bold text-amber-900">2 pts</span>
                 </li>
                 <li class="flex justify-between border-b border-stone-50 pb-2">
                     <span>Best In Show (Exact Match):</span>
                     <span class="font-bold text-amber-900">20 pts</span>
                 </li>
                 <li class="flex justify-between">
-                    <span>Best In Show (Contender Match):</span>
+                    <span>Best In Show was one of your group picks:</span>
                     <span class="font-bold text-amber-900">5 pts</span>
                 </li>
             </ul>
@@ -260,6 +423,18 @@
                 auth: null,
                 authReady: false,
                 db: null,
+                view: 'ballot',          // ballot | my | leaderboard | admin
+                isAdmin: false,
+                myBallots: [],
+                allBallots: [],
+                results: { groupWinners: {}, bestInShow: null, locked: false },
+                currentBallotId: null,
+                currentBallotName: '',
+                saveState: '',
+                _saveTimer: null,
+                _unsubs: [],
+                _lastSaved: '',
+                get locked() { return !!this.results.locked; },
                 saving: false,
                 notification: '',
                 activeGroup: null,
@@ -286,14 +461,14 @@
 
                 async init() {
                     fetch('images/photos.json').then(r => r.json()).then(j => { this.photos = j; }).catch(e => console.warn('No photo list', e));
-                    // Ballot is always kept in this browser, so nothing is lost before sign-in.
+                    // Before sign-in, picks are kept in this browser.
                     try { const saved = JSON.parse(localStorage.getItem('dogShowBallot') || 'null'); if (saved && saved.picks) this.ballot = saved; } catch (e) {}
-                    this.$watch('ballot', v => { try { localStorage.setItem('dogShowBallot', JSON.stringify(v)); } catch (e) {} });
+                    this.$watch('ballot', () => this.onBallotChanged(), { deep: true });
 
                     // The Firebase module script loads after Alpine starts, so wait for it.
                     for (let i = 0; i < 50 && !window.firebaseModules; i++) await new Promise(r => setTimeout(r, 100));
                     if (!window.firebaseModules) { console.warn("Firebase SDK failed to load; saving in this browser only."); return; }
-                    const { initializeApp, getAuth, onAuthStateChanged, getFirestore } = window.firebaseModules;
+                    const { initializeApp, getAuth, onAuthStateChanged, getFirestore, doc, onSnapshot } = window.firebaseModules;
 
                     // Firebase web config (not secret: access is controlled by Firestore security rules).
                     const firebaseConfig = {
@@ -304,19 +479,48 @@
                         messagingSenderId: "358969064201",
                         appId: "1:358969064201:web:a49cb08e48a137366b71d8"
                     };
-                    if (firebaseConfig.apiKey.startsWith('PASTE')) { console.warn("Firebase not configured yet; saving in this browser only."); return; }
 
                     try {
                         const app = initializeApp(firebaseConfig);
                         this.auth = getAuth(app);
                         this.db = getFirestore(app);
-                        onAuthStateChanged(this.auth, async (user) => {
-                            this.user = user;
-                            this.authReady = true;
-                            if (user) await this.loadUserBallot();
-                        });
+                        // Results are public and live.
+                        onSnapshot(doc(this.db, 'results', 'current'), snap => {
+                            const d = snap.exists() ? snap.data() : {};
+                            this.results = { groupWinners: d.groupWinners || {}, bestInShow: d.bestInShow || null, locked: !!d.locked };
+                        }, e => console.warn('results listener', e));
+                        onAuthStateChanged(this.auth, user => this.onUser(user));
                     } catch (e) {
                         console.warn("Firebase unavailable; saving in this browser only.", e);
+                    }
+                },
+
+                async onUser(user) {
+                    this._unsubs.forEach(u => u()); this._unsubs = [];
+                    this.user = user; this.authReady = true;
+                    this.isAdmin = false; this.myBallots = []; this.allBallots = [];
+                    if (!user) { this.currentBallotId = null; this.view = 'ballot'; return; }
+                    const { doc, getDoc, collection, query, where, onSnapshot } = window.firebaseModules;
+                    try { this.isAdmin = (await getDoc(doc(this.db, 'admins', user.uid))).exists(); } catch (e) { this.isAdmin = false; }
+                    let first = true;
+                    this._unsubs.push(onSnapshot(query(collection(this.db, 'ballots'), where('ownerUid', '==', user.uid)), snap => {
+                        this.myBallots = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((x, y) => (x.name || '').localeCompare(y.name || ''));
+                        if (first) { first = false; this.afterFirstLoad(); }
+                    }, e => console.warn('my ballots listener', e)));
+                    this._unsubs.push(onSnapshot(collection(this.db, 'ballots'), snap => {
+                        this.allBallots = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    }, e => console.warn('leaderboard listener', e)));
+                },
+
+                async afterFirstLoad() {
+                    // First sign-in: turn picks made before signing in into a ballot.
+                    const hasLocal = Object.values(this.ballot.picks || {}).some(g => g && (g.topPick || (g.shortlist || []).length)) || this.ballot.bestInShow;
+                    if (this.myBallots.length === 0 && hasLocal && !this.locked) {
+                        await this.createBallot((this.user.displayName || 'My ballot').split(' ')[0], JSON.parse(JSON.stringify(this.ballot)));
+                        localStorage.removeItem('dogShowBallot');
+                        this.showNotification('Your picks were saved as a ballot.');
+                    } else {
+                        this.goMyBallots();
                     }
                 },
 
@@ -336,8 +540,139 @@
                 },
 
                 async signOutUser() {
+                    await this.flushSave();
                     await window.firebaseModules.signOut(this.auth);
-                    this.showNotification('Signed out. Your picks stay saved in this browser.');
+                    this.ballot = { picks: {}, bestInShow: null };
+                    this.showNotification('Signed out.');
+                },
+
+                // ---------- ballots ----------
+                goMyBallots() { this.flushSave(); this.currentBallotId = null; this.activeGroup = null; this.view = 'my'; },
+
+                async createBallot(name, picksData) {
+                    if (!name) {
+                        name = prompt('Whose ballot is this? (e.g. "Grandma" or "Jake")', this.myBallots.length ? '' : (this.user.displayName || '').split(' ')[0]);
+                        if (!name || !name.trim()) return;
+                    }
+                    const { addDoc, collection, serverTimestamp } = window.firebaseModules;
+                    const data = picksData || { picks: {}, bestInShow: null };
+                    try {
+                        const ref = await addDoc(collection(this.db, 'ballots'), {
+                            name: name.trim().slice(0, 40), ownerUid: this.user.uid, ownerName: (this.user.displayName || '').split(' ')[0],
+                            picks: data.picks || {}, bestInShow: data.bestInShow || null, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+                        });
+                        this.openBallot({ id: ref.id, name: name.trim().slice(0, 40), picks: data.picks || {}, bestInShow: data.bestInShow || null });
+                    } catch (e) { console.error(e); this.showNotification("⚠️ Couldn't create the ballot."); }
+                },
+
+                openBallot(b) {
+                    this.ballot = { picks: JSON.parse(JSON.stringify(b.picks || {})), bestInShow: b.bestInShow || null };
+                    this._lastSaved = this.ballotKey();
+                    this.currentBallotId = b.id; this.currentBallotName = b.name; this.saveState = '';
+                    this.activeGroup = null; this.view = 'ballot';
+                    window.scrollTo(0, 0);
+                },
+
+                async renameBallot(b) {
+                    const name = prompt('Rename ballot', b.name);
+                    if (!name || !name.trim() || name.trim() === b.name) return;
+                    const { doc, updateDoc, serverTimestamp } = window.firebaseModules;
+                    try { await updateDoc(doc(this.db, 'ballots', b.id), { name: name.trim().slice(0, 40), updatedAt: serverTimestamp() }); }
+                    catch (e) { this.showNotification("⚠️ Couldn't rename."); }
+                },
+
+                async deleteBallot(b) {
+                    if (!confirm(`Delete ${b.name}'s ballot? This can't be undone.`)) return;
+                    const { doc, deleteDoc } = window.firebaseModules;
+                    try { await deleteDoc(doc(this.db, 'ballots', b.id)); this.showNotification('Ballot deleted.'); }
+                    catch (e) { this.showNotification("⚠️ Couldn't delete."); }
+                },
+
+                // Compact fingerprint of the picks (ignores empty groups) so we only save real changes.
+                ballotKey() {
+                    const p = {};
+                    for (const [k, g] of Object.entries(this.ballot.picks || {})) if (g && (g.topPick || (g.shortlist || []).length)) p[k] = g;
+                    return JSON.stringify([p, this.ballot.bestInShow || null]);
+                },
+
+                onBallotChanged() {
+                    if (!this.currentBallotId) {
+                        try { localStorage.setItem('dogShowBallot', JSON.stringify(this.ballot)); } catch (e) {}
+                        return;
+                    }
+                    if (this.locked || this.ballotKey() === this._lastSaved) return;
+                    this.saveState = 'saving';
+                    clearTimeout(this._saveTimer);
+                    this._saveTimer = setTimeout(() => this.flushSave(), 700);
+                },
+
+                async flushSave() {
+                    if (!this._saveTimer || !this.currentBallotId || !this.db) return;
+                    clearTimeout(this._saveTimer); this._saveTimer = null;
+                    const { doc, updateDoc, serverTimestamp } = window.firebaseModules;
+                    const key = this.ballotKey();
+                    try {
+                        await updateDoc(doc(this.db, 'ballots', this.currentBallotId), {
+                            picks: JSON.parse(JSON.stringify(this.ballot.picks)), bestInShow: this.ballot.bestInShow || null, updatedAt: serverTimestamp()
+                        });
+                        this._lastSaved = key;
+                        this.saveState = 'saved';
+                    } catch (e) { console.error(e); this.saveState = 'error'; }
+                },
+
+                canEdit() {
+                    if (this.locked) { this.showNotification('🔒 Ballots are locked.'); return false; }
+                    return true;
+                },
+
+                setBestInShowPick(breed) { if (this.canEdit()) this.ballot.bestInShow = breed; },
+
+                ballotProgress(b) {
+                    let n = b.bestInShow ? 1 : 0;
+                    for (const g of Object.values(b.picks || {})) n += (g.topPick ? 1 : 0) + (g.shortlist || []).length;
+                    return n;
+                },
+
+                // ---------- scoring ----------
+                resultsAnnounced() { return Object.values(this.results.groupWinners).some(Boolean) || !!this.results.bestInShow; },
+
+                scoreBallot(b) {
+                    const r = this.results, out = { total: 0, groups: {}, bis: 0 };
+                    const myPicks = new Set();
+                    for (const g of this.groups) {
+                        const gp = (b.picks || {})[g.id] || {}, w = r.groupWinners[g.id];
+                        if (gp.topPick) myPicks.add(gp.topPick);
+                        (gp.shortlist || []).forEach(x => myPicks.add(x));
+                        let pts = 0;
+                        if (w) pts = gp.topPick === w ? 5 : ((gp.shortlist || []).includes(w) ? 2 : 0);
+                        out.groups[g.id] = pts; out.total += pts;
+                    }
+                    if (r.bestInShow) out.bis = b.bestInShow === r.bestInShow ? 20 : (myPicks.has(r.bestInShow) ? 5 : 0);
+                    out.total += out.bis;
+                    return out;
+                },
+
+                leaderboard() {
+                    const rows = this.allBallots.map(b => ({ ...b, score: this.scoreBallot(b) }))
+                        .sort((x, y) => y.score.total - x.score.total || (x.name || '').localeCompare(y.name || ''));
+                    let rank = 0, prev = null;
+                    rows.forEach((row, i) => { if (row.score.total !== prev) { rank = i + 1; prev = row.score.total; } row.rank = rank; });
+                    return rows;
+                },
+
+                // ---------- admin ----------
+                openAdmin() { this.flushSave(); this.currentBallotId = null; this.view = 'admin'; },
+
+                async writeResults(patch) {
+                    const { doc, setDoc, serverTimestamp } = window.firebaseModules;
+                    try { await setDoc(doc(this.db, 'results', 'current'), { ...patch, updatedAt: serverTimestamp() }, { merge: true }); this.showNotification('✅ Published'); }
+                    catch (e) { console.error(e); this.showNotification("⚠️ Couldn't save. Are you signed in as admin?"); }
+                },
+                setGroupWinner(gid, breed) { this.writeResults({ groupWinners: { ...this.results.groupWinners, [gid]: breed || null } }); },
+                setBestInShowResult(breed) { this.writeResults({ bestInShow: breed || null }); },
+                setLocked(v) {
+                    if (v && !confirm('Lock all ballots now? Nobody will be able to change picks.')) return;
+                    this.writeResults({ locked: v });
                 },
 
                 slug(breed) {
@@ -376,6 +711,7 @@
                 },
 
                 setTopPick(groupId, breed) {
+                    if (!this.canEdit()) return;
                     const gp = this.getGroupPicks(groupId);
                     gp.shortlist = gp.shortlist.filter(b => b !== breed);
                     
@@ -391,6 +727,7 @@
                 },
 
                 toggleShortlist(groupId, breed) {
+                    if (!this.canEdit()) return;
                     const gp = this.getGroupPicks(groupId);
                     if (gp.topPick === breed) return;
 
@@ -426,46 +763,6 @@
                 showNotification(msg) {
                     this.notification = msg;
                     setTimeout(() => { this.notification = ''; }, 3000);
-                },
-
-                async saveBallot() {
-                    if (!this.user || !this.db) {
-                        this.showNotification(this.auth ? "Saved in this browser. Sign in to keep it on every device." : "Ballot saved in this browser.");
-                        return;
-                    }
-                    this.saving = true;
-                    try {
-                        const { doc, setDoc } = window.firebaseModules;
-                        await setDoc(doc(this.db, "ballots", this.user.uid), {
-                            uid: this.user.uid,
-                            name: this.user.displayName || '',
-                            ballot: this.ballot,
-                            updatedAt: new Date().toISOString()
-                        });
-                        this.showNotification("✅ Ballot saved to your account!");
-                    } catch (e) {
-                        console.error("Error saving ballot:", e);
-                        this.showNotification("⚠️ Couldn't save to your account. It's still saved in this browser.");
-                    } finally {
-                        this.saving = false;
-                    }
-                },
-
-                async loadUserBallot() {
-                    if (!this.user || !this.db) return;
-                    try {
-                        const { doc, getDoc } = window.firebaseModules;
-                        const docSnap = await getDoc(doc(this.db, "ballots", this.user.uid));
-                        const hasLocal = Object.values(this.ballot.picks || {}).some(g => g && (g.topPick || (g.shortlist || []).length)) || this.ballot.bestInShow;
-                        if (docSnap.exists()) {
-                            this.ballot = docSnap.data().ballot;
-                            this.showNotification("📥 Loaded your saved ballot.");
-                        } else if (hasLocal) {
-                            await this.saveBallot();   // first sign-in: keep the picks made before signing in
-                        }
-                    } catch (e) {
-                        console.error("Error loading ballot:", e);
-                    }
                 }
             }));
         });

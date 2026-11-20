@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+
+    // Admins are listed in /admins/{uid}; only the project owner can add them (via scripts/make_admin.sh).
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // The admin locks ballots on show day; after that, nobody can change picks.
+    function locked() {
+      return exists(/databases/$(database)/documents/results/current)
+        && get(/databases/$(database)/documents/results/current).data.get('locked', false) == true;
+    }
+
+    function validBallot() {
+      let d = request.resource.data;
+      return d.ownerUid == request.auth.uid && d.name is string && d.name.size() > 0 && d.name.size() <= 40;
+    }
+
+    // Ballots: anyone signed in can see them (leaderboard); only the owner can change their own, until locked.
+    match /ballots/{ballotId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && validBallot() && !locked();
+      allow update: if signedIn() && resource.data.ownerUid == request.auth.uid && validBallot() && !locked();
+      allow delete: if signedIn() && resource.data.ownerUid == request.auth.uid && !locked();
+      allow update, delete: if isAdmin();
+    }
+
+    // Results: public to read, only admins can write.
+    match /results/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Admin list: you can check whether you're an admin; nobody can write it from the website.
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+  }
+}

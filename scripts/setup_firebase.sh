@@ -100,14 +100,7 @@ else
 fi
 
 say "6/6  Publishing security rules (each person can only read/write their own ballot)"
-RULES='rules_version = '"'"'2'"'"';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /ballots/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
-    }
-  }
-}'
+RULES="$(curl -sL https://raw.githubusercontent.com/kyle-b-frazier/dog-show-app/main/firestore.rules)"
 RULESET_BODY="$(python3 -c 'import sys,json; print(json.dumps({"source":{"files":[{"name":"firestore.rules","content":sys.stdin.read()}]}}))' <<<"$RULES")"
 RULESET="$(api POST "https://firebaserules.googleapis.com/v1/projects/$PROJECT/rulesets" "$RULESET_BODY" | json 'd["name"]')"
 RELEASE="projects/$PROJECT/releases/cloud.firestore"
