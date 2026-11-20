@@ -3,6 +3,7 @@
 
 Runs in GitHub Actions. Reads scripts/photo-sources.json:
   photos:          slug -> {breed, url}   -> saved to images/photos/<slug>.jpg
+  banners:         group -> "File:..." title  -> images/banners/<group>.jpg (960px)
   candidatePages:  Wikipedia article titles -> every photo on the page saved
                    (small) to photo-candidates/<page>/ for manual review.
 Polite: one request at a time, honours Retry-After on HTTP 429.
@@ -50,6 +51,21 @@ for slug, info in SRC.get("photos", {}).items():
     else:
         failed.append(slug)
         print("FAILED", slug, info["url"], flush=True)
+    time.sleep(1)
+
+os.makedirs("images/banners", exist_ok=True)
+for group, title in SRC.get("banners", {}).items():
+    path = f"images/banners/{group}.jpg"
+    if os.path.exists(path) and os.path.getsize(path) > 1000:
+        continue
+    d = api({"action": "query", "titles": title, "prop": "imageinfo", "iiprop": "url", "iiurlwidth": 960})
+    ii = (d.get("query", {}).get("pages", [{}])[0].get("imageinfo") or [None])[0]
+    data = get(ii["thumburl"].split("?")[0].replace("thumb.wikimedia.org", "upload.wikimedia.org")) if ii else None
+    if data:
+        open(path, "wb").write(data)
+        print("banner ok", group, flush=True)
+    else:
+        failed.append("banner:" + group)
     time.sleep(1)
 
 for page in SRC.get("candidatePages", []):

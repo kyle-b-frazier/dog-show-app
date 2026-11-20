@@ -18,16 +18,6 @@
     </script>
     <style>
         .trade-banner { position: relative; }
-        /* dog illustration: faded "watermark" at the bottom of each banner */
-        .trade-banner .dog-art {
-            position: absolute; bottom: 0;
-            left: -8%; width: 116%; height: 60%;
-            object-fit: contain; object-position: center bottom;
-            opacity: 0.62;
-            transition: opacity 0.2s ease;
-            pointer-events: none;
-        }
-        .trade-banner:hover .dog-art { opacity: 0.8; }
         /* real photo as a faded watermark over the banner color */
         .trade-banner .banner-photo {
             position: absolute; inset: 0; width: 100%; height: 100%;
@@ -84,9 +74,8 @@
                          :aria-label="'Open ' + group.name + ' group ballot'"
                          class="trade-banner h-[28rem] lg:h-[36rem] rounded-xl shadow-md border-2 border-amber-900/20 cursor-pointer overflow-hidden flex flex-col justify-start gap-6 p-4 transition transform hover:-translate-y-1.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500"
                          :style="`background-color: ${group.color}`">
-                        <img x-show="!group.photoFailed" class="banner-photo" :src="'images/photos/' + group.bannerBreed + '.jpg'" alt="" aria-hidden="true" referrerpolicy="no-referrer"
-                             @error="if (!$el.dataset.remote && photos[group.bannerBreed]) { $el.dataset.remote = 1; $el.src = photos[group.bannerBreed].url } else { group.photoFailed = true }">
-                        <img x-show="group.photoFailed" class="dog-art" :src="'images/' + group.id + '.svg'" alt="" aria-hidden="true">
+                        <img x-show="!group.photoFailed" class="banner-photo" :src="'images/banners/' + group.id + '.jpg'" alt="" aria-hidden="true"
+                             @error="if (!$el.dataset.fb) { $el.dataset.fb = 1; $el.src = 'images/photos/' + group.bannerBreed + '.jpg' } else { group.photoFailed = true }">
 
                         <!-- Top: progress badge -->
                         <div class="relative z-10 flex justify-center">
