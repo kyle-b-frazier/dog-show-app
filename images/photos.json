@@ -151,14 +151,6 @@
   "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
   "page": "https://commons.wikimedia.org/wiki/File:Orrvilas_enska_w800px.jpg"
  },
- "irish-red-white-setter": {
-  "breed": "Irish Red & White Setter",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/0/04/Irish_Red_And_White_Setter_2005.jpg",
-  "author": "Missledwidge",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Irish_Red_And_White_Setter_2005.jpg"
- },
  "irish-setter": {
   "breed": "Irish Setter",
   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Can_Setter_dog_GFDL.jpg/500px-Can_Setter_dog_GFDL.jpg",
@@ -430,14 +422,6 @@
   "license": "Public domain",
   "licenseUrl": "",
   "page": "https://commons.wikimedia.org/wiki/File:Two_otterhounds.jpg"
- },
- "petit-basset-griffon-vendeen": {
-  "breed": "Petit Basset Griffon Vendeen",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/e/e4/P_Basset_Griffon_Vendeen_600.jpg",
-  "author": "Sannse",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:P_Basset_Griffon_Vendeen_600.jpg"
  },
  "pharaoh-hound": {
   "breed": "Pharaoh Hound",
@@ -799,14 +783,6 @@
   "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
   "page": "https://commons.wikimedia.org/wiki/File:Cairn-Terrier-Garten1.jpg"
  },
- "colored-bull-terrier": {
-  "breed": "Colored Bull Terrier",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg",
-  "author": "Pixabay User TC-TORRES",
-  "license": "CC0",
-  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "page": "https://commons.wikimedia.org/wiki/File:Bullterrier-3453301920.jpg"
- },
  "dandie-dinmont-terrier": {
   "breed": "Dandie Dinmont Terrier",
   "url": "https://upload.wikimedia.org/wikipedia/commons/6/63/Dandie_Dinmont_Terrier_600.jpg",
@@ -975,22 +951,6 @@
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "page": "https://commons.wikimedia.org/wiki/File:Terier_walijski_suka_2009_pl.jpg"
  },
- "west-highland-terrier": {
-  "breed": "West Highland Terrier",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/West_Highland_White_Terrier_Krakow.jpg",
-  "author": "Christopher Walker from Krakow, Poland",
-  "license": "CC BY 2.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-  "page": "https://commons.wikimedia.org/wiki/File:West_Highland_White_Terrier_Krakow.jpg"
- },
- "white-bull-terrier": {
-  "breed": "White Bull Terrier",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg",
-  "author": "Pixabay User TC-TORRES",
-  "license": "CC0",
-  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
-  "page": "https://commons.wikimedia.org/wiki/File:Bullterrier-3453301920.jpg"
- },
  "biewer-terrier": {
   "breed": "Biewer Terrier",
   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/BiewerH%C3%BCndin.jpg/500px-BiewerH%C3%BCndin.jpg",
@@ -1062,14 +1022,6 @@
   "license": "CC BY-SA 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
   "page": "https://commons.wikimedia.org/wiki/File:Chin_posing.jpg"
- },
- "long-coat-chihuahua": {
-  "breed": "Long Coat Chihuahua",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg",
-  "author": "Bonnie van den Born, http://www.bonfoto.nl. The original uploader was Cwazi at Dutch Wikipedia.",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:Chihuahua1_bvdb.jpg"
  },
  "maltese": {
   "breed": "Maltese",
@@ -1151,14 +1103,6 @@
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
   "page": "https://commons.wikimedia.org/wiki/File:Australian_Silky_Terrier_Alana_Of_Silky%27s_Dream.jpg"
  },
- "smooth-coat-chihuahua": {
-  "breed": "Smooth Coat Chihuahua",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg",
-  "author": "Bonnie van den Born, http://www.bonfoto.nl. The original uploader was Cwazi at Dutch Wikipedia.",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:Chihuahua1_bvdb.jpg"
- },
  "toy-fox-terrier": {
   "breed": "Toy Fox Terrier",
   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Toy_Fox_Terrier_2.jpg/500px-Toy_Fox_Terrier_2.jpg",
@@ -1167,22 +1111,6 @@
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
   "page": "https://commons.wikimedia.org/wiki/File:Toy_Fox_Terrier_2.jpg"
  },
- "toy-manchester-terrier": {
-  "breed": "Toy Manchester Terrier",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Toy_manchesters_lg.jpg/500px-Toy_manchesters_lg.jpg",
-  "author": "Kenneth R. Pergrem (krp)",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:Toy_manchesters_lg.jpg"
- },
- "toy-poodle": {
-  "breed": "Toy Poodle",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Pudel_Zwerg_SilberShow.jpg",
-  "author": "B. Schöner",
-  "license": "Public domain",
-  "licenseUrl": "",
-  "page": "https://commons.wikimedia.org/wiki/File:Pudel_Zwerg_SilberShow.jpg"
- },
  "yorkshire-terrier": {
   "breed": "Yorkshire Terrier",
   "url": "https://upload.wikimedia.org/wikipedia/commons/4/41/%282_version%29_Grupp_3%2C_YORKSHIRETERRIER%2C_NO_UCH_SE_UCH_Oxzar_Amazing_Bel%E2%80%99s_Toffy_%2824310212305%29.jpg",
@@ -1190,14 +1118,6 @@
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "page": "https://commons.wikimedia.org/wiki/File:(2_version)_Grupp_3,_YORKSHIRETERRIER,_NO_UCH_SE_UCH_Oxzar_Amazing_Bel%E2%80%99s_Toffy_(24310212305).jpg"
- },
- "american-eskimo": {
-  "breed": "American Eskimo",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/American_Eskimo_Dog_1.jpg/500px-American_Eskimo_Dog_1.jpg",
-  "author": "Christmas w/a K",
-  "license": "CC BY-SA 2.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-  "page": "https://commons.wikimedia.org/wiki/File:American_Eskimo_Dog_1.jpg"
  },
  "bichon-frise": {
   "breed": "Bichon Frise",
@@ -1407,14 +1327,6 @@
   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
   "page": "https://commons.wikimedia.org/wiki/File:Tervuren.jpg"
  },
- "bergamasco": {
-  "breed": "Bergamasco",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Ortensia_di_Valle_Scrivia_%28cropped%29.jpg/500px-Ortensia_di_Valle_Scrivia_%28cropped%29.jpg",
-  "author": "Luigi Guidobono Cavalchini (Josephine06)",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Ortensia_di_Valle_Scrivia_(cropped).jpg"
- },
  "berger-picard": {
   "breed": "Berger Picard",
   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Picard_Delice_Stacked.jpg/500px-Picard_Delice_Stacked.jpg",
@@ -1614,5 +1526,93 @@
   "license": "CC BY 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
   "page": "https://commons.wikimedia.org/wiki/File:V%C3%A4stg%C3%B6taspets_hane_5_%C3%A5r.jpg"
+ },
+ "irish-red-and-white-setter": {
+  "breed": "Irish Red and White Setter",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/0/04/Irish_Red_And_White_Setter_2005.jpg",
+  "author": "Missledwidge",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Irish_Red_And_White_Setter_2005.jpg"
+ },
+ "petit-basset-griffon-vendeen": {
+  "breed": "Petit Basset Griffon Vendéen",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/e/e4/P_Basset_Griffon_Vendeen_600.jpg",
+  "author": "Sannse",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:P_Basset_Griffon_Vendeen_600.jpg"
+ },
+ "bull-terrier-colored": {
+  "breed": "Bull Terrier (Colored)",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg",
+  "author": "Pixabay User TC-TORRES",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Bullterrier-3453301920.jpg"
+ },
+ "bull-terrier-white": {
+  "breed": "Bull Terrier (White)",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg",
+  "author": "Pixabay User TC-TORRES",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Bullterrier-3453301920.jpg"
+ },
+ "chihuahua-long-coat": {
+  "breed": "Chihuahua (Long Coat)",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg",
+  "author": "Bonnie van den Born, http://www.bonfoto.nl. The original uploader was Cwazi at Dutch Wikipedia.",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Chihuahua1_bvdb.jpg"
+ },
+ "chihuahua-smooth-coat": {
+  "breed": "Chihuahua (Smooth Coat)",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg",
+  "author": "Bonnie van den Born, http://www.bonfoto.nl. The original uploader was Cwazi at Dutch Wikipedia.",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Chihuahua1_bvdb.jpg"
+ },
+ "manchester-terrier-toy": {
+  "breed": "Manchester Terrier (Toy)",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Toy_manchesters_lg.jpg/500px-Toy_manchesters_lg.jpg",
+  "author": "Kenneth R. Pergrem (krp)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Toy_manchesters_lg.jpg"
+ },
+ "poodle-toy": {
+  "breed": "Poodle (Toy)",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Pudel_Zwerg_SilberShow.jpg",
+  "author": "B. Schöner",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Pudel_Zwerg_SilberShow.jpg"
+ },
+ "american-eskimo-dog": {
+  "breed": "American Eskimo Dog",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/American_Eskimo_Dog_1.jpg/500px-American_Eskimo_Dog_1.jpg",
+  "author": "Christmas w/a K",
+  "license": "CC BY-SA 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:American_Eskimo_Dog_1.jpg"
+ },
+ "bergamasco-sheepdog": {
+  "breed": "Bergamasco Sheepdog",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Ortensia_di_Valle_Scrivia_%28cropped%29.jpg/500px-Ortensia_di_Valle_Scrivia_%28cropped%29.jpg",
+  "author": "Luigi Guidobono Cavalchini (Josephine06)",
+  "license": "CC BY 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Ortensia_di_Valle_Scrivia_(cropped).jpg"
+ },
+ "west-highland-white-terrier": {
+  "breed": "West Highland White Terrier",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/West_Highland_White_Terrier_Krakow.jpg",
+  "author": "Christopher Walker from Krakow, Poland",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:West_Highland_White_Terrier_Krakow.jpg"
  }
 }

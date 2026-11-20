@@ -76,10 +76,6 @@
    "breed": "Gordon Setter",
    "url": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Orrvilas_enska_w800px.jpg"
   },
-  "irish-red-white-setter": {
-   "breed": "Irish Red & White Setter",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/0/04/Irish_Red_And_White_Setter_2005.jpg"
-  },
   "irish-setter": {
    "breed": "Irish Setter",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Can_Setter_dog_GFDL.jpg/500px-Can_Setter_dog_GFDL.jpg"
@@ -215,10 +211,6 @@
   "otterhound": {
    "breed": "Otterhound",
    "url": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Two_otterhounds.jpg"
-  },
-  "petit-basset-griffon-vendeen": {
-   "breed": "Petit Basset Griffon Vendeen",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/e/e4/P_Basset_Griffon_Vendeen_600.jpg"
   },
   "pharaoh-hound": {
    "breed": "Pharaoh Hound",
@@ -400,10 +392,6 @@
    "breed": "Cairn Terrier",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Cairn-Terrier-Garten1.jpg/500px-Cairn-Terrier-Garten1.jpg"
   },
-  "colored-bull-terrier": {
-   "breed": "Colored Bull Terrier",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg"
-  },
   "dandie-dinmont-terrier": {
    "breed": "Dandie Dinmont Terrier",
    "url": "https://upload.wikimedia.org/wikipedia/commons/6/63/Dandie_Dinmont_Terrier_600.jpg"
@@ -488,14 +476,6 @@
    "breed": "Welsh Terrier",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Terier_walijski_suka_2009_pl.jpg/500px-Terier_walijski_suka_2009_pl.jpg"
   },
-  "west-highland-terrier": {
-   "breed": "West Highland Terrier",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/West_Highland_White_Terrier_Krakow.jpg"
-  },
-  "white-bull-terrier": {
-   "breed": "White Bull Terrier",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg"
-  },
   "biewer-terrier": {
    "breed": "Biewer Terrier",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/BiewerH%C3%BCndin.jpg/500px-BiewerH%C3%BCndin.jpg"
@@ -531,10 +511,6 @@
   "japanese-chin": {
    "breed": "Japanese Chin",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Chin_posing.jpg/500px-Chin_posing.jpg"
-  },
-  "long-coat-chihuahua": {
-   "breed": "Long Coat Chihuahua",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg"
   },
   "maltese": {
    "breed": "Maltese",
@@ -576,29 +552,13 @@
    "breed": "Silky Terrier",
    "url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Australian_Silky_Terrier_Alana_Of_Silky%27s_Dream.jpg"
   },
-  "smooth-coat-chihuahua": {
-   "breed": "Smooth Coat Chihuahua",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg"
-  },
   "toy-fox-terrier": {
    "breed": "Toy Fox Terrier",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Toy_Fox_Terrier_2.jpg/500px-Toy_Fox_Terrier_2.jpg"
   },
-  "toy-manchester-terrier": {
-   "breed": "Toy Manchester Terrier",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Toy_manchesters_lg.jpg/500px-Toy_manchesters_lg.jpg"
-  },
-  "toy-poodle": {
-   "breed": "Toy Poodle",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Pudel_Zwerg_SilberShow.jpg"
-  },
   "yorkshire-terrier": {
    "breed": "Yorkshire Terrier",
    "url": "https://upload.wikimedia.org/wikipedia/commons/4/41/%282_version%29_Grupp_3%2C_YORKSHIRETERRIER%2C_NO_UCH_SE_UCH_Oxzar_Amazing_Bel%E2%80%99s_Toffy_%2824310212305%29.jpg"
-  },
-  "american-eskimo": {
-   "breed": "American Eskimo",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/American_Eskimo_Dog_1.jpg/500px-American_Eskimo_Dog_1.jpg"
   },
   "bichon-frise": {
    "breed": "Bichon Frise",
@@ -704,10 +664,6 @@
    "breed": "Belgian Tervuren",
    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Tervuren.jpg"
   },
-  "bergamasco": {
-   "breed": "Bergamasco",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Ortensia_di_Valle_Scrivia_%28cropped%29.jpg/500px-Ortensia_di_Valle_Scrivia_%28cropped%29.jpg"
-  },
   "berger-picard": {
    "breed": "Berger Picard",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Picard_Delice_Stacked.jpg/500px-Picard_Delice_Stacked.jpg"
@@ -807,6 +763,110 @@
   "swedish-vallhund": {
    "breed": "Swedish Vallhund",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/V%C3%A4stg%C3%B6taspets_hane_5_%C3%A5r.jpg/500px-V%C3%A4stg%C3%B6taspets_hane_5_%C3%A5r.jpg"
+  },
+  "irish-red-and-white-setter": {
+   "breed": "Irish Red and White Setter",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/0/04/Irish_Red_And_White_Setter_2005.jpg"
+  },
+  "petit-basset-griffon-vendeen": {
+   "breed": "Petit Basset Griffon Vendéen",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/e/e4/P_Basset_Griffon_Vendeen_600.jpg"
+  },
+  "bull-terrier-colored": {
+   "breed": "Bull Terrier (Colored)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg"
+  },
+  "bull-terrier-white": {
+   "breed": "Bull Terrier (White)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg"
+  },
+  "chihuahua-long-coat": {
+   "breed": "Chihuahua (Long Coat)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg"
+  },
+  "chihuahua-smooth-coat": {
+   "breed": "Chihuahua (Smooth Coat)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg"
+  },
+  "manchester-terrier-toy": {
+   "breed": "Manchester Terrier (Toy)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Toy_manchesters_lg.jpg/500px-Toy_manchesters_lg.jpg"
+  },
+  "poodle-toy": {
+   "breed": "Poodle (Toy)",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Pudel_Zwerg_SilberShow.jpg"
+  },
+  "american-eskimo-dog": {
+   "breed": "American Eskimo Dog",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/American_Eskimo_Dog_1.jpg/500px-American_Eskimo_Dog_1.jpg"
+  },
+  "bergamasco-sheepdog": {
+   "breed": "Bergamasco Sheepdog",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Ortensia_di_Valle_Scrivia_%28cropped%29.jpg/500px-Ortensia_di_Valle_Scrivia_%28cropped%29.jpg"
+  },
+  "west-highland-white-terrier": {
+   "breed": "West Highland White Terrier",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/West_Highland_White_Terrier_Krakow.jpg"
+  },
+  "affenpinscher": {
+   "breed": "Affenpinscher",
+   "article": "Affenpinscher"
+  },
+  "american-water-spaniel": {
+   "breed": "American Water Spaniel",
+   "article": "American Water Spaniel"
+  },
+  "anatolian-shepherd-dog": {
+   "breed": "Anatolian Shepherd Dog",
+   "article": "Anatolian Shepherd"
+  },
+  "belgian-laekenois": {
+   "breed": "Belgian Laekenois",
+   "file": "File:Lakenios Koira 2013.JPG"
+  },
+  "bluetick-coonhound": {
+   "breed": "Bluetick Coonhound",
+   "article": "Bluetick Coonhound"
+  },
+  "boerboel": {
+   "breed": "Boerboel",
+   "article": "Boerboel"
+  },
+  "cesky-terrier": {
+   "breed": "Cesky Terrier",
+   "article": "Český Terrier"
+  },
+  "finnish-spitz": {
+   "breed": "Finnish Spitz",
+   "article": "Finnish Spitz"
+  },
+  "grand-basset-griffon-vendeen": {
+   "breed": "Grand Basset Griffon Vendéen",
+   "article": "Grand Basset Griffon Vendéen"
+  },
+  "harrier": {
+   "breed": "Harrier",
+   "article": "Harrier (dog)"
+  },
+  "kuvasz": {
+   "breed": "Kuvasz",
+   "article": "Kuvasz"
+  },
+  "nederlandse-kooikerhondje": {
+   "breed": "Nederlandse Kooikerhondje",
+   "article": "Kooikerhondje"
+  },
+  "norwegian-elkhound": {
+   "breed": "Norwegian Elkhound",
+   "article": "Norwegian Elkhound"
+  },
+  "plott-hound": {
+   "breed": "Plott Hound",
+   "article": "Plott Hound"
+  },
+  "wire-fox-terrier": {
+   "breed": "Wire Fox Terrier",
+   "article": "Wire Fox Terrier"
   }
  },
  "candidatePages": [

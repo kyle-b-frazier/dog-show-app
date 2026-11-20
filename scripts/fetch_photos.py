@@ -40,10 +40,42 @@ def api(params):
 
 failed = []
 os.makedirs("images/photos", exist_ok=True)
+def strip(v):
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", v or "")).strip()
+
+
+def resolve(info):
+    """Look up the photo URL (500px) + credit for an {article} or {file} entry."""
+    title = info.get("file")
+    if not title:
+        d = api({"action": "query", "titles": info["article"], "redirects": 1, "prop": "pageimages", "piprop": "name"})
+        name = (d.get("query", {}).get("pages", [{}])[0]).get("pageimage")
+        if not name:
+            return None
+        title = "File:" + name
+    d = api({"action": "query", "titles": title, "prop": "imageinfo", "iiprop": "url|extmetadata", "iiurlwidth": 500})
+    ii = (d.get("query", {}).get("pages", [{}])[0].get("imageinfo") or [None])[0]
+    if not ii:
+        return None
+    md = ii.get("extmetadata", {})
+    return {"url": ii["thumburl"].split("?")[0].replace("thumb.wikimedia.org", "upload.wikimedia.org"),
+            "author": strip(md.get("Artist", {}).get("value"))[:120], "license": strip(md.get("LicenseShortName", {}).get("value")),
+            "licenseUrl": strip(md.get("LicenseUrl", {}).get("value")), "page": ii.get("descriptionurl"), "file": title}
+
+
+resolved = json.load(open("images/photo-credits-new.json")) if os.path.exists("images/photo-credits-new.json") else {}
 for slug, info in SRC.get("photos", {}).items():
     path = f"images/photos/{slug}.jpg"
     if os.path.exists(path) and os.path.getsize(path) > 1000:
         continue
+    if "url" not in info:
+        meta = resolve(info)
+        if not meta:
+            failed.append(slug)
+            print("NO PHOTO FOUND", slug, info, flush=True)
+            continue
+        resolved[slug] = dict(meta, breed=info["breed"])
+        info = dict(info, url=meta["url"])
     data = get(info["url"])
     if data and data[:3] == b"\xff\xd8\xff" or (data and data[:8] == b"\x89PNG\r\n\x1a\n"):
         open(path, "wb").write(data)
@@ -90,4 +122,5 @@ for page in SRC.get("candidatePages", []):
     json.dump(manifest, open(f"{folder}/files.json", "w"), indent=1, ensure_ascii=False)
     print("candidates", page, len(manifest), flush=True)
 
+json.dump(resolved, open("images/photo-credits-new.json", "w"), indent=1, ensure_ascii=False)
 print(f"done; {len(failed)} failed: {failed}")
