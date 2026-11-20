@@ -31,15 +31,35 @@ gcloud services enable firebase.googleapis.com identitytoolkit.googleapis.com \
   firestore.googleapis.com firebaserules.googleapis.com --project "$PROJECT"
 ok "APIs enabled"
 
-say "2/6  Reading your web app's config"
-APP_ID="$(api GET "https://firebase.googleapis.com/v1beta1/projects/$PROJECT/webApps" \
-  | json 'd.get("apps",[{}])[0].get("appId","") if d.get("apps") else ""')"
-if [ -z "$APP_ID" ]; then
-  warn "No web app found. In the Firebase console: Project Overview -> Add app -> Web (</>), then re-run this script."
+say "2/6  Reading your web app's config (registering one if needed)"
+APPS_RESP="$(api GET "https://firebase.googleapis.com/v1beta1/projects/$PROJECT/webApps")"
+if echo "$APPS_RESP" | grep -q '"error"'; then
+  warn "Firebase returned an error while listing web apps:"
+  echo "$APPS_RESP"
   exit 1
 fi
+APP_ID="$(echo "$APPS_RESP" | json '(d.get("apps") or [{}])[0].get("appId","")')"
+if [ -z "$APP_ID" ]; then
+  OP_RESP="$(api POST "https://firebase.googleapis.com/v1beta1/projects/$PROJECT/webApps" '{"displayName":"ballot-site"}')"
+  if echo "$OP_RESP" | grep -q '"error"'; then
+    warn "Couldn't register a web app:"; echo "$OP_RESP"; exit 1
+  fi
+  OP="$(echo "$OP_RESP" | json 'd["name"]')"
+  for i in $(seq 1 30); do
+    sleep 2
+    OP_STATE="$(api GET "https://firebase.googleapis.com/v1beta1/$OP")"
+    if [ "$(echo "$OP_STATE" | json 'd.get("done", False)')" = "True" ]; then
+      if echo "$OP_STATE" | grep -q '"error"'; then warn "Registering the web app failed:"; echo "$OP_STATE"; exit 1; fi
+      APP_ID="$(echo "$OP_STATE" | json 'd["response"]["appId"]')"
+      break
+    fi
+  done
+  [ -n "$APP_ID" ] || { warn "Timed out waiting for the web app to register; re-run the script."; exit 1; }
+  ok "Registered a new web app ($APP_ID)"
+fi
 CONFIG_JSON="$(api GET "https://firebase.googleapis.com/v1beta1/projects/$PROJECT/webApps/$APP_ID/config")"
-ok "Found web app $APP_ID"
+if echo "$CONFIG_JSON" | grep -q '"error"'; then warn "Couldn't read the web app config:"; echo "$CONFIG_JSON"; exit 1; fi
+ok "Using web app $APP_ID"
 
 say "3/6  Allowing $SITE_DOMAIN to use sign-in"
 AUTH_CFG="$(api GET "https://identitytoolkit.googleapis.com/admin/v2/projects/$PROJECT/config")"
