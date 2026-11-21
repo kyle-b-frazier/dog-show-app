@@ -19,9 +19,14 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
-      - name: Download photos from Wikimedia
-        run: python3 scripts/fetch_photos.py
+        with:
+          ref: ${{ github.ref_name }}   # latest branch tip, so photos from earlier runs are kept and skipped
+      - name: Install Pillow
+        run: pip install --quiet pillow
+      - name: Download photos from Wikimedia (stops after 50 min; progress is saved)
+        run: timeout 3000 python3 scripts/fetch_photos.py || echo "time limit reached; saving what we have"
       - name: Commit downloaded photos
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

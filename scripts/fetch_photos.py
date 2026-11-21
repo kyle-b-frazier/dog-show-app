@@ -8,13 +8,14 @@ Runs in GitHub Actions. Reads scripts/photo-sources.json:
                    (small) to photo-candidates/<page>/ for manual review.
 Polite: one request at a time, honours Retry-After on HTTP 429.
 """
-import json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
+import io, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
+from PIL import Image
 
 UA = "dog-show-app-photo-fetch/1.0 (GitHub Actions; hobby project)"
 SRC = json.load(open("scripts/photo-sources.json"))
 
 
-def get(url, tries=10):
+def get(url, tries=3):
     for i in range(tries):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": UA})
@@ -23,13 +24,36 @@ def get(url, tries=10):
             if e.code == 404:
                 print("  404", url, flush=True)
                 return None
-            wait = int(e.headers.get("Retry-After") or 10 * (i + 1))
+            wait = min(int(e.headers.get("Retry-After") or 10 * (i + 1)), 30)
             print(f"  HTTP {e.code}, waiting {wait}s", flush=True)
-            time.sleep(min(wait, 180) + 2)
+            time.sleep(wait + 2)
         except Exception as e:  # network hiccup
             print("  error", e, flush=True)
             time.sleep(10)
     return None
+
+
+def original_url(url):
+    """Wikimedia thumbnail URL -> original file URL (served without on-the-fly resizing)."""
+    m = re.match(r"(https://upload\.wikimedia\.org/wikipedia/commons)/thumb/(\w/\w\w/[^/]+)/[^/]+$", url)
+    return f"{m.group(1)}/{m.group(2)}" if m else url
+
+
+def fetch_resized(url, width, path):
+    """Download the original image and save a JPEG resized to `width` px wide."""
+    data = get(original_url(url))
+    if not data:
+        return False
+    try:
+        im = Image.open(io.BytesIO(data))
+        im = im.convert("RGB")
+        if im.width > width:
+            im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
+        im.save(path, "JPEG", quality=82, optimize=True, progressive=True)
+        return True
+    except Exception as e:
+        print("  bad image", e, flush=True)
+        return False
 
 
 def api(params):
@@ -75,10 +99,9 @@ for slug, info in SRC.get("photos", {}).items():
             print("NO PHOTO FOUND", slug, info, flush=True)
             continue
         resolved[slug] = dict(meta, breed=info["breed"])
+        json.dump(resolved, open("images/photo-credits-new.json", "w"), indent=1, ensure_ascii=False)
         info = dict(info, url=meta["url"])
-    data = get(info["url"])
-    if data and data[:3] == b"\xff\xd8\xff" or (data and data[:8] == b"\x89PNG\r\n\x1a\n"):
-        open(path, "wb").write(data)
+    if fetch_resized(info["url"], 640, path):
         print("ok", slug, flush=True)
     else:
         failed.append(slug)
@@ -90,11 +113,9 @@ for group, title in SRC.get("banners", {}).items():
     path = f"images/banners/{group}.jpg"
     if os.path.exists(path) and os.path.getsize(path) > 1000:
         continue
-    d = api({"action": "query", "titles": title, "prop": "imageinfo", "iiprop": "url", "iiurlwidth": 960})
+    d = api({"action": "query", "titles": title, "prop": "imageinfo", "iiprop": "url"})
     ii = (d.get("query", {}).get("pages", [{}])[0].get("imageinfo") or [None])[0]
-    data = get(ii["thumburl"].split("?")[0].replace("thumb.wikimedia.org", "upload.wikimedia.org")) if ii else None
-    if data:
-        open(path, "wb").write(data)
+    if ii and fetch_resized(ii["url"], 1000, path):
         print("banner ok", group, flush=True)
     else:
         failed.append("banner:" + group)
@@ -110,13 +131,11 @@ for page in SRC.get("candidatePages", []):
              if i["title"].lower().endswith((".jpg", ".jpeg"))]
     manifest = {}
     for n, f in enumerate(files[:40]):
-        d = api({"action": "query", "titles": f, "prop": "imageinfo", "iiprop": "url", "iiurlwidth": 330})
+        d = api({"action": "query", "titles": f, "prop": "imageinfo", "iiprop": "url|size"})
         ii = (d.get("query", {}).get("pages", [{}])[0].get("imageinfo") or [None])[0]
-        if not ii:
+        if not ii or ii.get("size", 0) > 25_000_000:
             continue
-        data = get(ii["thumburl"].split("?")[0].replace("thumb.wikimedia.org", "upload.wikimedia.org"))
-        if data:
-            open(f"{folder}/{n:02d}.jpg", "wb").write(data)
+        if fetch_resized(ii["url"], 400, f"{folder}/{n:02d}.jpg"):
             manifest[f"{n:02d}.jpg"] = f
         time.sleep(1)
     json.dump(manifest, open(f"{folder}/files.json", "w"), indent=1, ensure_ascii=False)
