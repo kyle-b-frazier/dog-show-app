@@ -418,6 +418,26 @@
         </div>
     </div>
 
+    <!-- Name-the-ballot popup (new ballot, or picks made before signing in) -->
+    <div x-show="namePrompt.open" style="display:none" class="fixed inset-0 z-[60] bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <form @submit.prevent="confirmNamePrompt()" class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-xl font-black text-stone-900" x-text="namePrompt.mode === 'import' ? 'Save the picks you already made' : 'New ballot'"></h3>
+            <p x-show="namePrompt.mode === 'import'" class="text-sm text-stone-600">
+                You made <b x-text="namePrompt.count"></b> picks before signing in. Whose ballot are they?
+            </p>
+            <p x-show="namePrompt.mode === 'new'" class="text-sm text-stone-600">Whose ballot is this?</p>
+            <input x-ref="ballotName" x-model="namePrompt.name" maxlength="40" placeholder='e.g. "Grandma" or "Jake"'
+                   class="w-full border-2 border-stone-300 focus:border-amber-700 rounded-xl px-3 py-2.5 text-base focus:outline-none">
+            <p x-show="namePrompt.error" class="text-sm text-red-700" x-text="namePrompt.error"></p>
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <button type="button" x-show="namePrompt.mode === 'import'" @click="discardLocalPicks()" class="text-sm text-stone-500 hover:text-red-700 underline">Discard these picks</button>
+                <button type="button" x-show="namePrompt.mode === 'new'" @click="namePrompt.open = false" class="text-sm text-stone-500 hover:text-stone-800 underline">Cancel</button>
+                <button type="submit" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-black shadow" :disabled="namePrompt.busy"
+                        x-text="namePrompt.busy ? 'Saving…' : 'Save ballot'"></button>
+            </div>
+        </form>
+    </div>
+
     <!-- Notification Toast -->
     <div x-show="notification" x-transition class="fixed bottom-4 right-4 bg-stone-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs z-50">
         <span x-text="notification"></span>
@@ -442,6 +462,7 @@
                 _saveTimer: null,
                 _unsubs: [],
                 _lastSaved: '',
+                namePrompt: { open: false, mode: 'new', name: '', count: 0, error: '', busy: false },
                 get locked() { return !!this.results.locked; },
                 saving: false,
                 notification: '',
@@ -521,15 +542,10 @@
                 },
 
                 async afterFirstLoad() {
-                    // First sign-in: turn picks made before signing in into a ballot.
-                    const hasLocal = Object.values(this.ballot.picks || {}).some(g => g && (g.topPick || (g.shortlist || []).length)) || this.ballot.bestInShow;
-                    if (this.myBallots.length === 0 && hasLocal && !this.locked) {
-                        await this.createBallot((this.user.displayName || 'My ballot').split(' ')[0], JSON.parse(JSON.stringify(this.ballot)));
-                        localStorage.removeItem('dogShowBallot');
-                        this.showNotification('Your picks were saved as a ballot.');
-                    } else {
-                        this.goMyBallots();
-                    }
+                    // Picks made before signing in: ask whose ballot they are, so nothing is lost.
+                    const count = this.localPickCount();
+                    this.goMyBallots();
+                    if (count > 0 && !this.locked) this.openNamePrompt('import', count);
                 },
 
                 async signIn() {
@@ -557,11 +573,41 @@
                 // ---------- ballots ----------
                 goMyBallots() { this.flushSave(); this.currentBallotId = null; this.activeGroup = null; this.view = 'my'; },
 
+                localPickCount() {
+                    let n = this.ballot.bestInShow ? 1 : 0;
+                    for (const g of Object.values(this.ballot.picks || {})) if (g) n += (g.topPick ? 1 : 0) + (g.shortlist || []).length;
+                    return this.currentBallotId ? 0 : n;
+                },
+
+                openNamePrompt(mode, count = 0) {
+                    const first = (this.user && this.user.displayName || '').split(' ')[0];
+                    const taken = this.myBallots.some(b => (b.name || '').toLowerCase() === first.toLowerCase());
+                    this.namePrompt = { open: true, mode, count, error: '', busy: false, name: taken ? '' : first };
+                    this.$nextTick(() => this.$refs.ballotName && this.$refs.ballotName.focus());
+                },
+
+                async confirmNamePrompt() {
+                    const name = (this.namePrompt.name || '').trim();
+                    if (!name) { this.namePrompt.error = 'Please enter a name.'; return; }
+                    this.namePrompt.busy = true;
+                    const data = this.namePrompt.mode === 'import' ? JSON.parse(JSON.stringify(this.ballot)) : null;
+                    const ok = await this.createBallot(name, data);
+                    this.namePrompt.busy = false;
+                    if (!ok) { this.namePrompt.error = "Couldn't save. Check your connection and try again."; return; }
+                    if (this.namePrompt.mode === 'import') { localStorage.removeItem('dogShowBallot'); this.showNotification(`✅ Saved as ${name}'s ballot`); }
+                    this.namePrompt.open = false;
+                },
+
+                discardLocalPicks() {
+                    if (!confirm('Discard the picks you made before signing in? This cannot be undone.')) return;
+                    localStorage.removeItem('dogShowBallot');
+                    this.ballot = { picks: {}, bestInShow: null };
+                    this.namePrompt.open = false;
+                    this.goMyBallots();
+                },
+
                 async createBallot(name, picksData) {
-                    if (!name) {
-                        name = prompt('Whose ballot is this? (e.g. "Grandma" or "Jake")', this.myBallots.length ? '' : (this.user.displayName || '').split(' ')[0]);
-                        if (!name || !name.trim()) return;
-                    }
+                    if (!name) { this.openNamePrompt('new'); return false; }
                     const { addDoc, collection, serverTimestamp } = window.firebaseModules;
                     const data = picksData || { picks: {}, bestInShow: null };
                     try {
@@ -570,7 +616,8 @@
                             picks: data.picks || {}, bestInShow: data.bestInShow || null, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
                         });
                         this.openBallot({ id: ref.id, name: name.trim().slice(0, 40), picks: data.picks || {}, bestInShow: data.bestInShow || null });
-                    } catch (e) { console.error(e); this.showNotification("⚠️ Couldn't create the ballot."); }
+                        return true;
+                    } catch (e) { console.error(e); this.showNotification("⚠️ Couldn't create the ballot."); return false; }
                 },
 
                 openBallot(b) {
@@ -643,10 +690,9 @@
                     await this.flushSave();
                     if (this.saveState === 'error') { this.showNotification("⚠️ Couldn't save. Check your connection and try again."); return; }
                     const n = group.id ? this.getPicksCount(group.id) : null;
-                    const where = this.currentBallotId ? '' : ' in this browser';
-                    this.showNotification(group.id
-                        ? `✅ ${group.name} picks saved${where}` + (n < 5 ? ` (${n} of 5)` : '')
-                        : `✅ Best in Show saved${where}`);
+                    let msg = group.id ? `✅ ${group.name} picks saved` + (n < 5 ? ` (${n} of 5)` : '') : '✅ Best in Show saved';
+                    if (!this.currentBallotId) msg += this.authReady && !this.user ? ' in this browser. Sign in to enter them in the contest.' : ' in this browser.';
+                    this.showNotification(msg);
                     this.backToGroups();
                 },
 
@@ -794,7 +840,8 @@
 
                 showNotification(msg) {
                     this.notification = msg;
-                    setTimeout(() => { this.notification = ''; }, 3000);
+                    clearTimeout(this._toastTimer);
+                    this._toastTimer = setTimeout(() => { this.notification = ''; }, msg.length > 50 ? 6000 : 3500);
                 }
             }));
         });
