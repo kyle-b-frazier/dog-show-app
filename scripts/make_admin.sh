@@ -28,10 +28,16 @@ service cloud.firestore {
       return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
-    // The admin locks ballots on show day; after that, nobody can change picks.
+    // Ballots lock when the admin locks them, or automatically at results/current.autoLockAt
+    // (milliseconds; default Thanksgiving 2026, noon Eastern; null turns the automatic lock off).
     function locked() {
       return exists(/databases/$(database)/documents/results/current)
-        && get(/databases/$(database)/documents/results/current).data.get('locked', false) == true;
+        ? lockedBy(get(/databases/$(database)/documents/results/current).data)
+        : request.time.toMillis() >= 1795712400000;
+    }
+    function lockedBy(r) {
+      return r.get('locked', false) == true
+        || (r.get('autoLockAt', 1795712400000) != null && request.time.toMillis() >= r.get('autoLockAt', 1795712400000));
     }
 
     function validBallot() {
@@ -120,10 +126,10 @@ if ! echo "$REL_RESP" | grep -q "\"rulesetName\": *\"$RULESET\""; then
 fi
 LIVE="$(api GET "https://firebaserules.googleapis.com/v1/$RELEASE" | python3 -c 'import sys,json; print(json.load(sys.stdin).get("rulesetName",""))')"
 LIVE_SRC="$(api GET "https://firebaserules.googleapis.com/v1/$LIVE")"
-if echo "$LIVE_SRC" | grep -q "match /leagues/"; then
-  ok "Rules published (leagues are on)"
+if echo "$LIVE_SRC" | grep -q "match /leagues/" && echo "$LIVE_SRC" | grep -q "autoLockAt"; then
+  ok "Rules published (leagues and automatic lock are on)"
 else
-  bad "The live rules still don't include leagues. Copy everything above and send it to Claude."; exit 1
+  bad "The live rules aren't the newest ones. Copy everything above and send it to Claude."; exit 1
 fi
 
 say "2/2  Making $EMAIL an admin"

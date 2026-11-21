@@ -190,6 +190,7 @@
                                     x-text="locked ? 'View' : (totalPicks(b) === 0 ? 'Start' : 'Continue')"></button>
                         </div>
                     </template>
+                    <div x-show="!locked && results.autoLockAt != null" class="text-sm font-bold text-amber-900">🔓 Picks lock <span x-text="lockTimeLabel()"></span></div>
                     <div class="flex flex-col sm:flex-row gap-3 pt-1">
                         <button x-show="!locked" @click="createBallot()" class="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-3 rounded-2xl font-black shadow" x-text="myBallots.length ? '+ Add another ballot' : '+ Start your ballot'"></button>
                         <button @click="view = 'leaderboard'" class="flex-1 bg-white hover:bg-amber-50 border-2 border-amber-300 text-amber-900 px-5 py-3 rounded-2xl font-black shadow">🏆 Leaderboard</button>
@@ -526,7 +527,8 @@
                 </template>
                 <template x-for="(row, i) in leaderboard()" :key="row.id">
                     <div class="flex items-center gap-3 px-4 py-3 border-b border-stone-100 last:border-0"
-                         :class="row.ownerUid === (user && user.uid) ? 'bg-amber-50' : ''">
+                         @click="if (locked) peek = row" :title="locked ? 'See picks' : ''"
+                         :class="(row.ownerUid === (user && user.uid) ? 'bg-amber-50 ' : '') + (locked ? 'cursor-pointer hover:bg-amber-100/60' : '')">
                         <div class="w-8 text-center font-black text-lg" :class="row.rank === 1 && resultsAnnounced() ? 'text-amber-500' : 'text-stone-400'" x-text="row.rank"></div>
                         <div class="flex-1 min-w-0">
                             <div class="font-bold text-stone-900 truncate" x-text="row.name"></div>
@@ -610,11 +612,17 @@
             <div class="bg-white rounded-xl border border-stone-200 shadow-sm p-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <div class="font-bold text-stone-900" x-text="locked ? '🔒 Ballots are locked' : '🔓 Ballots are open'"></div>
-                    <div class="text-xs text-stone-500">Lock before judging starts so nobody can change picks.</div>
+                    <div class="text-xs text-stone-500" x-text="autoLocked ? 'Locked automatically at ' + lockTimeLabel() : (results.autoLockAt != null ? 'Locks automatically ' + lockTimeLabel() : 'Automatic lock is off')"></div>
                 </div>
                 <button @click="setLocked(!locked)" class="px-4 py-2 rounded-lg text-sm font-bold"
                         :class="locked ? 'bg-stone-200 text-stone-800 hover:bg-stone-300' : 'bg-stone-800 text-white hover:bg-stone-700'"
-                        x-text="locked ? 'Unlock ballots' : 'Lock ballots'"></button>
+                        x-text="locked ? 'Unlock ballots' : 'Lock now'"></button>
+                <div class="w-full flex flex-wrap items-center gap-2 pt-3 border-t border-stone-100">
+                    <span class="text-sm font-bold text-stone-700">Automatic lock</span>
+                    <input type="datetime-local" x-model="lockAtInput" class="border border-stone-300 rounded-lg px-2 py-1.5 text-sm">
+                    <button @click="saveAutoLock(false)" class="small-btn">Save</button>
+                    <button x-show="results.autoLockAt != null" @click="saveAutoLock(true)" class="small-btn text-red-700">Turn off</button>
+                </div>
             </div>
             <div class="bg-white rounded-xl border border-stone-200 shadow-sm divide-y divide-stone-100">
                 <template x-for="g in groups" :key="g.id">
@@ -698,6 +706,46 @@
     </div>
 
     <!-- Invite popup: email, text, phone share menu, or copy -->
+    <div x-show="peek" style="display:none" class="fixed inset-0 z-[60] bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div @click.outside="peek = null" class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[85vh] flex flex-col">
+            <template x-if="peek">
+                <div class="flex flex-col min-h-0">
+                    <div class="flex items-start justify-between gap-3 p-5 pb-3 border-b border-stone-100">
+                        <div class="min-w-0">
+                            <h3 class="serif-heading text-2xl text-stone-900 truncate" x-text="peek.name"></h3>
+                            <div class="text-xs text-stone-500" x-text="'by ' + (peek.ownerName || 'someone') + (resultsAnnounced() ? ' · ' + peek.score.total + ' points' : '')"></div>
+                        </div>
+                        <button @click="peek = null" class="text-stone-400 hover:text-stone-700 text-2xl leading-none" aria-label="Close">×</button>
+                    </div>
+                    <div class="overflow-y-auto p-5 pt-3 space-y-3">
+                        <div class="rounded-xl p-3 bg-amber-100 border border-amber-300 text-amber-950">
+                            <div class="text-xs font-black uppercase tracking-wider">🏆 Best in Show</div>
+                            <div class="font-black text-lg" x-text="(peek.bestInShow || '—') + (results.bestInShow && peek.bestInShow === results.bestInShow ? ' ✓' : '')"></div>
+                        </div>
+                        <template x-for="g in groups" :key="'pk-' + g.id">
+                            <div class="rounded-xl border border-stone-200 overflow-hidden">
+                                <div class="px-3 py-1.5 text-white text-xs font-black uppercase tracking-wider flex justify-between" :style="`background-color: ${g.color}`">
+                                    <span x-text="g.name"></span>
+                                    <span x-show="results.groupWinners[g.id]" x-text="'+' + peek.score.groups[g.id]"></span>
+                                </div>
+                                <div class="px-3 py-2 text-sm space-y-0.5">
+                                    <div class="font-bold" :class="results.groupWinners[g.id] && pickOf(peek, g.id).topPick === results.groupWinners[g.id] ? 'text-emerald-700' : 'text-stone-900'"
+                                         x-text="'★ ' + (pickOf(peek, g.id).topPick || '—') + (results.groupWinners[g.id] && pickOf(peek, g.id).topPick === results.groupWinners[g.id] ? ' ✓' : '')"></div>
+                                    <div class="text-stone-600">
+                                        <template x-for="(c, i) in (pickOf(peek, g.id).shortlist || [])" :key="c">
+                                            <span :class="c === results.groupWinners[g.id] ? 'text-emerald-700 font-bold' : ''" x-text="(i ? ', ' : '') + c + (c === results.groupWinners[g.id] ? ' ✓' : '')"></span>
+                                        </template>
+                                        <span x-show="!(pickOf(peek, g.id).shortlist || []).length">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
     <div x-show="invite.open" style="display:none" class="fixed inset-0 z-[60] bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div @click.outside="invite.open = false" class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex items-start justify-between gap-3">
@@ -778,7 +826,8 @@
                 isAdmin: false,
                 myBallots: [],
                 allBallots: [],
-                results: { groupWinners: {}, bestInShow: null, locked: false },
+                results: { groupWinners: {}, bestInShow: null, locked: false, autoLockAt: 1795712400000 },
+                now: Date.now(), lockAtInput: '', peek: null,
                 currentBallotId: null,
                 currentBallotName: '',
                 saveState: '',
@@ -795,7 +844,9 @@
                 newLeague: { name: '', isPrivate: false, password: '', error: '', busy: false },
                 _leagueSubs: {}, _allBallotsUnsub: null,
                 namePrompt: { open: false, mode: 'new', name: '', count: 0, error: '', busy: false },
-                get locked() { return !!this.results.locked; },
+                get locked() { return !!this.results.locked || this.autoLocked; },
+                get autoLocked() { const t = this.results.autoLockAt; return t != null && this.now >= t; },
+                lockTimeLabel() { const t = this.results.autoLockAt; return t == null ? '' : new Date(t).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); },
                 saving: false,
                 notification: '',
                 activeGroup: null,
@@ -856,9 +907,11 @@
                         // Results are public and live.
                         onSnapshot(doc(this.db, 'results', 'current'), snap => {
                             const d = snap.exists() ? snap.data() : {};
-                            this.results = { groupWinners: d.groupWinners || {}, bestInShow: d.bestInShow || null, locked: !!d.locked };
+                            this.results = { groupWinners: d.groupWinners || {}, bestInShow: d.bestInShow || null, locked: !!d.locked, autoLockAt: d.autoLockAt === undefined ? 1795712400000 : d.autoLockAt };
+                            this.lockAtInput = this.toLocalInput(this.results.autoLockAt);
                         }, e => console.warn('results listener', e));
                         onAuthStateChanged(this.auth, user => this.onUser(user));
+                        setInterval(() => { this.now = Date.now(); }, 15000);
                     } catch (e) {
                         console.warn("Firebase unavailable; saving in this browser only.", e);
                     }
@@ -1272,6 +1325,8 @@
                     return out;
                 },
 
+                pickOf(b, gid) { return (b.picks || {})[gid] || {}; },
+
                 leaderboard() {
                     const sel = this.selectedLeague, ids = this.leagueEntries[sel];
                     const pool = (sel !== 'all' && ids) ? this.allBallots.filter(b => ids.includes(b.id)) : this.allBallots;
@@ -1293,8 +1348,26 @@
                 setGroupWinner(gid, breed) { this.writeResults({ groupWinners: { ...this.results.groupWinners, [gid]: breed || null } }); },
                 setBestInShowResult(breed) { this.writeResults({ bestInShow: breed || null }); },
                 setLocked(v) {
-                    if (v && !confirm('Lock all ballots now? Nobody will be able to change picks.')) return;
-                    this.writeResults({ locked: v });
+                    if (v) {
+                        if (!confirm('Lock all ballots now? Nobody will be able to change picks.')) return;
+                        return this.writeResults({ locked: true });
+                    }
+                    if (this.autoLocked) {
+                        if (!confirm('The lock time has passed. Unlocking also turns off the automatic lock. Unlock?')) return;
+                        return this.writeResults({ locked: false, autoLockAt: null });
+                    }
+                    this.writeResults({ locked: false });
+                },
+                toLocalInput(t) {
+                    if (t == null) return '';
+                    const d = new Date(t), z = n => String(n).padStart(2, '0');
+                    return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`;
+                },
+                saveAutoLock(off) {
+                    if (off) return this.writeResults({ autoLockAt: null });
+                    const t = new Date(this.lockAtInput).getTime();
+                    if (!t) return this.showNotification('Pick a date and time first.');
+                    this.writeResults({ autoLockAt: t });
                 },
 
                 slug(breed) {
