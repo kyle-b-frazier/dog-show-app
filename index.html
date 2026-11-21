@@ -501,7 +501,7 @@
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button x-show="!locked" @click="openLeagueModal(selectedLeague)" class="small-btn">Choose my ballots</button>
-                    <button @click="copyShareLink(selectedLeague)" class="small-btn">🔗 Share link</button>
+                    <button @click="openInvite(selectedLeague)" class="small-btn">✉️ Invite people</button>
                 </div>
             </div>
 
@@ -590,7 +590,7 @@
                             <div class="flex flex-wrap gap-2">
                                 <button @click="selectedLeague = id; view = 'leaderboard'" class="small-btn">Standings</button>
                                 <button x-show="!locked" @click="openLeagueModal(id)" class="small-btn">Choose ballots</button>
-                                <button @click="copyShareLink(id)" class="small-btn">🔗 Share</button>
+                                <button @click="openInvite(id)" class="small-btn">✉️ Invite</button>
                                 <button x-show="isLeagueOwner(id) || isAdmin" @click="deleteLeague(id)" class="small-btn text-red-700">Delete</button>
                                 <button x-show="!isLeagueOwner(id)" @click="leaveLeague(id)" class="small-btn text-red-700">Leave</button>
                             </div>
@@ -697,6 +697,31 @@
         </form>
     </div>
 
+    <!-- Invite popup: email, text, phone share menu, or copy -->
+    <div x-show="invite.open" style="display:none" class="fixed inset-0 z-[60] bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div @click.outside="invite.open = false" class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div class="flex items-start justify-between gap-3">
+                <h3 class="text-xl font-black text-stone-900" x-text="'Invite people to ' + invite.name"></h3>
+                <button @click="invite.open = false" class="text-stone-400 hover:text-stone-700 text-2xl leading-none" aria-label="Close">×</button>
+            </div>
+            <label x-show="invite.isPrivate && invite.password" class="flex items-center gap-3 px-3 py-2 rounded-xl border border-stone-200 cursor-pointer hover:bg-amber-50">
+                <input type="checkbox" x-model="invite.includePw" class="w-5 h-5 accent-amber-700">
+                <span class="text-sm"><b>Include the password</b> so they can join in one tap</span>
+            </label>
+            <div class="space-y-2">
+                <input x-model="invite.to" type="email" multiple autocomplete="off" placeholder="Email addresses (optional)"
+                       class="w-full border-2 border-stone-300 focus:border-amber-700 rounded-xl px-3 py-2 focus:outline-none">
+                <a :href="inviteMailto()" class="block text-center w-full bg-emerald-700 hover:bg-emerald-600 text-white py-2.5 rounded-xl font-black shadow">✉️ Send email</a>
+            </div>
+            <div class="grid gap-2" :class="canNativeShare ? 'grid-cols-3' : 'grid-cols-2'">
+                <a :href="inviteSms()" class="text-center py-2.5 rounded-xl border-2 border-amber-300 text-amber-900 font-bold hover:bg-amber-50">💬 Text</a>
+                <button x-show="canNativeShare" @click="inviteNativeShare()" class="py-2.5 rounded-xl border-2 border-amber-300 text-amber-900 font-bold hover:bg-amber-50">📤 More…</button>
+                <button @click="inviteCopy()" class="py-2.5 rounded-xl border-2 border-amber-300 text-amber-900 font-bold hover:bg-amber-50">🔗 Copy</button>
+            </div>
+            <pre class="whitespace-pre-wrap break-words text-xs text-stone-600 bg-stone-50 border border-stone-200 rounded-xl p-3 font-sans" x-text="inviteMessage()"></pre>
+        </div>
+    </div>
+
     <!-- League popup: join, or choose which ballots are entered -->
     <div x-show="leagueModal.open" style="display:none" class="fixed inset-0 z-[60] bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <form @submit.prevent="confirmLeagueModal()" class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
@@ -754,6 +779,9 @@
                 // Leagues
                 myLeagueIds: [], leaguesById: {}, leagueEntries: {}, publicLeagues: [], selectedLeague: 'all',
                 pendingLeagueId: new URLSearchParams(location.search).get('league'),
+                pendingLeaguePw: new URLSearchParams(location.search).get('pw') || '',
+                invite: { open: false, id: null, name: '', isPrivate: false, password: '', includePw: true, to: '' },
+                canNativeShare: !!navigator.share,
                 leagueModal: { open: false, mode: 'join', id: null, league: null, password: '', ballotIds: [], error: '', busy: false },
                 newLeague: { name: '', isPrivate: false, password: '', error: '', busy: false },
                 _leagueSubs: {}, _allBallotsUnsub: null,
@@ -1092,9 +1120,10 @@
                     }
                     if (!league) { this.showNotification("⚠️ That league link doesn't work. It may have been deleted."); return; }
                     const member = this.myLeagueIds.includes(id);
-                    this.leagueModal = { open: true, mode: member ? 'entries' : 'join', id, league, password: '', error: '', busy: false,
+                    const pw = member ? '' : this.pendingLeaguePw; this.pendingLeaguePw = '';
+                    this.leagueModal = { open: true, mode: member ? 'entries' : 'join', id, league, password: pw, error: '', busy: false,
                                          ballotIds: member ? this.myEntriesIn(id) : this.myBallots.map(b => b.id) };
-                    this.$nextTick(() => this.$refs.leaguePassword && league.isPrivate && !member && this.$refs.leaguePassword.focus());
+                    this.$nextTick(() => this.$refs.leaguePassword && league.isPrivate && !member && !pw && this.$refs.leaguePassword.focus());
                 },
 
                 async confirmLeagueModal() {
@@ -1113,6 +1142,7 @@
                         if (m.mode === 'join') this.selectedLeague = m.id;
                         this.view = 'leaderboard';
                         m.open = false;
+                        if (m.fresh) this.openInvite(m.id);
                     } catch (e) { console.error(e); m.error = "Couldn't save. Please try again."; }
                     m.busy = false;
                 },
@@ -1143,8 +1173,8 @@
                         this.newLeague = { name: '', isPrivate: false, password: '', error: '', busy: false };
                         this.leaguesById = { ...this.leaguesById, [ref.id]: { id: ref.id, name, isPrivate: n.isPrivate, ownerUid: uid } };
                         this.selectedLeague = ref.id;
-                        this.showNotification(`✅ Created ${name}. Use 🔗 Share link to invite people.`);
-                        this.leagueModal = { open: true, mode: 'entries', id: ref.id, league: { id: ref.id, name, isPrivate: n.isPrivate }, password: '', error: '', busy: false, ballotIds: this.myBallots.map(b => b.id) };
+                        this.showNotification(`✅ Created ${name}`);
+                        this.leagueModal = { open: true, mode: 'entries', fresh: true, id: ref.id, league: { id: ref.id, name, isPrivate: n.isPrivate }, password: '', error: '', busy: false, ballotIds: this.myBallots.map(b => b.id) };
                     } catch (e) { console.error(e); n.error = e && e.code === 'permission-denied' ? "Leagues aren't switched on in the database yet. The site admin needs to install the latest rules." : "Couldn't create the league. Please try again."; n.busy = false; }
                 },
 
@@ -1173,11 +1203,37 @@
                     } catch (e) { console.error(e); this.showNotification("⚠️ Couldn't delete the league."); }
                 },
 
-                async copyShareLink(id) {
+                // ---------- invites ----------
+                async openInvite(id) {
                     const l = this.leaguesById[id] || {};
-                    const url = location.origin + location.pathname + '?league=' + id;
-                    const text = `Join "${l.name || 'our league'}" in the Thanksgiving Dog Show Ballot: ${url}` + (l.isPrivate ? ' (ask me for the password)' : '');
-                    try { await navigator.clipboard.writeText(text); this.showNotification('🔗 Invite copied. Paste it into a text or email.'); }
+                    this.invite = { open: true, id, name: l.name || 'our league', isPrivate: !!l.isPrivate, password: '', includePw: true, to: '' };
+                    if (l.isPrivate) {   // members (and the owner) saved the password when they joined
+                        try { const F = window.firebaseModules, snap = await F.getDoc(F.doc(this.db, 'leagues', id, 'members', this.user.uid));
+                              if (snap.exists() && snap.data().password) this.invite.password = snap.data().password; } catch (e) {}
+                    }
+                },
+                inviteUrl() {
+                    const i = this.invite, withPw = i.isPrivate && i.includePw && i.password;
+                    return location.origin + location.pathname + '?league=' + i.id + (withPw ? '&pw=' + encodeURIComponent(i.password) : '');
+                },
+                inviteMessage() {
+                    const i = this.invite;
+                    let t = `Join my league "${i.name}" in the Thanksgiving Dog Show Ballot! Pick your winners before the show:\n${this.inviteUrl()}`;
+                    if (i.isPrivate) t += (i.includePw && i.password) ? `\n(The link fills in the password for you: ${i.password})` : `\n(Ask me for the password.)`;
+                    return t;
+                },
+                inviteSubject() { return `Join "${this.invite.name}" – Thanksgiving Dog Show Ballot`; },
+                inviteMailto() {
+                    const to = (this.invite.to || '').split(/[\s,;]+/).filter(Boolean).map(encodeURIComponent).join(',');
+                    return `mailto:${to}?subject=${encodeURIComponent(this.inviteSubject())}&body=${encodeURIComponent(this.inviteMessage())}`;
+                },
+                inviteSms() { return 'sms:?&body=' + encodeURIComponent(this.inviteMessage()); },
+                async inviteNativeShare() {
+                    try { await navigator.share({ title: this.inviteSubject(), text: this.inviteMessage() }); } catch (e) {}
+                },
+                async inviteCopy() {
+                    const text = this.inviteMessage();
+                    try { await navigator.clipboard.writeText(text); this.showNotification('🔗 Invite copied. Paste it anywhere.'); }
                     catch (e) { prompt('Copy this invite:', text); }
                 },
 
