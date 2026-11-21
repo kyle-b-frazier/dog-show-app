@@ -48,7 +48,7 @@
             
             <div class="flex items-center gap-2.5">
                 <button @click="showScoringModal = true" class="bg-orange-800 hover:bg-orange-700 text-amber-100 px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-orange-700">
-                    📊 How Scoring Works
+                    📊 Scoring
                 </button>
                 <template x-if="user">
                     <nav class="flex items-center gap-1.5">
@@ -220,26 +220,25 @@
             <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-6">
 
             <div class="space-y-4">
-                <template x-if="getAllTopPicks().length === 0">
-                    <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 text-xs flex items-center gap-3">
-                        <span>⚠️ Pick a group winner first.</span>
-                    </div>
-                </template>
-                <template x-if="getAllTopPicks().length > 0">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <template x-for="pick in getAllTopPicks()" :key="pick.breed">
-                            <div @click="setBestInShowPick(pick.breed)" 
-                                 class="p-4 rounded-xl border-2 cursor-pointer transition flex items-center justify-between"
-                                 :class="ballot.bestInShow === pick.breed ? 'border-amber-700 bg-amber-50/70 shadow-sm' : 'border-stone-200 hover:border-stone-300'">
-                                <div>
-                                    <span class="text-[10px] uppercase tracking-wider font-bold text-amber-800" x-text="pick.groupName"></span>
-                                    <h4 class="font-bold text-stone-900 text-base" x-text="pick.breed"></h4>
-                                </div>
-                                <input type="radio" name="bestInShow" :checked="ballot.bestInShow === pick.breed" class="h-4 w-4 text-amber-800 focus:ring-amber-700">
+                <div x-show="getAllTopPicks().length === 0" class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-900 text-sm">
+                    ⚠️ Pick a winner in at least one group first. You can choose Best in Show before finishing the rest.
+                </div>
+                <div x-show="getAllTopPicks().length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- one slot per group (static list); shown when that group has a winner picked -->
+                    <template x-for="g in groups" :key="'bis-' + g.id">
+                        <button type="button" x-show="groupWinner(g.id)" @click="setBestInShowPick(groupWinner(g.id))"
+                                class="text-left p-4 rounded-xl border-2 transition flex items-center justify-between gap-3"
+                                :class="groupWinner(g.id) && ballot.bestInShow === groupWinner(g.id) ? 'border-amber-600 bg-amber-50 shadow-sm' : 'border-stone-200 hover:border-stone-300 bg-white'">
+                            <div>
+                                <span class="text-[11px] uppercase tracking-wider font-bold" :style="`color: ${g.color}`" x-text="g.name + ' Group winner'"></span>
+                                <div class="font-bold text-stone-900 text-base" x-text="groupWinner(g.id)"></div>
                             </div>
-                        </template>
-                    </div>
-                </template>
+                            <span class="w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-black"
+                                  :class="groupWinner(g.id) && ballot.bestInShow === groupWinner(g.id) ? 'border-amber-600 bg-amber-500 text-white' : 'border-stone-300'"
+                                  x-text="groupWinner(g.id) && ballot.bestInShow === groupWinner(g.id) ? '✓' : ''"></span>
+                        </button>
+                    </template>
+                </div>
             </div>
             </div>
             <div class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-stone-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
@@ -780,12 +779,14 @@
                     return 'bg-white border-stone-200 hover:border-stone-300';
                 },
 
+                groupWinner(gid) { const gp = this.ballot.picks[gid]; return (gp && gp.topPick) || null; },
+
                 getAllTopPicks() {
                     let tops = [];
                     for (const g of this.groups) {
                         const gp = this.ballot.picks[g.id];
                         if (gp && gp.topPick) {
-                            tops.push({ groupName: g.name, breed: gp.topPick });
+                            tops.push({ groupId: g.id, groupName: g.name, breed: gp.topPick });
                         }
                     }
                     return tops;
