@@ -699,7 +699,7 @@
 
     <!-- Invite popup: email, text, phone share menu, or copy -->
     <div x-show="invite.open" style="display:none" class="fixed inset-0 z-[60] bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div @click.outside="invite.open = false" class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+        <div @click.outside="invite.open = false" class="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
             <div class="flex items-start justify-between gap-3">
                 <h3 class="text-xl font-black text-stone-900" x-text="'Invite people to ' + invite.name"></h3>
                 <button @click="invite.open = false" class="text-stone-400 hover:text-stone-700 text-2xl leading-none" aria-label="Close">×</button>
@@ -711,17 +711,21 @@
             <div class="space-y-2">
                 <input x-model="invite.to" type="email" multiple autocomplete="off" placeholder="Email addresses (optional)"
                        class="w-full border-2 border-stone-300 focus:border-amber-700 rounded-xl px-3 py-2 focus:outline-none">
-                <a :href="inviteWebMail('gmail')" target="_blank" rel="noopener" class="block text-center w-full bg-emerald-700 hover:bg-emerald-600 text-white py-2.5 rounded-xl font-black shadow">✉️ Send with Gmail</a>
-                <div class="grid grid-cols-3 gap-2 text-sm">
-                    <a :href="inviteWebMail('outlook')" target="_blank" rel="noopener" class="text-center py-2 rounded-xl border-2 border-stone-200 text-stone-700 font-bold hover:bg-amber-50">Outlook</a>
-                    <a :href="inviteWebMail('yahoo')" target="_blank" rel="noopener" class="text-center py-2 rounded-xl border-2 border-stone-200 text-stone-700 font-bold hover:bg-amber-50">Yahoo</a>
-                    <a :href="inviteMailto()" class="text-center py-2 rounded-xl border-2 border-stone-200 text-stone-700 font-bold hover:bg-amber-50">Mail app</a>
-                </div>
+                <button @click="invite.pickMail = true" class="block w-full bg-emerald-700 hover:bg-emerald-600 text-white py-2.5 rounded-xl font-black shadow">✉️ Send email with browser</button>
             </div>
             <div class="grid gap-2" :class="canNativeShare ? 'grid-cols-3' : 'grid-cols-2'">
                 <a :href="inviteSms()" class="text-center py-2.5 rounded-xl border-2 border-amber-300 text-amber-900 font-bold hover:bg-amber-50">💬 Text</a>
                 <button x-show="canNativeShare" @click="inviteNativeShare()" class="py-2.5 rounded-xl border-2 border-amber-300 text-amber-900 font-bold hover:bg-amber-50">📤 More…</button>
                 <button @click="inviteCopy()" class="py-2.5 rounded-xl border-2 border-amber-300 text-amber-900 font-bold hover:bg-amber-50">🔗 Copy</button>
+            </div>
+            <div x-show="invite.pickMail" x-transition.opacity class="absolute inset-0 rounded-2xl bg-white/95 backdrop-blur-sm flex flex-col justify-center p-6 space-y-3">
+                <h4 class="text-lg font-black text-stone-900 text-center">Which email do you use?</h4>
+                <template x-for="m in [['gmail','Gmail'],['outlook','Outlook / Hotmail'],['yahoo','Yahoo Mail']]" :key="m[0]">
+                    <a :href="inviteWebMail(m[0])" target="_blank" rel="noopener" @click="invite.pickMail = false"
+                       class="block text-center py-3 rounded-xl border-2 border-amber-300 text-amber-900 font-black hover:bg-amber-50" x-text="m[1]"></a>
+                </template>
+                <a :href="inviteMailto()" @click="invite.pickMail = false" class="block text-center py-3 rounded-xl border-2 border-stone-200 text-stone-700 font-bold hover:bg-stone-50">Something else (my mail app)</a>
+                <button @click="invite.pickMail = false" class="text-sm text-stone-500 hover:text-stone-800">← Back</button>
             </div>
             <pre class="whitespace-pre-wrap break-words text-xs text-stone-600 bg-stone-50 border border-stone-200 rounded-xl p-3 font-sans" x-text="inviteMessage()"></pre>
         </div>
@@ -785,7 +789,7 @@
                 myLeagueIds: [], leaguesById: {}, leagueEntries: {}, publicLeagues: [], selectedLeague: 'all',
                 pendingLeagueId: new URLSearchParams(location.search).get('league'),
                 pendingLeaguePw: new URLSearchParams(location.search).get('pw') || '',
-                invite: { open: false, id: null, name: '', isPrivate: false, password: '', includePw: true, to: '' },
+                invite: { open: false, id: null, name: '', isPrivate: false, password: '', includePw: true, to: '', pickMail: false },
                 canNativeShare: !!navigator.share,
                 leagueModal: { open: false, mode: 'join', id: null, league: null, password: '', ballotIds: [], error: '', busy: false },
                 newLeague: { name: '', isPrivate: false, password: '', error: '', busy: false },
@@ -1211,7 +1215,7 @@
                 // ---------- invites ----------
                 async openInvite(id) {
                     const l = this.leaguesById[id] || {};
-                    this.invite = { open: true, id, name: l.name || 'our league', isPrivate: !!l.isPrivate, password: '', includePw: true, to: '' };
+                    this.invite = { open: true, id, name: l.name || 'our league', isPrivate: !!l.isPrivate, password: '', includePw: true, to: '', pickMail: false };
                     if (l.isPrivate) {   // members (and the owner) saved the password when they joined
                         try { const F = window.firebaseModules, snap = await F.getDoc(F.doc(this.db, 'leagues', id, 'members', this.user.uid));
                               if (snap.exists() && snap.data().password) this.invite.password = snap.data().password; } catch (e) {}
