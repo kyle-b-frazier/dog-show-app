@@ -63,6 +63,9 @@
         .small-btn { padding: .4rem .75rem; border-radius: .6rem; font-size: .8rem; font-weight: 700; background: #f5f5f4; color: #44403c; }
         .small-btn:hover { background: #fef3c7; }
         .trade-banner { position: relative; }
+        .group-row .row-photo { position: absolute; right: 0; top: 0; height: 100%; width: 65%; object-fit: cover; object-position: center 30%;
+            opacity: .55; pointer-events: none;
+            -webkit-mask-image: linear-gradient(to right, transparent, #000 60%); mask-image: linear-gradient(to right, transparent, #000 60%); }
         .bis-banner { background: linear-gradient(160deg, #451a03, #9a3412 50%, #d97706); }
         .bis-title { font-family: 'Playfair', Georgia, serif; font-style: italic; font-weight: 900;
                      color: #fde68a; text-shadow: 0 2px 0 #7c2d12, 0 4px 10px rgba(0,0,0,.35); }
@@ -203,7 +206,7 @@
         <div x-show="locked" class="max-w-6xl mx-auto -mt-3 mb-6 rounded-xl bg-stone-800 text-white text-sm px-4 py-2.5">🔒 Ballots are locked. Judging has started, so picks can no longer be changed.</div>
         
         <!-- HOME PAGE: All 7 Trade Show Banners Side by Side + Separate Best In Show -->
-        <div x-show="activeGroup === null" class="space-y-8">
+        <div x-show="activeGroup === null" class="space-y-5 sm:space-y-8">
             <div class="text-center max-w-2xl mx-auto space-y-1">
                 <h2 class="serif-heading text-4xl sm:text-5xl tracking-tight text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
                 <p x-show="saveStatusText()" class="text-xs" :class="saveState === 'error' ? 'text-red-600 font-semibold' : 'text-stone-400'" x-text="saveStatusText()"></p>
@@ -217,7 +220,7 @@
                          x-text="totalPicks(ballot) === 36 ? '✓ Ballot complete' : (36 - totalPicks(ballot)) + ' picks left'"></div>
                 </div>
                 <div class="h-2 rounded-full bg-stone-100 overflow-hidden"><div class="h-full bg-emerald-600 transition-all" :style="`width: ${totalPicks(ballot) / 36 * 100}%`"></div></div>
-                <div class="flex flex-wrap gap-2">
+                <div class="hidden sm:flex flex-wrap gap-2">
                     <template x-for="g in groups" :key="'prog-' + g.id">
                         <button @click="activeGroup = g.id; searchQuery = ''" class="text-xs font-bold px-2.5 py-1 rounded-full border transition"
                                 :class="groupCount(ballot, g.id) === 5 ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 'bg-amber-50 border-amber-200 text-amber-900 hover:bg-amber-100'"
@@ -229,8 +232,36 @@
                 </div>
             </div>
 
-            <!-- Side-by-Side Trade Show Banners Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 pt-2">
+            <!-- Phone: compact rows, all 8 fit on one screen -->
+            <div class="sm:hidden space-y-2">
+                <template x-for="group in groups" :key="'row-' + group.id">
+                    <button @click="activeGroup = group.id; searchQuery = ''" :aria-label="'Open ' + group.name + ' group ballot'"
+                            class="group-row relative w-full h-14 rounded-xl overflow-hidden shadow-md border-2 border-amber-900/20 flex items-center gap-3 px-4 text-left active:scale-[.98] transition"
+                            :style="`background-color: ${group.color}`">
+                        <img class="row-photo" :src="'images/photos/' + group.bannerBreed + '.jpg'" alt="" aria-hidden="true" @error="$el.style.display = 'none'">
+                        <span class="relative z-10 flex-1 text-xl font-black text-white uppercase tracking-wide drop-shadow-lg" x-text="group.name"></span>
+                        <span class="relative z-10 text-xs px-2.5 py-1 rounded-full font-bold shadow whitespace-nowrap"
+                              :class="isGroupComplete(group.id) ? 'bg-emerald-600 text-white' : 'bg-white/90 text-stone-900'"
+                              x-text="isGroupComplete(group.id) ? '✓ 5/5' : getPicksCount(group.id) + ' / 5'"></span>
+                        <span class="relative z-10 text-white/90 text-2xl font-black leading-none drop-shadow" aria-hidden="true">›</span>
+                    </button>
+                </template>
+                <button @click="activeGroup = 'best-in-show'" aria-label="Open Best In Show ballot"
+                        class="bis-banner relative w-full h-[4.5rem] rounded-xl overflow-hidden shadow-md border-2 border-amber-400 flex items-center gap-3 px-4 text-left active:scale-[.98] transition">
+                    <span class="absolute right-12 top-1/2 -translate-y-1/2 text-6xl leading-none opacity-30 pointer-events-none" aria-hidden="true">🏆</span>
+                    <span class="relative z-10 flex-1 min-w-0">
+                        <span class="bis-title block text-2xl uppercase tracking-wide">Best in Show</span>
+                        <span x-show="ballot.bestInShow" class="block truncate text-sm font-bold text-amber-50 drop-shadow" x-text="ballot.bestInShow"></span>
+                    </span>
+                    <span class="relative z-10 text-xs px-2.5 py-1 rounded-full font-bold shadow whitespace-nowrap"
+                          :class="ballot.bestInShow ? 'bg-emerald-600 text-white' : 'bg-amber-300 text-amber-950'"
+                          x-text="ballot.bestInShow ? '✓ Picked' : 'Pick 1'"></span>
+                    <span class="relative z-10 text-amber-100 text-2xl font-black leading-none drop-shadow" aria-hidden="true">›</span>
+                </button>
+            </div>
+
+            <!-- Computer/tablet: side-by-side trade show banners -->
+            <div class="hidden sm:grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 pt-2">
                 <template x-for="group in groups" :key="group.id">
                     <div @click="activeGroup = group.id; searchQuery = ''" @keydown.enter="activeGroup = group.id; searchQuery = ''" role="button" tabindex="0"
                          :aria-label="'Open ' + group.name + ' group ballot'"
