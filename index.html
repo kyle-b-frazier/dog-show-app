@@ -80,13 +80,13 @@
             </div>
             
             <div class="flex flex-wrap items-center justify-center gap-2">
-                <button @click="goHome()" class="navpill" :class="view === 'home' && 'active'">🏠 Home</button>
+                <button x-show="view !== 'home'" @click="goHome()" class="navpill">🏠 Home</button>
                 <button @click="showScoringModal = true" class="navpill">📊 Scoring</button>
                 <template x-if="user">
                     <nav class="flex items-center gap-1.5">
-                        <button @click="goMyBallots()" class="navpill" :class="view === 'my' && 'active'">📋 My Ballots</button>
-                        <button @click="view = 'leaderboard'" class="navpill" :class="view === 'leaderboard' && 'active'">🏆 Leaderboard</button>
-                        <button x-show="isAdmin" @click="openAdmin()" class="navpill" :class="view === 'admin' ? 'active' : '!bg-red-800/80 !border-red-400/50'">🔧 Admin</button>
+                        <button x-show="view !== 'my'" @click="goMyBallots()" class="navpill">📋 My Ballots</button>
+                        <button x-show="view !== 'leaderboard'" @click="view = 'leaderboard'" class="navpill">🏆 Leaderboard</button>
+                        <button x-show="isAdmin && view !== 'admin'" @click="openAdmin()" class="navpill !bg-red-800/80 !border-red-400/50">🔧 Admin</button>
                     </nav>
                 </template>
                 <template x-if="authReady && !user">
