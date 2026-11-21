@@ -83,30 +83,18 @@
         <!-- ======================= BALLOT EDITOR ======================= -->
         <div x-show="view === 'ballot'">
 
-        <!-- Which ballot am I editing? -->
-        <div class="max-w-6xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm"
-             :class="currentBallotId ? 'bg-white border border-stone-200 shadow-sm' : 'bg-amber-100/70 border border-amber-200'">
-            <template x-if="currentBallotId">
-                <div class="flex items-center gap-2">
-                    <span class="text-stone-500">Ballot:</span>
-                    <span class="font-black text-stone-900 text-base" x-text="currentBallotName"></span>
-                    <span class="text-xs" :class="saveState === 'error' ? 'text-red-600' : 'text-stone-400'"
-                          x-text="locked ? '🔒 Locked' : (saveState === 'saving' ? 'Saving…' : (saveState === 'error' ? '⚠️ Not saved, check connection' : (saveState === 'saved' ? '✓ Saved' : '')))"></span>
-                </div>
-            </template>
-            <template x-if="!currentBallotId">
-                <span class="text-amber-900" x-text="authReady ? 'Sign in to save your ballot and join the leaderboard.' : 'Your picks are saved in this browser.'"></span>
-            </template>
-            <button x-show="currentBallotId" @click="goMyBallots()" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-1.5 rounded-lg text-xs font-bold">Done ✓</button>
-            <button x-show="!currentBallotId && authReady && !user" @click="signIn()" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-1.5 rounded-lg text-xs font-bold">Sign in with Google</button>
+        <!-- Signed-out visitors: prompt to sign in -->
+        <div x-show="!currentBallotId && authReady && !user" class="max-w-6xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl px-4 py-3 text-sm bg-amber-100/70 border border-amber-200">
+            <span class="text-amber-900">Sign in to save your ballot and join the leaderboard.</span>
+            <button @click="signIn()" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-1.5 rounded-lg text-xs font-bold">Sign in with Google</button>
         </div>
         <div x-show="locked" class="max-w-6xl mx-auto -mt-3 mb-6 rounded-xl bg-stone-800 text-white text-sm px-4 py-2.5">🔒 Ballots are locked. Judging has started, so picks can no longer be changed.</div>
         
         <!-- HOME PAGE: All 7 Trade Show Banners Side by Side + Separate Best In Show -->
         <div x-show="activeGroup === null" class="space-y-8">
             <div class="text-center max-w-2xl mx-auto space-y-1">
-                <h2 class="text-2xl font-bold tracking-tight text-stone-900">National Dog Show Ballot</h2>
-                <p class="text-xs text-stone-600">Tap a group to make your picks.</p>
+                <h2 class="text-3xl sm:text-4xl font-black tracking-tight text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
+                <p class="text-sm text-stone-600">Tap a group to make your picks. <span class="text-xs" :class="saveState === 'error' ? 'text-red-600 font-semibold' : 'text-stone-400'" x-text="saveStatusText()"></span></p>
             </div>
 
             <!-- Side-by-Side Trade Show Banners Grid -->
@@ -161,18 +149,19 @@
 
         <!-- GROUP DETAIL VIEW -->
         <template x-for="group in groups" :key="group.id">
-            <div x-show="activeGroup === group.id" class="max-w-6xl mx-auto space-y-5">
-                <div class="flex items-center justify-between gap-3">
-                    <button @click="activeGroup = null" class="text-sm font-bold text-amber-900 hover:underline">← All Groups</button>
+            <div x-show="activeGroup === group.id" class="max-w-6xl mx-auto space-y-5 pb-28">
+                <button @click="backToGroups()" class="inline-flex items-center gap-2 bg-white border-2 border-amber-900 text-amber-900 hover:bg-amber-900 hover:text-white px-4 py-2 rounded-xl text-sm font-black shadow-sm transition">← Back to All Groups</button>
+
+                <div class="flex flex-wrap items-end justify-between gap-3">
+                    <div>
+                        <h2 class="text-3xl sm:text-4xl font-black text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
+                        <div class="text-xl sm:text-2xl font-black mt-1" :style="`color: ${group.color}`" x-text="group.name + ' Group'"></div>
+                        <p class="text-sm text-stone-600 mt-1">Pick <b>1 group winner</b> and <b>4 other contenders</b>.</p>
+                    </div>
                     <div class="text-sm font-bold px-3 py-1.5 rounded-full"
                          :class="getPicksCount(group.id) === 5 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'">
-                        <span x-text="getPicksCount(group.id)"></span> / 5
+                        <span x-text="getPicksCount(group.id)"></span> / 5 picked
                     </div>
-                </div>
-
-                <div>
-                    <h2 class="text-3xl font-black text-stone-900" x-text="group.name"></h2>
-                    <p class="text-sm text-stone-600 mt-1">Pick <b>1 group winner</b> and <b>4 other contenders</b>.</p>
                 </div>
 
                 <input type="search" x-model="searchQuery" placeholder="🔍 Search" aria-label="Search breeds"
@@ -206,16 +195,29 @@
                         </div>
                     </template>
                 </div>
+
+                <!-- Sticky bottom bar: always-visible Submit -->
+                <div class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-stone-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+                    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+                        <button @click="backToGroups()" class="text-sm font-bold text-amber-900 hover:underline">← Back to All Groups</button>
+                        <div class="flex items-center gap-3">
+                            <span class="hidden sm:inline text-sm font-semibold" :class="getPicksCount(group.id) === 5 ? 'text-emerald-700' : 'text-stone-500'" x-text="getPicksCount(group.id) + ' of 5 picked'"></span>
+                            <button x-show="!locked" @click="submitGroup(group)" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-black shadow" x-text="'Submit ' + group.name + ' picks ✓'"></button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </template>
 
         <!-- BEST IN SHOW VIEW -->
-        <div x-show="activeGroup === 'best-in-show'" class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-6 max-w-4xl mx-auto">
-            <div class="border-b border-stone-100 pb-4">
-                <button @click="activeGroup = null" class="text-xs font-bold text-amber-800 hover:underline mb-1 inline-block">← All Groups</button>
-                <h2 class="text-2xl font-bold text-stone-900">🏆 Best In Show Prediction</h2>
-                <p class="text-xs text-stone-500 mt-0.5">Choose your overall champion.</p>
+        <div x-show="activeGroup === 'best-in-show'" class="max-w-4xl mx-auto space-y-5 pb-28">
+            <button @click="backToGroups()" class="inline-flex items-center gap-2 bg-white border-2 border-amber-900 text-amber-900 hover:bg-amber-900 hover:text-white px-4 py-2 rounded-xl text-sm font-black shadow-sm transition">← Back to All Groups</button>
+            <div>
+                <h2 class="text-3xl sm:text-4xl font-black text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
+                <div class="text-xl sm:text-2xl font-black mt-1 text-amber-700">🏆 Best In Show</div>
+                <p class="text-sm text-stone-600 mt-1">Choose your overall champion from your group winners.</p>
             </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-6">
 
             <div class="space-y-4">
                 <template x-if="getAllTopPicks().length === 0">
@@ -238,6 +240,13 @@
                         </template>
                     </div>
                 </template>
+            </div>
+            </div>
+            <div class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-stone-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+                <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+                    <button @click="backToGroups()" class="text-sm font-bold text-amber-900 hover:underline">← Back to All Groups</button>
+                    <button x-show="!locked" @click="submitGroup({ name: 'Best in Show' })" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-black shadow">Submit Best in Show ✓</button>
+                </div>
             </div>
         </div>
 
@@ -618,6 +627,28 @@
                         this._lastSaved = key;
                         this.saveState = 'saved';
                     } catch (e) { console.error(e); this.saveState = 'error'; }
+                },
+
+                ballotLabel() {
+                    return this.currentBallotId ? this.currentBallotName : (this.user ? (this.user.displayName || 'Me').split(' ')[0] : 'Your picks');
+                },
+
+                saveStatusText() {
+                    if (this.locked) return '🔒 Locked';
+                    return { saving: 'Saving…', saved: '✓ Saved', error: '⚠️ Not saved, check connection' }[this.saveState] || '';
+                },
+
+                backToGroups() { this.activeGroup = null; this.searchQuery = ''; window.scrollTo(0, 0); },
+
+                async submitGroup(group) {
+                    await this.flushSave();
+                    if (this.saveState === 'error') { this.showNotification("⚠️ Couldn't save. Check your connection and try again."); return; }
+                    const n = group.id ? this.getPicksCount(group.id) : null;
+                    const where = this.currentBallotId ? '' : ' in this browser';
+                    this.showNotification(group.id
+                        ? `✅ ${group.name} picks saved${where}` + (n < 5 ? ` (${n} of 5)` : '')
+                        : `✅ Best in Show saved${where}`);
+                    this.backToGroups();
                 },
 
                 canEdit() {
