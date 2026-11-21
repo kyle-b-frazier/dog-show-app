@@ -662,22 +662,26 @@
             <ul class="space-y-2.5 text-stone-700 text-sm">
                 <li class="flex justify-between border-b border-stone-50 pb-2">
                     <span>Group Winner:</span>
-                    <span class="font-bold text-amber-900">5 pts</span>
+                    <span class="font-bold text-amber-900 whitespace-nowrap pl-3">5 pts</span>
                 </li>
                 <li class="flex justify-between border-b border-stone-50 pb-2">
                     <span>Group winner is one of your 4 contenders:</span>
-                    <span class="font-bold text-amber-900">2 pts</span>
+                    <span class="font-bold text-amber-900 whitespace-nowrap pl-3">2 pts</span>
                 </li>
                 <li class="flex justify-between border-b border-stone-50 pb-2">
                     <span>Best In Show (Exact Match):</span>
-                    <span class="font-bold text-amber-900">20 pts</span>
+                    <span class="font-bold text-amber-900 whitespace-nowrap pl-3">20 pts</span>
                 </li>
                 <li class="flex justify-between">
                     <span>Best In Show was one of your group picks:</span>
-                    <span class="font-bold text-amber-900">5 pts</span>
+                    <span class="font-bold text-amber-900 whitespace-nowrap pl-3">5 pts</span>
                 </li>
             </ul>
-            <p class="text-sm text-stone-700"><span class="font-bold">Tiebreaker:</span> if scores are tied, the ballot whose Best in Show pick won its group ranks higher.</p>
+            <div class="text-sm text-stone-700 bg-amber-50 border border-amber-200 rounded-xl p-3 space-y-1.5">
+                <div class="font-bold text-amber-900">Tiebreaker</div>
+                <p>If two ballots have the same points, check each one's Best in Show pick. If that dog won its group (so it made the final 7), that ballot moves ahead.</p>
+                <p class="text-stone-500"><span class="font-semibold">Example:</span> Amy and Bob both have 30 points. Amy picked the Pug for Best in Show, and the Pug won the Toy Group. Bob picked the Akita, which didn't win the Working Group. Amy ranks ahead of Bob.</p>
+            </div>
             <div class="pt-2 flex justify-end">
                 <button @click="showScoringModal = false" class="bg-amber-900 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-amber-800 transition">
                     Got it
