@@ -1614,5 +1614,29 @@
   "license": "Public domain",
   "licenseUrl": "",
   "page": "https://commons.wikimedia.org/wiki/File:Elias1%C4%8Derven2006.jpg"
+ },
+ "kuvasz": {
+  "breed": "Kuvasz",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Kuvasz_named_Kan.jpg/500px-Kuvasz_named_Kan.jpg",
+  "author": "Erdelyi kopo",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Kuvasz_named_Kan.jpg"
+ },
+ "nederlandse-kooikerhondje": {
+  "breed": "Nederlandse Kooikerhondje",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Kooiker03.jpg/500px-Kooiker03.jpg",
+  "author": "Wikimedia Commons contributor (see source)",
+  "license": "CC BY 2.5",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+  "page": "https://commons.wikimedia.org/wiki/File:Kooiker03.jpg"
+ },
+ "norwegian-elkhound": {
+  "breed": "Norwegian Elkhound",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Elkhound2020_%28cropped%29.jpg/500px-Elkhound2020_%28cropped%29.jpg",
+  "author": "HawkNightingale175",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Elkhound2020_(cropped).jpg"
  }
 }
