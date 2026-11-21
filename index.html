@@ -35,7 +35,7 @@
         @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
         .leaf { position: absolute; top: -40px; font-size: 22px; opacity: .5; animation: fall linear infinite; pointer-events: none; z-index: 0; }
         @keyframes fall { 0% { transform: translate(0, 0) rotate(0); } 100% { transform: translate(-90px, 260px) rotate(360deg); } }
-        .toplink { color: #fef3c7; font-weight: 600; font-size: .95rem; padding: .35rem .6rem; border-radius: .5rem; opacity: .9; }
+        .toplink { white-space: nowrap; color: #fef3c7; font-weight: 600; font-size: .95rem; padding: .35rem .6rem; border-radius: .5rem; opacity: .9; }
         .toplink:hover { opacity: 1; background: rgba(255,255,255,.1); }
         .iconbtn { width: 2.1rem; height: 2.1rem; border-radius: 9999px; border: 1px solid rgba(253,230,138,.45); background: rgba(255,255,255,.1); color: #fef3c7; font-weight: 800; }
         .iconbtn:hover { background: rgba(255,255,255,.2); }
@@ -63,6 +63,8 @@
         .small-btn { padding: .4rem .75rem; border-radius: .6rem; font-size: .8rem; font-weight: 700; background: #f5f5f4; color: #44403c; }
         .small-btn:hover { background: #fef3c7; }
         .trade-banner { position: relative; }
+        /* computer: banners fill what's left of the window so their bottoms stay visible */
+        :root { --banner-h: clamp(16rem, calc(100vh - 22.25rem), 36rem); }
         .group-row .row-photo { position: absolute; right: 0; top: 0; height: 100%; width: 65%; object-fit: cover; object-position: center 30%;
             opacity: .55; pointer-events: none;
             -webkit-mask-image: linear-gradient(to right, transparent, #000 60%); mask-image: linear-gradient(to right, transparent, #000 60%); }
@@ -154,7 +156,7 @@
     </nav>
 
     <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-4 py-8 lg:pt-5 flex-grow w-full">
 
         <!-- ========================= HOME (landing) ========================= -->
         <div x-show="view === 'home'" class="max-w-3xl mx-auto py-6 sm:py-14">
@@ -209,14 +211,14 @@
         <div x-show="locked" class="max-w-6xl mx-auto -mt-3 mb-6 rounded-xl bg-stone-800 text-white text-sm px-4 py-2.5">🔒 Ballots are locked. Judging has started, so picks can no longer be changed.</div>
         
         <!-- HOME PAGE: All 7 Trade Show Banners Side by Side + Separate Best In Show -->
-        <div x-show="activeGroup === null" class="space-y-5 sm:space-y-8">
+        <div x-show="activeGroup === null" class="space-y-5 sm:space-y-8 lg:space-y-4">
             <div class="text-center max-w-2xl mx-auto space-y-1">
-                <h2 class="serif-heading text-4xl sm:text-5xl tracking-tight text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
+                <h2 class="serif-heading text-4xl sm:text-5xl lg:text-[2.6rem] tracking-tight text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
                 <p x-show="saveStatusText()" class="text-xs" :class="saveState === 'error' ? 'text-red-600 font-semibold' : 'text-stone-400'" x-text="saveStatusText()"></p>
             </div>
 
             <!-- Picks remaining, per group -->
-            <div class="max-w-5xl mx-auto bg-white rounded-2xl border border-stone-200 shadow-sm p-4 space-y-3">
+            <div class="max-w-5xl mx-auto bg-white rounded-2xl border border-stone-200 shadow-sm p-4 lg:py-3 space-y-3 lg:space-y-2">
                 <div class="flex flex-wrap items-baseline justify-between gap-2">
                     <div class="font-black text-stone-900" x-text="totalPicks(ballot) + ' of 36 picks made'"></div>
                     <div class="text-sm font-semibold" :class="totalPicks(ballot) === 36 ? 'text-emerald-700' : 'text-amber-800'"
@@ -264,11 +266,11 @@
             </div>
 
             <!-- Computer/tablet: side-by-side trade show banners -->
-            <div class="hidden sm:grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 pt-2">
+            <div class="hidden sm:grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 pt-2 lg:pt-1">
                 <template x-for="group in groups" :key="group.id">
                     <div @click="activeGroup = group.id; searchQuery = ''" @keydown.enter="activeGroup = group.id; searchQuery = ''" role="button" tabindex="0"
                          :aria-label="'Open ' + group.name + ' group ballot'"
-                         class="trade-banner h-[28rem] lg:h-[36rem] rounded-xl shadow-md border-2 border-amber-900/20 cursor-pointer overflow-hidden flex flex-col justify-start gap-6 p-4 transition transform hover:-translate-y-1.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500"
+                         class="trade-banner h-[28rem] lg:h-[var(--banner-h)] rounded-xl shadow-md border-2 border-amber-900/20 cursor-pointer overflow-hidden flex flex-col justify-start gap-6 p-4 transition transform hover:-translate-y-1.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500"
                          :style="`background-color: ${group.color}`">
                         <img x-show="!group.photoFailed" class="banner-photo" :src="'images/banners/' + group.id + '.jpg'" alt="" aria-hidden="true"
                              @error="if (!$el.dataset.fb) { $el.dataset.fb = 1; $el.src = 'images/photos/' + group.bannerBreed + '.jpg' } else { group.photoFailed = true }">
@@ -291,7 +293,7 @@
                 <!-- 8th banner: Best in Show -->
                 <div @click="activeGroup = 'best-in-show'" @keydown.enter="activeGroup = 'best-in-show'" role="button" tabindex="0"
                      aria-label="Open Best In Show ballot"
-                     class="trade-banner bis-banner h-[28rem] lg:h-[36rem] rounded-xl shadow-md border-2 border-amber-400 cursor-pointer overflow-hidden flex flex-col justify-start gap-6 p-4 transition transform hover:-translate-y-1.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500">
+                     class="trade-banner bis-banner h-[28rem] lg:h-[var(--banner-h)] rounded-xl shadow-md border-2 border-amber-400 cursor-pointer overflow-hidden flex flex-col justify-start gap-6 p-4 transition transform hover:-translate-y-1.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500">
                     <div class="absolute inset-x-0 bottom-6 flex justify-center text-[7.5rem] leading-none opacity-35 pointer-events-none select-none" aria-hidden="true">🏆</div>
                     <div class="relative z-10 flex justify-center">
                         <span class="text-xs px-2.5 py-1 rounded-full font-bold shadow whitespace-nowrap"
