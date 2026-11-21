@@ -25,11 +25,11 @@
  },
  "brittany": {
   "breed": "Brittany",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Satellite_picture_of_Brittany_-_NASA%2C_2002.jpg/500px-Satellite_picture_of_Brittany_-_NASA%2C_2002.jpg",
-  "author": "Credit: Jacques Descloitres, MODIS Rapid Response Team, NASA/GSFC",
-  "license": "Public domain",
-  "licenseUrl": "",
-  "page": "https://commons.wikimedia.org/wiki/File:Satellite_picture_of_Brittany_-_NASA,_2002.jpg"
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Zuri_txakurra_1_%28cropped%29.JPG/500px-Zuri_txakurra_1_%28cropped%29.JPG",
+  "author": "Olatz / souligne",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Zuri_txakurra_1_(cropped).JPG"
  },
  "chesapeake-bay-retriever": {
   "breed": "Chesapeake Bay Retriever",
@@ -46,30 +46,6 @@
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "page": "https://commons.wikimedia.org/wiki/File:Clumber_spaniel_rybnik_kamien_pppl.jpg"
- },
- "cocker-spaniel-ascob": {
-  "breed": "Cocker Spaniel (ASCOB)",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Gessa_d%27Aran_Copo_de_Nieve-_arancio_roano-_prop.Kalesa.jpg",
-  "author": "Fcocker",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:Gessa_d%27Aran_Copo_de_Nieve-_arancio_roano-_prop.Kalesa.jpg"
- },
- "cocker-spaniel-black": {
-  "breed": "Cocker Spaniel (Black)",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Gessa_d%27Aran_Copo_de_Nieve-_arancio_roano-_prop.Kalesa.jpg",
-  "author": "Fcocker",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:Gessa_d%27Aran_Copo_de_Nieve-_arancio_roano-_prop.Kalesa.jpg"
- },
- "cocker-spaniel-parti-color": {
-  "breed": "Cocker Spaniel (Parti-Color)",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Gessa_d%27Aran_Copo_de_Nieve-_arancio_roano-_prop.Kalesa.jpg",
-  "author": "Fcocker",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:Gessa_d%27Aran_Copo_de_Nieve-_arancio_roano-_prop.Kalesa.jpg"
  },
  "curly-coated-retriever": {
   "breed": "Curly-Coated Retriever",
@@ -319,14 +295,6 @@
   "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
   "page": "https://commons.wikimedia.org/wiki/File:Beagle_600.jpg"
  },
- "beagle-15-inches": {
-  "breed": "Beagle (15 inches)",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/5/55/Beagle_600.jpg",
-  "author": "",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:Beagle_600.jpg"
- },
  "black-and-tan-coonhound": {
   "breed": "Black and Tan Coonhound",
   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Black_and_Tan_Coonhound.jpg/500px-Black_and_Tan_Coonhound.jpg",
@@ -334,14 +302,6 @@
   "license": "CC BY-SA 2.5",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
   "page": "https://commons.wikimedia.org/wiki/File:Black_and_Tan_Coonhound.jpg"
- },
- "bloodhound": {
-  "breed": "Bloodhound",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Bloodhound_Erland22.jpg/500px-Bloodhound_Erland22.jpg",
-  "author": "User:Erland22",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Bloodhound_Erland22.jpg"
  },
  "borzoi": {
   "breed": "Borzoi",
@@ -366,14 +326,6 @@
   "license": "CC BY-SA 2.5",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
   "page": "https://commons.wikimedia.org/wiki/File:Jamnik_d%C5%82ugow%C5%82osy_standardowy_LM_671.jpg"
- },
- "dachshund-smooth": {
-  "breed": "Dachshund (Smooth)",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Smooth_Dachshund_red_and_tan_portrait.jpg/500px-Smooth_Dachshund_red_and_tan_portrait.jpg",
-  "author": "Raven Underwood",
-  "license": "CC BY 2.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Smooth_Dachshund_red_and_tan_portrait.jpg"
  },
  "dachshund-wirehaired": {
   "breed": "Dachshund (Wirehaired)",
@@ -494,14 +446,6 @@
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "page": "https://commons.wikimedia.org/wiki/File:Whippet_2018_6.jpg"
- },
- "akita": {
-  "breed": "Akita",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Akita_Collage.png",
-  "author": "Peter Theakston; Keetanii; Melodorakitas; Sevenfatdogs",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Akita_Collage.png"
  },
  "alaskan-malamute": {
   "breed": "Alaskan Malamute",

@@ -24,18 +24,6 @@
    "breed": "Clumber Spaniel",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Clumber_spaniel_rybnik_kamien_pppl.jpg/500px-Clumber_spaniel_rybnik_kamien_pppl.jpg"
   },
-  "cocker-spaniel-ascob": {
-   "breed": "Cocker Spaniel (ASCOB)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Gessa_d%27Aran_Copo_de_Nieve-_arancio_roano-_prop.Kalesa.jpg"
-  },
-  "cocker-spaniel-black": {
-   "breed": "Cocker Spaniel (Black)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Gessa_d%27Aran_Copo_de_Nieve-_arancio_roano-_prop.Kalesa.jpg"
-  },
-  "cocker-spaniel-parti-color": {
-   "breed": "Cocker Spaniel (Parti-Color)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Gessa_d%27Aran_Copo_de_Nieve-_arancio_roano-_prop.Kalesa.jpg"
-  },
   "curly-coated-retriever": {
    "breed": "Curly-Coated Retriever",
    "url": "https://upload.wikimedia.org/wikipedia/commons/5/58/Curly_Coated_Retriever.jpg"
@@ -160,17 +148,9 @@
    "breed": "Beagle (13 inches)",
    "url": "https://upload.wikimedia.org/wikipedia/commons/5/55/Beagle_600.jpg"
   },
-  "beagle-15-inches": {
-   "breed": "Beagle (15 inches)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/5/55/Beagle_600.jpg"
-  },
   "black-and-tan-coonhound": {
    "breed": "Black and Tan Coonhound",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Black_and_Tan_Coonhound.jpg/500px-Black_and_Tan_Coonhound.jpg"
-  },
-  "bloodhound": {
-   "breed": "Bloodhound",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Bloodhound_Erland22.jpg/500px-Bloodhound_Erland22.jpg"
   },
   "borzoi": {
    "breed": "Borzoi",
@@ -183,10 +163,6 @@
   "dachshund-longhaired": {
    "breed": "Dachshund (Longhaired)",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Jamnik_d%C5%82ugow%C5%82osy_standardowy_LM_671.jpg/500px-Jamnik_d%C5%82ugow%C5%82osy_standardowy_LM_671.jpg"
-  },
-  "dachshund-smooth": {
-   "breed": "Dachshund (Smooth)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Smooth_Dachshund_red_and_tan_portrait.jpg/500px-Smooth_Dachshund_red_and_tan_portrait.jpg"
   },
   "dachshund-wirehaired": {
    "breed": "Dachshund (Wirehaired)",
@@ -247,10 +223,6 @@
   "whippet": {
    "breed": "Whippet",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Whippet_2018_6.jpg/500px-Whippet_2018_6.jpg"
-  },
-  "akita": {
-   "breed": "Akita",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Akita_Collage.png"
   },
   "alaskan-malamute": {
    "breed": "Alaskan Malamute",
