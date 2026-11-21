@@ -56,6 +56,9 @@
         @keyframes waddle { 0%, 100% { transform: rotate(-8deg) translateX(-2px); } 50% { transform: rotate(8deg) translateX(2px); } }
         @media (prefers-reduced-motion: reduce) { .turkey { animation: none; } }
         .trade-banner { position: relative; }
+        .bis-banner { background: linear-gradient(160deg, #451a03, #9a3412 50%, #d97706); }
+        .bis-title { font-family: 'Playfair', Georgia, serif; font-style: italic; font-weight: 900;
+                     color: #fde68a; text-shadow: 0 2px 0 #7c2d12, 0 4px 10px rgba(0,0,0,.35); }
         /* real photo as a faded watermark over the banner color */
         .trade-banner .banner-photo {
             position: absolute; inset: 0; width: 100%; height: 100%;
@@ -219,7 +222,7 @@
             </div>
 
             <!-- Side-by-Side Trade Show Banners Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 pt-2">
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 pt-2">
                 <template x-for="group in groups" :key="group.id">
                     <div @click="activeGroup = group.id; searchQuery = ''" @keydown.enter="activeGroup = group.id; searchQuery = ''" role="button" tabindex="0"
                          :aria-label="'Open ' + group.name + ' group ballot'"
@@ -242,30 +245,24 @@
                         </div>
                     </div>
                 </template>
-            </div>
 
-            <!-- Best In Show Grand Finale -->
-            <div class="pt-4">
+                <!-- 8th banner: Best in Show -->
                 <div @click="activeGroup = 'best-in-show'" @keydown.enter="activeGroup = 'best-in-show'" role="button" tabindex="0"
                      aria-label="Open Best In Show ballot"
-                     class="cursor-pointer rounded-2xl shadow-2xl border-4 border-amber-400 bg-gradient-to-br from-amber-950 via-orange-900 to-amber-900 text-amber-50 px-6 py-10 sm:py-12 text-center space-y-4 transition transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-amber-300 relative overflow-hidden">
-                    <div class="absolute inset-0 opacity-10 text-[16rem] leading-none flex items-center justify-center select-none pointer-events-none">🏆</div>
-                    <div class="relative z-10 space-y-4">
-                        <div class="text-amber-300 text-sm tracking-[0.5em]">★ ★ ★ ★ ★</div>
-                        <div class="inline-block bg-amber-400 text-amber-950 text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Grand Finale</div>
-                        <h3 class="text-4xl sm:text-5xl font-black tracking-tight text-white">🏆 Best In Show</h3>
-                        <p class="text-amber-200 text-sm max-w-xl mx-auto">Crown your overall champion from your group winners.</p>
-                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                            <span class="text-sm font-bold px-4 py-2 rounded-xl shadow"
-                                  :class="ballot.bestInShow ? 'bg-emerald-600 text-white' : 'bg-amber-950/60 text-amber-200 border border-amber-700'"
-                                  x-text="ballot.bestInShow ? '👑 Your Champion: ' + ballot.bestInShow : getAllTopPicks().length + ' of 7 group winners chosen'">
-                            </span>
-                            <span class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-black px-6 py-2.5 rounded-xl text-sm shadow-lg"
-                                  x-text="ballot.bestInShow ? 'Change Pick →' : 'Make Your Pick →'"></span>
-                        </div>
+                     class="trade-banner bis-banner h-[28rem] lg:h-[36rem] rounded-xl shadow-md border-2 border-amber-400 cursor-pointer overflow-hidden flex flex-col justify-start gap-6 p-4 transition transform hover:-translate-y-1.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-amber-500">
+                    <div class="absolute inset-x-0 bottom-6 flex justify-center text-[7.5rem] leading-none opacity-35 pointer-events-none select-none" aria-hidden="true">🏆</div>
+                    <div class="relative z-10 flex justify-center">
+                        <span class="text-xs px-2.5 py-1 rounded-full font-bold shadow whitespace-nowrap"
+                              :class="ballot.bestInShow ? 'bg-emerald-600 text-white' : 'bg-amber-300 text-amber-950'"
+                              x-text="ballot.bestInShow ? '✓ Picked' : 'Pick 1'"></span>
+                    </div>
+                    <div class="relative z-10 text-center">
+                        <h3 class="bis-title text-2xl uppercase tracking-wide lg:[writing-mode:vertical-rl] lg:rotate-180 lg:text-4xl lg:mx-auto">Best in Show</h3>
+                        <div x-show="ballot.bestInShow" class="mt-2 text-sm font-bold text-amber-50 drop-shadow lg:hidden" x-text="ballot.bestInShow"></div>
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- GROUP DETAIL VIEW -->
