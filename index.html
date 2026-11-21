@@ -12,9 +12,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         
-        window.firebaseModules = { initializeApp, getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, getFirestore, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp };
+        window.firebaseModules = { initializeApp, getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, getFirestore, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, collection, query, where, onSnapshot, serverTimestamp, arrayUnion, arrayRemove };
     </script>
     <style>
         /* Home-screen background: one family photo per visit, faded into the page like a watermark */
@@ -29,7 +29,8 @@
         .harvest-header { position: relative; z-index: 30; background: linear-gradient(120deg, #3b1d0b, #7c2d12 55%, #b45309); }
         .gold-title { font-family: 'Playfair', Georgia, serif; font-style: italic; font-weight: 900; letter-spacing: .3px;
                       background: linear-gradient(90deg, #fde68a, #f59e0b, #fef3c7, #f59e0b, #fde68a); background-size: 200% 100%;
-                      -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 6s linear infinite; }
+                      -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 6s linear infinite;
+                      display: inline-block; line-height: 1.2; padding-bottom: .14em; margin-bottom: -.14em; }
         .serif-heading { font-family: 'Playfair', Georgia, serif; font-weight: 800; }
         @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
         .leaf { position: absolute; top: -40px; font-size: 22px; opacity: .5; animation: fall linear infinite; pointer-events: none; z-index: 0; }
@@ -55,6 +56,12 @@
         .turkey { display: inline-block; animation: waddle 1.8s ease-in-out infinite; transform-origin: 50% 90%; filter: drop-shadow(0 3px 4px rgba(0,0,0,.35)); }
         @keyframes waddle { 0%, 100% { transform: rotate(-8deg) translateX(-2px); } 50% { transform: rotate(8deg) translateX(2px); } }
         @media (prefers-reduced-motion: reduce) { .turkey { animation: none; } }
+        .league-tab { padding: .45rem .9rem; border-radius: 9999px; font-weight: 700; font-size: .9rem; background: #fff; border: 2px solid #e7e5e4; color: #57534e; }
+        .league-tab:hover { border-color: #d6d3d1; }
+        .league-tab.on { background: #7c2d12; border-color: #7c2d12; color: #fef3c7; }
+        .league-tab.dashed { border-style: dashed; }
+        .small-btn { padding: .4rem .75rem; border-radius: .6rem; font-size: .8rem; font-weight: 700; background: #f5f5f4; color: #44403c; }
+        .small-btn:hover { background: #fef3c7; }
         .trade-banner { position: relative; }
         .bis-banner { background: linear-gradient(160deg, #451a03, #9a3412 50%, #d97706); }
         .bis-title { font-family: 'Playfair', Georgia, serif; font-style: italic; font-weight: 900;
@@ -88,7 +95,7 @@
         <div class="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-3">
                 <div>
-                    <h1 class="text-2xl sm:text-4xl lg:text-[2.75rem] leading-tight">
+                    <h1 class="text-2xl sm:text-4xl lg:text-[2.75rem] leading-normal">
                         <button @click="goHome()" title="Home" class="flex items-center gap-3 hover:opacity-90 text-left">
                             <span class="turkey text-4xl sm:text-6xl leading-none">🦃</span>
                             <span class="gold-title pr-1">Thanksgiving Dog Show Ballot</span>
@@ -155,6 +162,7 @@
                     <button @click="startPicking()" class="bg-amber-700 hover:bg-amber-600 text-white px-7 py-3.5 rounded-2xl text-lg font-black shadow-lg">Start picking →</button>
                     <button x-show="authReady" @click="signIn()" class="bg-white hover:bg-amber-50 text-stone-800 border-2 border-stone-200 px-6 py-3.5 rounded-2xl text-base font-bold shadow">Sign in with Google</button>
                 </div>
+                <p x-show="!user && pendingLeagueId" class="text-sm font-semibold text-amber-800">You've been invited to a league. Sign in to join it.</p>
                 <p x-show="!user && localPickCount() > 0" class="text-sm text-amber-800" x-text="'You have ' + localPickCount() + ' picks saved in this browser. Sign in to keep them and join the leaderboard.'"></p>
 
                 <!-- Signed in: my ballots -->
@@ -399,6 +407,11 @@
                             <div class="font-black text-lg text-stone-900" x-text="b.name"></div>
                             <div class="text-sm font-semibold mt-0.5" :class="totalPicks(b) === 36 ? 'text-emerald-700' : 'text-amber-800'"
                                  x-text="totalPicks(b) + ' of 36 picks made · ' + (totalPicks(b) === 36 ? 'complete ✓' : (36 - totalPicks(b)) + ' left')"></div>
+                            <div x-show="ballotLeagues(b.id).length" class="flex flex-wrap gap-1 mt-1.5">
+                                <template x-for="name in ballotLeagues(b.id)" :key="b.id + name">
+                                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900" x-text="'🏆 ' + name"></span>
+                                </template>
+                            </div>
                             <div class="h-1.5 rounded-full bg-stone-100 overflow-hidden mt-1.5 max-w-xs"><div class="h-full bg-emerald-600" :style="`width: ${totalPicks(b) / 36 * 100}%`"></div></div>
                             <div class="flex flex-wrap gap-1 mt-2">
                                 <template x-for="g in groups" :key="b.id + g.id">
@@ -434,6 +447,29 @@
                       x-text="locked ? '🔒 Ballots locked' : 'Ballots open'"></span>
             </div>
 
+            <!-- League switcher -->
+            <div class="flex flex-wrap gap-2">
+                <button @click="selectedLeague = 'all'" class="league-tab" :class="selectedLeague === 'all' && 'on'">Everyone</button>
+                <template x-for="id in myLeagueIds" :key="'tab-' + id">
+                    <button x-show="leaguesById[id]" @click="selectedLeague = id" class="league-tab" :class="selectedLeague === id && 'on'"
+                            x-text="(leaguesById[id] && leaguesById[id].isPrivate ? '🔒 ' : '') + (leaguesById[id] ? leaguesById[id].name : '')"></button>
+                </template>
+                <button @click="selectedLeague = 'manage'" class="league-tab dashed" :class="selectedLeague === 'manage' && 'on'">＋ Join or create a league</button>
+            </div>
+
+            <!-- Selected league: name + actions -->
+            <div x-show="leaguesById[selectedLeague]" class="flex flex-wrap items-center justify-between gap-3 bg-white rounded-2xl border border-stone-200 shadow-sm px-4 py-3">
+                <div>
+                    <div class="serif-heading text-2xl text-stone-900" x-text="leaguesById[selectedLeague] ? leaguesById[selectedLeague].name : ''"></div>
+                    <div class="text-xs text-stone-500" x-text="leaguesById[selectedLeague] ? ((leaguesById[selectedLeague].isPrivate ? '🔒 Password league' : '🌐 Public league') + ' · started by ' + (leaguesById[selectedLeague].ownerName || 'someone') + ' · ' + (leagueEntries[selectedLeague] || []).length + ' ballots') : ''"></div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button x-show="!locked" @click="openLeagueModal(selectedLeague)" class="small-btn">Choose my ballots</button>
+                    <button @click="copyShareLink(selectedLeague)" class="small-btn">🔗 Share link</button>
+                </div>
+            </div>
+
+            <div x-show="selectedLeague !== 'manage'" class="space-y-6">
             <!-- Results so far -->
             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
                 <template x-for="g in groups" :key="g.id">
@@ -470,6 +506,58 @@
                         <div class="w-14 text-right text-2xl font-black text-amber-900" x-text="row.score.total"></div>
                     </div>
                 </template>
+            </div>
+            </div>
+
+            <!-- Join or create a league -->
+            <div x-show="selectedLeague === 'manage'" class="space-y-6">
+                <div x-show="myLeagueIds.length" class="space-y-3">
+                    <h3 class="serif-heading text-2xl text-stone-900">Your leagues</h3>
+                    <template x-for="id in myLeagueIds" :key="'mine-' + id">
+                        <div x-show="leaguesById[id]" class="flex flex-wrap items-center gap-3 bg-white rounded-2xl border border-stone-200 shadow-sm px-4 py-3">
+                            <div class="flex-1 min-w-[12rem]">
+                                <div class="font-black text-lg text-stone-900" x-text="(leaguesById[id] && leaguesById[id].isPrivate ? '🔒 ' : '🌐 ') + (leaguesById[id] ? leaguesById[id].name : '')"></div>
+                                <div class="text-xs text-stone-500" x-text="leagueBallotsLabel(id)"></div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button @click="selectedLeague = id" class="small-btn">View</button>
+                                <button x-show="!locked" @click="openLeagueModal(id)" class="small-btn">Choose ballots</button>
+                                <button @click="copyShareLink(id)" class="small-btn">🔗 Share</button>
+                                <button x-show="isLeagueOwner(id) || isAdmin" @click="deleteLeague(id)" class="small-btn text-red-700">Delete</button>
+                                <button x-show="!isLeagueOwner(id)" @click="leaveLeague(id)" class="small-btn text-red-700">Leave</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-5">
+                    <form @submit.prevent="createLeague()" class="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 space-y-3">
+                        <h3 class="serif-heading text-2xl text-stone-900">Start a league</h3>
+                        <input x-model="newLeague.name" maxlength="40" placeholder='League name, e.g. "St. Mark&#39;s Church"' class="w-full border-2 border-stone-300 focus:border-amber-700 rounded-xl px-3 py-2 focus:outline-none">
+                        <div class="flex gap-2">
+                            <button type="button" @click="newLeague.isPrivate = false" class="flex-1 py-2 rounded-xl border-2 font-bold text-sm" :class="!newLeague.isPrivate ? 'border-amber-700 bg-amber-50 text-amber-900' : 'border-stone-200 text-stone-500'">🌐 Public</button>
+                            <button type="button" @click="newLeague.isPrivate = true" class="flex-1 py-2 rounded-xl border-2 font-bold text-sm" :class="newLeague.isPrivate ? 'border-amber-700 bg-amber-50 text-amber-900' : 'border-stone-200 text-stone-500'">🔒 Password</button>
+                        </div>
+                        <div x-show="newLeague.isPrivate">
+                            <input x-model="newLeague.password" maxlength="40" placeholder="League password (share it with members)" class="w-full border-2 border-stone-300 focus:border-amber-700 rounded-xl px-3 py-2 focus:outline-none">
+                            <p class="text-xs text-stone-500 mt-1">Use a simple code, not one of your real passwords.</p>
+                        </div>
+                        <p x-show="newLeague.error" class="text-sm text-red-700" x-text="newLeague.error"></p>
+                        <button type="submit" :disabled="newLeague.busy" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white py-2.5 rounded-xl font-black shadow" x-text="newLeague.busy ? 'Creating…' : 'Create league'"></button>
+                    </form>
+
+                    <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 space-y-3">
+                        <h3 class="serif-heading text-2xl text-stone-900">Join a public league</h3>
+                        <template x-for="lg in publicLeagues.filter(l => !myLeagueIds.includes(l.id))" :key="'pub-' + lg.id">
+                            <div class="flex items-center justify-between gap-3 border border-stone-200 rounded-xl px-3 py-2">
+                                <div class="min-w-0"><div class="font-bold truncate" x-text="lg.name"></div><div class="text-xs text-stone-500" x-text="'started by ' + (lg.ownerName || 'someone')"></div></div>
+                                <button @click="openLeagueModal(lg.id)" class="small-btn">Join</button>
+                            </div>
+                        </template>
+                        <p x-show="!publicLeagues.filter(l => !myLeagueIds.includes(l.id)).length" class="text-sm text-stone-500">No other public leagues yet.</p>
+                        <p class="text-xs text-stone-500">Password leagues: ask the organizer for their share link.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -569,6 +657,33 @@
         </form>
     </div>
 
+    <!-- League popup: join, or choose which ballots are entered -->
+    <div x-show="leagueModal.open" style="display:none" class="fixed inset-0 z-[60] bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <form @submit.prevent="confirmLeagueModal()" class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <h3 class="text-xl font-black text-stone-900" x-text="(leagueModal.mode === 'join' ? 'Join ' : '') + (leagueModal.league ? leagueModal.league.name : '')"></h3>
+            <div x-show="leagueModal.mode === 'join' && leagueModal.league && leagueModal.league.isPrivate">
+                <label class="text-sm font-semibold text-stone-700">League password</label>
+                <input x-ref="leaguePassword" x-model="leagueModal.password" type="text" autocomplete="off" class="mt-1 w-full border-2 border-stone-300 focus:border-amber-700 rounded-xl px-3 py-2 focus:outline-none">
+            </div>
+            <div>
+                <div class="text-sm font-semibold text-stone-700 mb-2">Which ballots count in this league?</div>
+                <template x-for="b in myBallots" :key="'lm-' + b.id">
+                    <label class="flex items-center gap-3 px-3 py-2 rounded-xl border border-stone-200 mb-2 cursor-pointer hover:bg-amber-50">
+                        <input type="checkbox" :value="b.id" x-model="leagueModal.ballotIds" class="w-5 h-5 accent-amber-700">
+                        <span class="font-bold" x-text="b.name"></span>
+                    </label>
+                </template>
+                <p x-show="!myBallots.length" class="text-sm text-stone-500">You don't have a ballot yet. You can join now and add ballots later.</p>
+            </div>
+            <p x-show="leagueModal.error" class="text-sm text-red-700" x-text="leagueModal.error"></p>
+            <div class="flex items-center justify-between gap-3">
+                <button type="button" @click="leagueModal.open = false" class="text-sm text-stone-500 hover:text-stone-800 underline">Cancel</button>
+                <button type="submit" :disabled="leagueModal.busy" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-black shadow"
+                        x-text="leagueModal.busy ? 'Saving…' : (leagueModal.mode === 'join' ? 'Join league' : 'Save')"></button>
+            </div>
+        </form>
+    </div>
+
     <!-- Notification Toast -->
     <div x-show="notification" x-transition class="fixed bottom-4 right-4 bg-stone-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs z-50">
         <span x-text="notification"></span>
@@ -582,8 +697,8 @@
                 auth: null,
                 authReady: false,
                 db: null,
-                homePhotos: ['show-ring', 'goldens-grooming', 'corgi', 'boxer-ribbon', 'city-hall'],
-                homePhotoFocus: { 'corgi': 'center 18%', 'boxer-ribbon': 'center 24%', 'goldens-grooming': 'center 40%' },   // keep faces/dogs in view   // photos in images/home; shown in turn, one per visit
+                homePhotos: ['show-ring', 'goldens-grooming', 'corgi', 'city-hall'],
+                homePhotoFocus: { 'corgi': 'center 18%', 'goldens-grooming': 'center 40%' },   // keep faces/dogs in view   // photos in images/home; shown in turn, one per visit
                 homePhoto: null,
                 view: 'home',            // home | ballot | my | leaderboard | admin
                 isAdmin: false,
@@ -596,6 +711,12 @@
                 _saveTimer: null,
                 _unsubs: [],
                 _lastSaved: '',
+                // Leagues
+                myLeagueIds: [], leaguesById: {}, leagueEntries: {}, publicLeagues: [], selectedLeague: 'all',
+                pendingLeagueId: new URLSearchParams(location.search).get('league'),
+                leagueModal: { open: false, mode: 'join', id: null, league: null, password: '', ballotIds: [], error: '', busy: false },
+                newLeague: { name: '', isPrivate: false, password: '', error: '', busy: false },
+                _leagueSubs: {}, _allBallotsUnsub: null,
                 namePrompt: { open: false, mode: 'new', name: '', count: 0, error: '', busy: false },
                 get locked() { return !!this.results.locked; },
                 saving: false,
@@ -634,6 +755,7 @@
                     try { const saved = JSON.parse(localStorage.getItem('dogShowBallot') || 'null'); if (saved && saved.picks) this.ballot = this.fullBallot(saved); } catch (e) {}
                     if (!this.ballot.picks.sporting) this.ballot = this.fullBallot(this.ballot);
                     this.$watch('ballot', () => this.onBallotChanged(), { deep: true });
+                    this.$watch('view', () => this.syncAllBallotsListener());
 
                     // The Firebase module script loads after Alpine starts, so wait for it.
                     for (let i = 0; i < 50 && !window.firebaseModules; i++) await new Promise(r => setTimeout(r, 100));
@@ -669,6 +791,9 @@
                     this._unsubs.forEach(u => u()); this._unsubs = [];
                     this.user = user; this.authReady = true;
                     this.isAdmin = false; this.myBallots = []; this.allBallots = [];
+                    Object.values(this._leagueSubs).forEach(u => u.forEach(f => f())); this._leagueSubs = {};
+                    if (this._allBallotsUnsub) { this._allBallotsUnsub(); this._allBallotsUnsub = null; }
+                    this.myLeagueIds = []; this.leaguesById = {}; this.leagueEntries = {}; this.publicLeagues = []; this.selectedLeague = 'all';
                     if (!user) { this.currentBallotId = null; this.view = 'home'; return; }
                     const { doc, getDoc, collection, query, where, onSnapshot } = window.firebaseModules;
                     try { this.isAdmin = (await getDoc(doc(this.db, 'admins', user.uid))).exists(); } catch (e) { this.isAdmin = false; }
@@ -677,9 +802,14 @@
                         this.myBallots = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((x, y) => (x.name || '').localeCompare(y.name || ''));
                         if (first) { first = false; this.afterFirstLoad(); }
                     }, e => console.warn('my ballots listener', e)));
-                    this._unsubs.push(onSnapshot(collection(this.db, 'ballots'), snap => {
-                        this.allBallots = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                    }, e => console.warn('leaderboard listener', e)));
+                    this.syncAllBallotsListener();
+                    // Leagues: my list, and the public ones anyone can join
+                    this._unsubs.push(onSnapshot(doc(this.db, 'users', user.uid), snap => {
+                        this.syncLeagueSubs((snap.exists() && snap.data().leagues) || []);
+                    }, e => console.warn('my leagues listener', e)));
+                    this._unsubs.push(onSnapshot(query(collection(this.db, 'leagues'), where('isPrivate', '==', false)), snap => {
+                        this.publicLeagues = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                    }, e => console.warn('public leagues listener', e)));
                 },
 
                 async afterFirstLoad() {
@@ -689,6 +819,9 @@
                     this.activeGroup = null; this.currentBallotId = null; this.view = 'home';
                     if (count > 0 && !this.locked) this.openNamePrompt('import', count);
                     else this.ballot = this.fullBallot(null);
+                    if (this.pendingLeagueId) { const id = this.pendingLeagueId; this.pendingLeagueId = null;
+                        history.replaceState(null, '', location.pathname);
+                        setTimeout(() => this.openLeagueModal(id), count > 0 ? 400 : 0); }
                 },
 
                 async signIn() {
@@ -866,6 +999,148 @@
                     return n;
                 },
 
+                // Everyone's ballots are only needed on the Leaderboard/Admin pages. Listening only there keeps
+                // database reads low (each pick anyone makes would otherwise be sent to every open page).
+                syncAllBallotsListener() {
+                    const want = !!this.user && (this.view === 'leaderboard' || this.view === 'admin');
+                    if (want && !this._allBallotsUnsub) {
+                        const { collection, onSnapshot } = window.firebaseModules;
+                        this._allBallotsUnsub = onSnapshot(collection(this.db, 'ballots'), snap => {
+                            this.allBallots = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                        }, e => console.warn('leaderboard listener', e));
+                    } else if (!want && this._allBallotsUnsub) {
+                        this._allBallotsUnsub(); this._allBallotsUnsub = null;
+                    }
+                },
+
+                // ---------- leagues ----------
+                syncLeagueSubs(ids) {
+                    const { doc, collection, onSnapshot } = window.firebaseModules;
+                    for (const id of Object.keys(this._leagueSubs)) if (!ids.includes(id)) {
+                        this._leagueSubs[id].forEach(f => f()); delete this._leagueSubs[id];
+                        delete this.leaguesById[id]; delete this.leagueEntries[id];
+                    }
+                    for (const id of ids) if (!this._leagueSubs[id]) {
+                        this._leagueSubs[id] = [
+                            onSnapshot(doc(this.db, 'leagues', id), snap => {
+                                if (snap.exists()) this.leaguesById = { ...this.leaguesById, [id]: { id, ...snap.data() } };
+                                else { const c = { ...this.leaguesById }; delete c[id]; this.leaguesById = c; }
+                            }, e => console.warn('league', id, e)),
+                            onSnapshot(collection(this.db, 'leagues', id, 'entries'), snap => {
+                                this.leagueEntries = { ...this.leagueEntries, [id]: snap.docs.map(d => d.id) };
+                            }, e => console.warn('league entries', id, e)),
+                        ];
+                    }
+                    this.myLeagueIds = ids;
+                    if (this.selectedLeague !== 'all' && this.selectedLeague !== 'manage' && !ids.includes(this.selectedLeague)) this.selectedLeague = 'all';
+                },
+
+                isLeagueOwner(id) { const l = this.leaguesById[id]; return !!(l && this.user && l.ownerUid === this.user.uid); },
+                myEntriesIn(id) { const mine = new Set(this.myBallots.map(b => b.id)); return (this.leagueEntries[id] || []).filter(x => mine.has(x)); },
+                ballotLeagues(ballotId) { return this.myLeagueIds.filter(id => (this.leagueEntries[id] || []).includes(ballotId) && this.leaguesById[id]).map(id => this.leaguesById[id].name); },
+                leagueBallotsLabel(id) {
+                    const names = this.myBallots.filter(b => (this.leagueEntries[id] || []).includes(b.id)).map(b => b.name);
+                    const l = this.leaguesById[id] || {};
+                    return (l.isPrivate ? 'Password league' : 'Public league') + ' · ' + (names.length ? 'your ballots: ' + names.join(', ') : 'none of your ballots entered yet');
+                },
+
+                async openLeagueModal(id) {
+                    if (!this.user) { this.pendingLeagueId = id; this.signIn(); return; }
+                    let league = this.leaguesById[id] || this.publicLeagues.find(l => l.id === id);
+                    if (!league) {
+                        try { const snap = await window.firebaseModules.getDoc(window.firebaseModules.doc(this.db, 'leagues', id)); if (snap.exists()) league = { id, ...snap.data() }; } catch (e) {}
+                    }
+                    if (!league) { this.showNotification("⚠️ That league link doesn't work. It may have been deleted."); return; }
+                    const member = this.myLeagueIds.includes(id);
+                    this.leagueModal = { open: true, mode: member ? 'entries' : 'join', id, league, password: '', error: '', busy: false,
+                                         ballotIds: member ? this.myEntriesIn(id) : this.myBallots.map(b => b.id) };
+                    this.$nextTick(() => this.$refs.leaguePassword && league.isPrivate && !member && this.$refs.leaguePassword.focus());
+                },
+
+                async confirmLeagueModal() {
+                    const m = this.leagueModal, F = window.firebaseModules, uid = this.user.uid;
+                    m.error = ''; m.busy = true;
+                    try {
+                        if (m.mode === 'join') {
+                            const member = { uid, name: (this.user.displayName || '').split(' ')[0], joinedAt: F.serverTimestamp() };
+                            if (m.league.isPrivate) member.password = (m.password || '').trim();
+                            try { await F.setDoc(F.doc(this.db, 'leagues', m.id, 'members', uid), member); }
+                            catch (e) { m.busy = false; m.error = m.league.isPrivate ? "That password isn't right. Check with whoever invited you." : "Couldn't join. Please try again."; return; }
+                            await F.setDoc(F.doc(this.db, 'users', uid), { leagues: F.arrayUnion(m.id) }, { merge: true });
+                        }
+                        if (!this.locked) await this.setLeagueEntries(m.id, m.ballotIds);
+                        this.showNotification(m.mode === 'join' ? `✅ Joined ${m.league.name}` : '✅ Saved');
+                        if (m.mode === 'join') this.selectedLeague = m.id;
+                        this.view = 'leaderboard';
+                        m.open = false;
+                    } catch (e) { console.error(e); m.error = "Couldn't save. Please try again."; }
+                    m.busy = false;
+                },
+
+                async setLeagueEntries(id, wanted) {
+                    const F = window.firebaseModules, current = this.myEntriesIn(id);
+                    for (const bid of wanted) if (!current.includes(bid))
+                        await F.setDoc(F.doc(this.db, 'leagues', id, 'entries', bid), { ballotId: bid, ownerUid: this.user.uid, enteredAt: F.serverTimestamp() });
+                    for (const bid of current) if (!wanted.includes(bid))
+                        await F.deleteDoc(F.doc(this.db, 'leagues', id, 'entries', bid));
+                },
+
+                async createLeague() {
+                    const n = this.newLeague, F = window.firebaseModules, uid = this.user.uid;
+                    n.error = '';
+                    const name = (n.name || '').trim(), pw = (n.password || '').trim();
+                    if (!name) { n.error = 'Please give the league a name.'; return; }
+                    if (n.isPrivate && pw.length < 4) { n.error = 'Please use a password of at least 4 characters.'; return; }
+                    n.busy = true;
+                    try {
+                        const ref = F.doc(F.collection(this.db, 'leagues'));
+                        await F.setDoc(ref, { name: name.slice(0, 40), isPrivate: n.isPrivate, ownerUid: uid, ownerName: (this.user.displayName || '').split(' ')[0], createdAt: F.serverTimestamp() });
+                        if (n.isPrivate) await F.setDoc(F.doc(this.db, 'leagues', ref.id, 'private', 'secret'), { password: pw });
+                        const member = { uid, name: (this.user.displayName || '').split(' ')[0], joinedAt: F.serverTimestamp() };
+                        if (n.isPrivate) member.password = pw;
+                        await F.setDoc(F.doc(this.db, 'leagues', ref.id, 'members', uid), member);
+                        await F.setDoc(F.doc(this.db, 'users', uid), { leagues: F.arrayUnion(ref.id) }, { merge: true });
+                        this.newLeague = { name: '', isPrivate: false, password: '', error: '', busy: false };
+                        this.leaguesById = { ...this.leaguesById, [ref.id]: { id: ref.id, name, isPrivate: n.isPrivate, ownerUid: uid } };
+                        this.selectedLeague = ref.id;
+                        this.showNotification(`✅ Created ${name}. Use 🔗 Share link to invite people.`);
+                        this.leagueModal = { open: true, mode: 'entries', id: ref.id, league: { id: ref.id, name, isPrivate: n.isPrivate }, password: '', error: '', busy: false, ballotIds: this.myBallots.map(b => b.id) };
+                    } catch (e) { console.error(e); n.error = "Couldn't create the league. Please try again."; n.busy = false; }
+                },
+
+                async leaveLeague(id) {
+                    const l = this.leaguesById[id]; if (!confirm(`Leave ${l ? l.name : 'this league'}? Your ballots will be removed from it.`)) return;
+                    const F = window.firebaseModules, uid = this.user.uid;
+                    try {
+                        for (const bid of this.myEntriesIn(id)) await F.deleteDoc(F.doc(this.db, 'leagues', id, 'entries', bid));
+                        await F.deleteDoc(F.doc(this.db, 'leagues', id, 'members', uid));
+                        await F.setDoc(F.doc(this.db, 'users', uid), { leagues: F.arrayRemove(id) }, { merge: true });
+                        this.showNotification('You left the league.');
+                    } catch (e) { console.error(e); this.showNotification("⚠️ Couldn't leave. Please try again."); }
+                },
+
+                async deleteLeague(id) {
+                    const l = this.leaguesById[id]; if (!confirm(`Delete ${l ? l.name : 'this league'} for everyone? Ballots themselves are not deleted.`)) return;
+                    const F = window.firebaseModules;
+                    try {
+                        for (const sub of ['entries', 'members', 'private']) {
+                            const snap = await F.getDocs(F.collection(this.db, 'leagues', id, sub));
+                            for (const d of snap.docs) await F.deleteDoc(d.ref);
+                        }
+                        await F.deleteDoc(F.doc(this.db, 'leagues', id));
+                        await F.setDoc(F.doc(this.db, 'users', this.user.uid), { leagues: F.arrayRemove(id) }, { merge: true });
+                        this.showNotification('League deleted.');
+                    } catch (e) { console.error(e); this.showNotification("⚠️ Couldn't delete the league."); }
+                },
+
+                async copyShareLink(id) {
+                    const l = this.leaguesById[id] || {};
+                    const url = location.origin + location.pathname + '?league=' + id;
+                    const text = `Join "${l.name || 'our league'}" in the Thanksgiving Dog Show Ballot: ${url}` + (l.isPrivate ? ' (ask me for the password)' : '');
+                    try { await navigator.clipboard.writeText(text); this.showNotification('🔗 Invite copied. Paste it into a text or email.'); }
+                    catch (e) { prompt('Copy this invite:', text); }
+                },
+
                 // ---------- scoring ----------
                 resultsAnnounced() { return Object.values(this.results.groupWinners).some(Boolean) || !!this.results.bestInShow; },
 
@@ -886,7 +1161,9 @@
                 },
 
                 leaderboard() {
-                    const rows = this.allBallots.map(b => ({ ...b, score: this.scoreBallot(b) }))
+                    const sel = this.selectedLeague, ids = this.leagueEntries[sel];
+                    const pool = (sel !== 'all' && sel !== 'manage' && ids) ? this.allBallots.filter(b => ids.includes(b.id)) : this.allBallots;
+                    const rows = pool.map(b => ({ ...b, score: this.scoreBallot(b) }))
                         .sort((x, y) => y.score.total - x.score.total || (x.name || '').localeCompare(y.name || ''));
                     let rank = 0, prev = null;
                     rows.forEach((row, i) => { if (row.score.total !== prev) { rank = i + 1; prev = row.score.total; } row.rank = rank; });
