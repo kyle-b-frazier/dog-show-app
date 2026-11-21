@@ -1558,5 +1558,53 @@
   "license": "CC BY 2.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
   "page": "https://commons.wikimedia.org/wiki/File:West_Highland_White_Terrier_Krakow.jpg"
+ },
+ "affenpinscher": {
+  "breed": "Affenpinscher",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Affenpinscher.jpg/500px-Affenpinscher.jpg",
+  "author": "",
+  "license": "GPL",
+  "licenseUrl": "http://www.gnu.org/licenses/gpl.html",
+  "page": "https://commons.wikimedia.org/wiki/File:Affenpinscher.jpg"
+ },
+ "american-water-spaniel": {
+  "breed": "American Water Spaniel",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Chien_d%27eau_americain_champion_1.JPG/500px-Chien_d%27eau_americain_champion_1.JPG",
+  "author": "Awsguy1",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Chien_d%27eau_americain_champion_1.JPG"
+ },
+ "anatolian-shepherd-dog": {
+  "breed": "Anatolian Shepherd Dog",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Kangal_front_on.jpg/500px-Kangal_front_on.jpg",
+  "author": "Kangalshepherddog",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Kangal_front_on.jpg"
+ },
+ "bluetick-coonhound": {
+  "breed": "Bluetick Coonhound",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/BluetickCoonhound.jpg/500px-BluetickCoonhound.jpg",
+  "author": "",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:BluetickCoonhound.jpg"
+ },
+ "boerboel": {
+  "breed": "Boerboel",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Boerboelmusta3.jpg/500px-Boerboelmusta3.jpg",
+  "author": "Canarian",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Boerboelmusta3.jpg"
+ },
+ "finnish-spitz": {
+  "breed": "Finnish Spitz",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Finnish_Spitz_600.jpg/500px-Finnish_Spitz_600.jpg",
+  "author": "",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:Finnish_Spitz_600.jpg"
  }
 }
