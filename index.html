@@ -22,6 +22,9 @@
                    filter: sepia(0.35) saturate(0.85); pointer-events: none; }
         .home-bg::after { content: ""; position: absolute; inset: 0;
                    background: linear-gradient(to bottom, rgba(253,248,239,0.80), rgba(253,248,239,0.86) 45%, rgba(253,248,239,0.95)); }
+        .turkey { display: inline-block; animation: waddle 1.8s ease-in-out infinite; transform-origin: 50% 90%; filter: drop-shadow(0 3px 4px rgba(0,0,0,.35)); }
+        @keyframes waddle { 0%, 100% { transform: rotate(-8deg) translateX(-2px); } 50% { transform: rotate(8deg) translateX(2px); } }
+        @media (prefers-reduced-motion: reduce) { .turkey { animation: none; } }
         .trade-banner { position: relative; }
         /* real photo as a faded watermark over the banner color */
         .trade-banner .banner-photo {
@@ -46,10 +49,12 @@
         <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-3">
                 <div>
-                    <h1 class="text-lg font-bold tracking-tight">
-                        <button @click="goHome()" title="Home" class="flex items-center gap-2 hover:opacity-90">🦃 Thanksgiving Dog Show Ballot</button>
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">
+                        <button @click="goHome()" title="Home" class="flex items-center gap-3 hover:opacity-90 text-left">
+                            <span class="turkey text-5xl sm:text-6xl leading-none">🦃</span>
+                            <span>Thanksgiving Dog Show Ballot</span>
+                        </button>
                     </h1>
-                    <p x-show="view === 'ballot' && activeGroup === null" class="text-amber-200 text-xs">Make your group picks and lock in Best In Show</p>
                 </div>
             </div>
             
@@ -103,7 +108,7 @@
         <div x-show="activeGroup === null" class="space-y-8">
             <div class="text-center max-w-2xl mx-auto space-y-1">
                 <h2 class="text-3xl sm:text-4xl font-black tracking-tight text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
-                <p class="text-sm text-stone-600">Tap a group to make your picks. <span class="text-xs" :class="saveState === 'error' ? 'text-red-600 font-semibold' : 'text-stone-400'" x-text="saveStatusText()"></span></p>
+                <p x-show="saveStatusText()" class="text-xs" :class="saveState === 'error' ? 'text-red-600 font-semibold' : 'text-stone-400'" x-text="saveStatusText()"></p>
             </div>
 
             <!-- Picks remaining, per group -->
@@ -244,7 +249,6 @@
             <div>
                 <h2 class="text-3xl sm:text-4xl font-black text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
                 <div class="text-xl sm:text-2xl font-black mt-1 text-amber-700">🏆 Best In Show</div>
-                <p class="text-sm text-stone-600 mt-1">Choose your overall champion from your group winners.</p>
             </div>
             <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-6">
 
@@ -332,7 +336,6 @@
             <div class="flex flex-wrap items-end justify-between gap-3">
                 <div>
                     <h2 class="text-3xl font-black text-stone-900">🏆 Leaderboard</h2>
-                    <p class="text-sm text-stone-600">Updates live as results are announced.</p>
                 </div>
                 <span class="text-xs font-semibold px-3 py-1.5 rounded-full" :class="locked ? 'bg-stone-800 text-white' : 'bg-emerald-100 text-emerald-800'"
                       x-text="locked ? '🔒 Ballots locked' : 'Ballots open'"></span>
@@ -530,7 +533,8 @@
                     this.homePhoto = this.homePhotos[Math.floor(Math.random() * this.homePhotos.length)];
                     fetch('images/photos.json').then(r => r.json()).then(j => { this.photos = j; }).catch(e => console.warn('No photo list', e));
                     // Before sign-in, picks are kept in this browser.
-                    try { const saved = JSON.parse(localStorage.getItem('dogShowBallot') || 'null'); if (saved && saved.picks) this.ballot = saved; } catch (e) {}
+                    try { const saved = JSON.parse(localStorage.getItem('dogShowBallot') || 'null'); if (saved && saved.picks) this.ballot = this.fullBallot(saved); } catch (e) {}
+                    if (!this.ballot.picks.sporting) this.ballot = this.fullBallot(this.ballot);
                     this.$watch('ballot', () => this.onBallotChanged(), { deep: true });
 
                     // The Firebase module script loads after Alpine starts, so wait for it.
@@ -605,7 +609,7 @@
                 async signOutUser() {
                     await this.flushSave();
                     await window.firebaseModules.signOut(this.auth);
-                    this.ballot = { picks: {}, bestInShow: null };
+                    this.ballot = this.fullBallot(null);
                     this.showNotification('Signed out.');
                 },
 
@@ -640,7 +644,7 @@
                 discardLocalPicks() {
                     if (!confirm('Discard the picks you made before signing in? This cannot be undone.')) return;
                     localStorage.removeItem('dogShowBallot');
-                    this.ballot = { picks: {}, bestInShow: null };
+                    this.ballot = this.fullBallot(null);
                     this.namePrompt.open = false;
                     this.goMyBallots();
                 },
@@ -660,7 +664,7 @@
                 },
 
                 openBallot(b) {
-                    this.ballot = { picks: JSON.parse(JSON.stringify(b.picks || {})), bestInShow: b.bestInShow || null };
+                    this.ballot = this.fullBallot(b);
                     this._lastSaved = this.ballotKey();
                     this.currentBallotId = b.id; this.currentBallotName = b.name; this.saveState = '';
                     this.activeGroup = null; this.view = 'ballot';
@@ -810,11 +814,19 @@
                     return breeds.filter(b => b.toLowerCase().includes(this.searchQuery.toLowerCase()));
                 },
 
+                // Read-only: never create data while the page is drawing (that left counters stale).
                 getGroupPicks(groupId) {
-                    if (!this.ballot.picks[groupId]) {
-                        this.ballot.picks[groupId] = { topPick: null, shortlist: [] };
+                    return this.ballot.picks[groupId] || { topPick: null, shortlist: [] };
+                },
+
+                // Give a ballot all 7 group slots up front, before it goes into the page.
+                fullBallot(data) {
+                    const picks = JSON.parse(JSON.stringify((data && data.picks) || {}));
+                    for (const g of this.groups) {
+                        const gp = picks[g.id] || {};
+                        picks[g.id] = { topPick: gp.topPick || null, shortlist: Array.isArray(gp.shortlist) ? gp.shortlist : [] };
                     }
-                    return this.ballot.picks[groupId];
+                    return { picks, bestInShow: (data && data.bestInShow) || null };
                 },
 
                 getPicksCount(groupId) {
@@ -838,6 +850,7 @@
 
                 setTopPick(groupId, breed) {
                     if (!this.canEdit()) return;
+                    if (!this.ballot.picks[groupId]) this.ballot.picks[groupId] = { topPick: null, shortlist: [] };
                     const gp = this.getGroupPicks(groupId);
                     gp.shortlist = gp.shortlist.filter(b => b !== breed);
                     
@@ -854,6 +867,7 @@
 
                 toggleShortlist(groupId, breed) {
                     if (!this.canEdit()) return;
+                    if (!this.ballot.picks[groupId]) this.ballot.picks[groupId] = { topPick: null, shortlist: [] };
                     const gp = this.getGroupPicks(groupId);
                     if (gp.topPick === breed) return;
 
