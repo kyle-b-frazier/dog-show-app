@@ -1143,7 +1143,7 @@
                         this.selectedLeague = ref.id;
                         this.showNotification(`✅ Created ${name}. Use 🔗 Share link to invite people.`);
                         this.leagueModal = { open: true, mode: 'entries', id: ref.id, league: { id: ref.id, name, isPrivate: n.isPrivate }, password: '', error: '', busy: false, ballotIds: this.myBallots.map(b => b.id) };
-                    } catch (e) { console.error(e); n.error = "Couldn't create the league. Please try again."; n.busy = false; }
+                    } catch (e) { console.error(e); n.error = e && e.code === 'permission-denied' ? "Leagues aren't switched on in the database yet. The site admin needs to install the latest rules." : "Couldn't create the league. Please try again."; n.busy = false; }
                 },
 
                 async leaveLeague(id) {
