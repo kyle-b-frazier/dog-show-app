@@ -552,7 +552,7 @@
                 <div class="grid md:grid-cols-2 gap-5">
                     <form @submit.prevent="createLeague()" class="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 space-y-3">
                         <h3 class="serif-heading text-2xl text-stone-900">Start a league</h3>
-                        <input x-model="newLeague.name" maxlength="40" placeholder='League name, e.g. "St. Mark&#39;s Church"' class="w-full border-2 border-stone-300 focus:border-amber-700 rounded-xl px-3 py-2 focus:outline-none">
+                        <input x-model="newLeague.name" maxlength="40" placeholder='League Name, e.g. "Fellowship Church"' class="w-full border-2 border-stone-300 focus:border-amber-700 rounded-xl px-3 py-2 focus:outline-none">
                         <div class="flex gap-2">
                             <button type="button" @click="newLeague.isPrivate = false" class="flex-1 py-2 rounded-xl border-2 font-bold text-sm" :class="!newLeague.isPrivate ? 'border-amber-700 bg-amber-50 text-amber-900' : 'border-stone-200 text-stone-500'">🌐 Public</button>
                             <button type="button" @click="newLeague.isPrivate = true" class="flex-1 py-2 rounded-xl border-2 font-bold text-sm" :class="newLeague.isPrivate ? 'border-amber-700 bg-amber-50 text-amber-900' : 'border-stone-200 text-stone-500'">🔒 Password</button>
