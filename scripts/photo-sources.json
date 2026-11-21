@@ -1,5 +1,21 @@
 {
  "photos": {
+  "bull-terrier-colored": {
+   "breed": "Bull Terrier (Colored)",
+   "file": "File:Bull Terrier 2.JPG"
+  },
+  "chihuahua-smooth-coat": {
+   "breed": "Chihuahua (Smooth Coat)",
+   "file": "File:Chihuahuasmoothcoat.jpg"
+  },
+  "english-toy-spaniel-b-pc": {
+   "breed": "English Toy Spaniel (B&PC)",
+   "file": "File:King Charles Spaniel Blenheim 1.jpg"
+  },
+  "cocker-spaniel-ascob": {
+   "breed": "Cocker Spaniel (ASCOB)",
+   "file": "File:AmericanCockerSpaniel wb.jpg"
+  },
   "german-shepherd-dog": {
    "breed": "German Shepherd Dog",
    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d0/German_Shepherd_-_DSC_0346_%2810096362833%29.jpg"
@@ -468,10 +484,6 @@
    "breed": "Chinese Crested",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/IndyStands.jpg/500px-IndyStands.jpg"
   },
-  "english-toy-spaniel-b-pc": {
-   "breed": "English Toy Spaniel (B&PC)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/King_Charles_Spaniel_200.jpg/500px-King_Charles_Spaniel_200.jpg"
-  },
   "english-toy-spaniel-kc-r": {
    "breed": "English Toy Spaniel (KC&R)",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/King_Charles_Spaniel_200.jpg/500px-King_Charles_Spaniel_200.jpg"
@@ -744,20 +756,12 @@
    "breed": "Petit Basset Griffon Vendéen",
    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e4/P_Basset_Griffon_Vendeen_600.jpg"
   },
-  "bull-terrier-colored": {
-   "breed": "Bull Terrier (Colored)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg"
-  },
   "bull-terrier-white": {
    "breed": "Bull Terrier (White)",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Bullterrier-3453301920.jpg/500px-Bullterrier-3453301920.jpg"
   },
   "chihuahua-long-coat": {
    "breed": "Chihuahua (Long Coat)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg"
-  },
-  "chihuahua-smooth-coat": {
-   "breed": "Chihuahua (Smooth Coat)",
    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg"
   },
   "manchester-terrier-toy": {
@@ -850,10 +854,5 @@
   "Bloodhound",
   "Dachshund",
   "Akita (dog)"
- ],
- "candidateSearches": {
-  "bull-terrier-colored": "brindle bull terrier",
-  "chihuahua-smooth-coat": "smooth coat chihuahua",
-  "english-toy-spaniel-b-pc": "blenheim king charles spaniel"
- }
+ ]
 }
