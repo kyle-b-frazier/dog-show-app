@@ -26,7 +26,7 @@
         .home-bg.strong::after { background: linear-gradient(to bottom, rgba(253,248,239,0.35), rgba(253,248,239,0.55) 55%, rgba(253,248,239,0.92)); }
         @font-face { font-family: 'Playfair'; src: url('fonts/playfair-display-latin-900-italic.woff2') format('woff2'); font-weight: 900; font-style: italic; font-display: swap; }
         @font-face { font-family: 'Playfair'; src: url('fonts/playfair-display-latin-800-normal.woff2') format('woff2'); font-weight: 800; font-style: normal; font-display: swap; }
-        .harvest-header { position: relative; overflow: hidden; background: linear-gradient(120deg, #3b1d0b, #7c2d12 55%, #b45309); }
+        .harvest-header { position: relative; z-index: 30; background: linear-gradient(120deg, #3b1d0b, #7c2d12 55%, #b45309); }
         .gold-title { font-family: 'Playfair', Georgia, serif; font-style: italic; font-weight: 900; letter-spacing: .3px;
                       background: linear-gradient(90deg, #fde68a, #f59e0b, #fef3c7, #f59e0b, #fde68a); background-size: 200% 100%;
                       -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 6s linear infinite; }
@@ -34,6 +34,19 @@
         @keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
         .leaf { position: absolute; top: -40px; font-size: 22px; opacity: .5; animation: fall linear infinite; pointer-events: none; z-index: 0; }
         @keyframes fall { 0% { transform: translate(0, 0) rotate(0); } 100% { transform: translate(-90px, 260px) rotate(360deg); } }
+        .toplink { color: #fef3c7; font-weight: 600; font-size: .95rem; padding: .35rem .6rem; border-radius: .5rem; opacity: .9; }
+        .toplink:hover { opacity: 1; background: rgba(255,255,255,.1); }
+        .iconbtn { width: 2.1rem; height: 2.1rem; border-radius: 9999px; border: 1px solid rgba(253,230,138,.45); background: rgba(255,255,255,.1); color: #fef3c7; font-weight: 800; }
+        .iconbtn:hover { background: rgba(255,255,255,.2); }
+        .admin-chip { margin-left: .35rem; font-size: .75rem; font-weight: 700; color: #fecaca; border: 1px solid rgba(254,202,202,.55); border-radius: 9999px; padding: .25rem .7rem; }
+        .admin-chip:hover { background: rgba(254,202,202,.12); }
+        .avatar { width: 2.4rem; height: 2.4rem; border-radius: 9999px; background: #fde68a; color: #7c2d12; font-weight: 800; border: 2px solid #fef3c7;
+                  display: inline-flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,.3); }
+        .bottombar { background: #2a1608; box-shadow: 0 -4px 14px rgba(0,0,0,.25); }
+        .bt { display: flex; flex-direction: column; align-items: center; gap: 1px; color: #fde68a; font-size: 11px; font-weight: 600; opacity: .75; flex: 1; padding: .2rem 0; }
+        .bt .i { font-size: 21px; line-height: 1.2; }
+        .bt.on { opacity: 1; color: #fff; }
+        .bt.on .i { transform: scale(1.15); }
         .navpill { padding: .45rem .8rem; border-radius: .6rem; font-size: .8rem; font-weight: 600; transition: background .15s;
                    background: rgba(255,255,255,.12); color: #fef3c7; border: 1px solid rgba(253,230,138,.35); }
         .navpill:hover { background: rgba(255,255,255,.22); }
@@ -57,54 +70,73 @@
         }
     </style>
 </head>
-<body class="bg-amber-50/40 text-stone-900 min-h-screen flex flex-col font-sans" x-data="dogShowApp()">
+<body class="bg-amber-50/40 text-stone-900 min-h-screen flex flex-col font-sans pb-16 sm:pb-0" x-data="dogShowApp()">
     <div class="home-bg" :class="view === 'home' ? 'strong' : ''" x-show="view === 'home' || (view === 'ballot' && activeGroup === null)" x-transition.opacity.duration.500ms
          :style="`background-image: url('images/home/${homePhoto}.jpg'); background-position: ${homePhotoFocus[homePhoto] || 'center'}`" aria-hidden="true"></div>
 
     <!-- Header -->
     <header class="harvest-header text-amber-50 shadow-lg border-b-4 border-amber-500/60">
+        <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <span class="leaf" style="left:66%; animation-duration:7s; animation-delay:0s">🍂</span>
         <span class="leaf" style="left:76%; animation-duration:8s; animation-delay:2.2s">🍁</span>
         <span class="leaf" style="left:86%; animation-duration:7.5s; animation-delay:4.4s">🍂</span>
         <span class="leaf" style="left:95%; animation-duration:9s; animation-delay:1.1s">🍁</span>
-        <div class="relative z-10 max-w-7xl mx-auto px-4 py-4 flex flex-col lg:flex-row justify-between items-center gap-3">
+        </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-3">
                 <div>
-                    <h1 class="text-3xl sm:text-4xl lg:text-[2.75rem] leading-tight">
+                    <h1 class="text-2xl sm:text-4xl lg:text-[2.75rem] leading-tight">
                         <button @click="goHome()" title="Home" class="flex items-center gap-3 hover:opacity-90 text-left">
-                            <span class="turkey text-5xl sm:text-6xl leading-none">🦃</span>
+                            <span class="turkey text-4xl sm:text-6xl leading-none">🦃</span>
                             <span class="gold-title pr-1">Thanksgiving Dog Show Ballot</span>
                         </button>
                     </h1>
                 </div>
             </div>
             
-            <div class="flex flex-wrap items-center justify-center gap-2">
-                <button x-show="view !== 'home'" @click="goHome()" class="navpill">🏠 Home</button>
-                <button @click="showScoringModal = true" class="navpill">📊 Scoring</button>
-                <template x-if="user">
-                    <nav class="flex items-center gap-1.5">
-                        <button x-show="view !== 'my'" @click="goMyBallots()" class="navpill">📋 My Ballots</button>
-                        <button x-show="view !== 'leaderboard'" @click="view = 'leaderboard'" class="navpill">🏆 Leaderboard</button>
-                        <button x-show="isAdmin && view !== 'admin'" @click="openAdmin()" class="navpill !bg-red-800/80 !border-red-400/50">🔧 Admin</button>
-                    </nav>
-                </template>
+            <div class="flex items-center gap-1 sm:gap-2">
+                <!-- Computer: plain links in order (current page hidden) -->
+                <nav class="hidden sm:flex items-center gap-1">
+                    <button x-show="view !== 'home'" @click="goHome()" class="toplink">Home</button>
+                    <button x-show="user && view !== 'my'" @click="goMyBallots()" class="toplink">My Ballots</button>
+                    <button x-show="user && view !== 'leaderboard'" @click="view = 'leaderboard'" class="toplink">Leaderboard</button>
+                    <span class="w-px h-6 bg-amber-100/30 mx-2"></span>
+                    <button @click="showScoringModal = true" class="iconbtn" title="How scoring works" aria-label="How scoring works">?</button>
+                    <button x-show="isAdmin && view !== 'admin'" @click="openAdmin()" class="admin-chip">Admin</button>
+                </nav>
+                <!-- Signed out -->
                 <template x-if="authReady && !user">
-                    <button @click="signIn()" class="bg-white hover:bg-amber-50 text-stone-800 px-3 py-1.5 rounded-lg font-semibold text-xs transition flex items-center gap-1.5 shadow-sm">
+                    <button @click="signIn()" class="ml-1 bg-white hover:bg-amber-50 text-stone-800 px-3 py-1.5 rounded-lg font-semibold text-xs transition flex items-center gap-1.5 shadow-sm whitespace-nowrap">
                         <svg width="14" height="14" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>
-                        Sign in with Google
+                        Sign in
                     </button>
                 </template>
+                <!-- Signed in: avatar with a small menu -->
                 <template x-if="user">
-                    <div class="flex items-center gap-2 bg-black/20 border border-amber-200/30 rounded-lg pl-1 pr-2 py-1">
-                        <img x-show="user.photoURL" :src="user.photoURL" alt="" class="w-6 h-6 rounded-full" referrerpolicy="no-referrer">
-                        <span class="text-xs font-semibold max-w-[8rem] truncate" x-text="(user.displayName || user.email || 'Signed in').split(' ')[0]"></span>
-                        <button @click="signOutUser()" class="text-[11px] text-amber-200 hover:text-white underline">Sign out</button>
+                    <div class="relative ml-1" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+                        <button @click="open = !open" class="avatar" :title="user.displayName || 'Account'" aria-label="Account menu">
+                            <img x-show="user.photoURL" :src="user.photoURL" alt="" class="w-full h-full rounded-full object-cover" referrerpolicy="no-referrer">
+                            <span x-show="!user.photoURL" x-text="(user.displayName || user.email || '?').charAt(0).toUpperCase()"></span>
+                        </button>
+                        <div x-show="open" x-transition.origin.top.right style="display:none" class="absolute right-0 mt-2 w-48 bg-white text-stone-800 rounded-xl shadow-xl border border-stone-200 p-1.5 z-50">
+                            <div class="px-3 py-2 text-sm font-black text-amber-900 border-b border-stone-100 truncate" x-text="user.displayName || user.email"></div>
+                            <button @click="open = false; signOutUser()" class="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-amber-50">Sign out</button>
+                        </div>
                     </div>
                 </template>
             </div>
         </div>
     </header>
+
+    <!-- Phone: app-style bottom bar (current page highlighted) -->
+    <nav class="sm:hidden fixed bottom-0 inset-x-0 z-50 bottombar flex justify-around px-1 pt-1.5" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom))">
+        <button @click="goHome()" class="bt" :class="view === 'home' && 'on'"><span class="i">🏠</span>Home</button>
+        <button x-show="user" @click="goMyBallots()" class="bt" :class="(view === 'my' || view === 'ballot') && 'on'"><span class="i">📋</span>My Ballots</button>
+        <button x-show="!user" @click="startPicking()" class="bt" :class="view === 'ballot' && 'on'"><span class="i">📋</span>Picks</button>
+        <button x-show="user" @click="view = 'leaderboard'" class="bt" :class="view === 'leaderboard' && 'on'"><span class="i">🏆</span>Leaderboard</button>
+        <button @click="showScoringModal = true" class="bt"><span class="i">📊</span>Scoring</button>
+        <button x-show="isAdmin" @click="openAdmin()" class="bt" :class="view === 'admin' && 'on'"><span class="i">🔧</span>Admin</button>
+    </nav>
 
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
@@ -241,15 +273,18 @@
             <div x-show="activeGroup === group.id" class="max-w-6xl mx-auto space-y-5 pb-28">
                 <button @click="backToGroups()" class="inline-flex items-center gap-2 bg-white border-2 border-amber-900 text-amber-900 hover:bg-amber-900 hover:text-white px-4 py-2 rounded-xl text-sm font-black shadow-sm transition">← Back to All Groups</button>
 
-                <div class="flex flex-wrap items-end justify-between gap-3">
-                    <div>
-                        <h2 class="serif-heading text-3xl sm:text-4xl text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
-                        <div class="text-xl sm:text-2xl font-black mt-1" :style="`color: ${group.color}`" x-text="group.name + ' Group'"></div>
-                        <p class="text-sm text-stone-600 mt-1">Pick <b>1 group winner</b> and <b>4 other contenders</b>.</p>
-                    </div>
-                    <div class="text-sm font-bold px-3 py-1.5 rounded-full"
-                         :class="getPicksCount(group.id) === 5 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'">
-                        <span x-text="getPicksCount(group.id) + ' / 5 picked' + (getPicksCount(group.id) < 5 ? ' · ' + (5 - getPicksCount(group.id)) + ' left' : ' ✓')"></span>
+                <!-- Group hero: the group name is the star -->
+                <div class="group-hero relative overflow-hidden rounded-3xl shadow-xl text-center text-white px-6 py-8 sm:py-12" :style="`background-color: ${group.color}`">
+                    <img class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" style="object-position: center 30%"
+                         :src="'images/photos/' + group.bannerBreed + '.jpg'" alt="" aria-hidden="true" @error="$el.style.display = 'none'">
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/10 via-black/20 to-black/45 pointer-events-none"></div>
+                    <div class="relative space-y-3">
+                        <div class="inline-block bg-white/90 text-stone-800 text-xs sm:text-sm font-bold px-3 py-1 rounded-full shadow" x-text="'Ballot – ' + ballotLabel()"></div>
+                        <h2 class="serif-heading text-5xl sm:text-7xl leading-none drop-shadow-lg" x-text="group.name + ' Group'"></h2>
+                        <p class="text-base sm:text-lg font-semibold text-white/95 drop-shadow">Pick <b>1 group winner</b> and <b>4 other contenders</b></p>
+                        <div class="inline-block text-sm font-black px-4 py-1.5 rounded-full shadow"
+                             :class="getPicksCount(group.id) === 5 ? 'bg-emerald-500 text-white' : 'bg-white text-stone-900'"
+                             x-text="getPicksCount(group.id) === 5 ? '✓ 5 of 5 picked' : getPicksCount(group.id) + ' of 5 picked · ' + (5 - getPicksCount(group.id)) + ' left'"></div>
                     </div>
                 </div>
 
@@ -286,12 +321,12 @@
                 </div>
 
                 <!-- Sticky bottom bar: always-visible Submit -->
-                <div class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-stone-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+                <div class="fixed bottom-16 sm:bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-stone-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
                     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-                        <button @click="backToGroups()" class="text-sm font-bold text-amber-900 hover:underline">← Back to All Groups</button>
+                        <button @click="backToGroups()" class="text-sm font-bold text-amber-900 hover:underline whitespace-nowrap"><span class="sm:hidden">← Groups</span><span class="hidden sm:inline">← Back to All Groups</span></button>
                         <div class="flex items-center gap-3">
                             <span class="hidden sm:inline text-sm font-semibold" :class="getPicksCount(group.id) === 5 ? 'text-emerald-700' : 'text-stone-500'" x-text="getPicksCount(group.id) + ' of 5 picked'"></span>
-                            <button x-show="!locked" @click="submitGroup(group)" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-black shadow" x-text="'Submit ' + group.name + ' picks ✓'"></button>
+                            <button x-show="!locked" @click="submitGroup(group)" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 sm:px-6 py-2.5 rounded-xl text-sm font-black shadow whitespace-nowrap"><span class="sm:hidden">Submit picks ✓</span><span class="hidden sm:inline" x-text="'Submit ' + group.name + ' picks ✓'"></span></button>
                         </div>
                     </div>
                 </div>
@@ -301,9 +336,15 @@
         <!-- BEST IN SHOW VIEW -->
         <div x-show="activeGroup === 'best-in-show'" class="max-w-4xl mx-auto space-y-5 pb-28">
             <button @click="backToGroups()" class="inline-flex items-center gap-2 bg-white border-2 border-amber-900 text-amber-900 hover:bg-amber-900 hover:text-white px-4 py-2 rounded-xl text-sm font-black shadow-sm transition">← Back to All Groups</button>
-            <div>
-                <h2 class="serif-heading text-3xl sm:text-4xl text-stone-900" x-text="'Ballot – ' + ballotLabel()"></h2>
-                <div class="text-xl sm:text-2xl font-black mt-1 text-amber-700">🏆 Best In Show</div>
+            <div class="relative overflow-hidden rounded-3xl shadow-xl text-center px-6 py-8 sm:py-12 border-4 border-amber-400 bg-gradient-to-br from-amber-950 via-orange-900 to-amber-800 text-amber-50">
+                <div class="absolute inset-0 opacity-10 text-[14rem] leading-none flex items-center justify-center select-none pointer-events-none">🏆</div>
+                <div class="relative space-y-3">
+                    <div class="inline-block bg-white/90 text-stone-800 text-xs sm:text-sm font-bold px-3 py-1 rounded-full shadow" x-text="'Ballot – ' + ballotLabel()"></div>
+                    <h2 class="gold-title text-5xl sm:text-7xl leading-none pb-1">Best in Show</h2>
+                    <div class="inline-block text-sm font-black px-4 py-1.5 rounded-full shadow"
+                         :class="ballot.bestInShow ? 'bg-emerald-500 text-white' : 'bg-white text-stone-900'"
+                         x-text="ballot.bestInShow ? '👑 ' + ballot.bestInShow : 'Pick 1 champion'"></div>
+                </div>
             </div>
             <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 space-y-6">
 
@@ -329,10 +370,10 @@
                 </div>
             </div>
             </div>
-            <div class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-stone-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+            <div class="fixed bottom-16 sm:bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-stone-200 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
                 <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-                    <button @click="backToGroups()" class="text-sm font-bold text-amber-900 hover:underline">← Back to All Groups</button>
-                    <button x-show="!locked" @click="submitGroup({ name: 'Best in Show' })" class="bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-sm font-black shadow">Submit Best in Show ✓</button>
+                    <button @click="backToGroups()" class="text-sm font-bold text-amber-900 hover:underline whitespace-nowrap"><span class="sm:hidden">← Groups</span><span class="hidden sm:inline">← Back to All Groups</span></button>
+                    <button x-show="!locked" @click="submitGroup({ name: 'Best in Show' })" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 sm:px-6 py-2.5 rounded-xl text-sm font-black shadow whitespace-nowrap"><span class="sm:hidden">Submit ✓</span><span class="hidden sm:inline">Submit Best in Show ✓</span></button>
                 </div>
             </div>
         </div>
