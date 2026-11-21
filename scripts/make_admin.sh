@@ -114,8 +114,17 @@ RS_RESP="$(api POST "https://firebaserules.googleapis.com/v1/projects/$PROJECT/r
 RULESET="$(echo "$RS_RESP" | python3 -c 'import sys,json; print(json.load(sys.stdin).get("name",""))')"
 [ -n "$RULESET" ] || { bad "Rules were rejected:"; echo "$RS_RESP"; exit 1; }
 RELEASE="projects/$PROJECT/releases/cloud.firestore"
-api PATCH "https://firebaserules.googleapis.com/v1/$RELEASE" "{\"release\":{\"name\":\"$RELEASE\",\"rulesetName\":\"$RULESET\"}}" >/dev/null
-ok "Rules published"
+REL_RESP="$(api PATCH "https://firebaserules.googleapis.com/v1/$RELEASE" "{\"release\":{\"name\":\"$RELEASE\",\"rulesetName\":\"$RULESET\"}}")"
+if ! echo "$REL_RESP" | grep -q "\"rulesetName\": *\"$RULESET\""; then
+  bad "Google didn't accept the new rules. Copy everything below and send it to Claude:"; echo "$REL_RESP"; exit 1
+fi
+LIVE="$(api GET "https://firebaserules.googleapis.com/v1/$RELEASE" | python3 -c 'import sys,json; print(json.load(sys.stdin).get("rulesetName",""))')"
+LIVE_SRC="$(api GET "https://firebaserules.googleapis.com/v1/$LIVE")"
+if echo "$LIVE_SRC" | grep -q "match /leagues/"; then
+  ok "Rules published (leagues are on)"
+else
+  bad "The live rules still don't include leagues. Copy everything above and send it to Claude."; exit 1
+fi
 
 say "2/2  Making $EMAIL an admin"
 LOOKUP="$(api POST "https://identitytoolkit.googleapis.com/v1/projects/$PROJECT/accounts:lookup" "{\"email\":[\"$EMAIL\"]}")"
