@@ -113,6 +113,7 @@
                     <button x-show="view !== 'home'" @click="goHome()" class="toplink">Home</button>
                     <button x-show="user && view !== 'my'" @click="goMyBallots()" class="toplink">My Ballots</button>
                     <button x-show="user && view !== 'leaderboard'" @click="view = 'leaderboard'" class="toplink">Leaderboard</button>
+                    <button x-show="user && view !== 'leagues'" @click="view = 'leagues'" class="toplink">Leagues</button>
                     <span class="w-px h-6 bg-amber-100/30 mx-2"></span>
                     <button @click="showScoringModal = true" class="iconbtn" title="How scoring works" aria-label="How scoring works">?</button>
                     <button x-show="isAdmin && view !== 'admin'" @click="openAdmin()" class="admin-chip">Admin</button>
@@ -147,6 +148,7 @@
         <button x-show="user" @click="goMyBallots()" class="bt" :class="(view === 'my' || view === 'ballot') && 'on'"><span class="i">📋</span>My Ballots</button>
         <button x-show="!user" @click="startPicking()" class="bt" :class="view === 'ballot' && 'on'"><span class="i">📋</span>Picks</button>
         <button x-show="user" @click="view = 'leaderboard'" class="bt" :class="view === 'leaderboard' && 'on'"><span class="i">🏆</span>Leaderboard</button>
+        <button x-show="user" @click="view = 'leagues'" class="bt" :class="view === 'leagues' && 'on'"><span class="i">👥</span>Leagues</button>
         <button @click="showScoringModal = true" class="bt"><span class="i">📊</span>Scoring</button>
         <button x-show="isAdmin" @click="openAdmin()" class="bt" :class="view === 'admin' && 'on'"><span class="i">🔧</span>Admin</button>
     </nav>
@@ -189,6 +191,7 @@
                     <div class="flex flex-col sm:flex-row gap-3 pt-1">
                         <button x-show="!locked" @click="createBallot()" class="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-3 rounded-2xl font-black shadow" x-text="myBallots.length ? '+ Add another ballot' : '+ Start your ballot'"></button>
                         <button @click="view = 'leaderboard'" class="flex-1 bg-white hover:bg-amber-50 border-2 border-amber-300 text-amber-900 px-5 py-3 rounded-2xl font-black shadow">🏆 Leaderboard</button>
+                        <button @click="view = 'leagues'" class="flex-1 bg-white hover:bg-amber-50 border-2 border-amber-300 text-amber-900 px-5 py-3 rounded-2xl font-black shadow">👥 Leagues</button>
                     </div>
                 </div>
             </div>
@@ -485,7 +488,7 @@
                     <button x-show="leaguesById[id]" @click="selectedLeague = id" class="league-tab" :class="selectedLeague === id && 'on'"
                             x-text="(leaguesById[id] && leaguesById[id].isPrivate ? '🔒 ' : '') + (leaguesById[id] ? leaguesById[id].name : '')"></button>
                 </template>
-                <button @click="selectedLeague = 'manage'" class="league-tab dashed" :class="selectedLeague === 'manage' && 'on'">＋ Join or create a league</button>
+                <button @click="view = 'leagues'" class="league-tab dashed">＋ Join or create a league</button>
             </div>
 
             <!-- Selected league: name + actions -->
@@ -500,7 +503,7 @@
                 </div>
             </div>
 
-            <div x-show="selectedLeague !== 'manage'" class="space-y-6">
+            <div class="space-y-6">
             <!-- Results so far -->
             <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
                 <template x-for="g in groups" :key="g.id">
@@ -540,27 +543,12 @@
             </div>
             </div>
 
-            <!-- Join or create a league -->
-            <div x-show="selectedLeague === 'manage'" class="space-y-6">
-                <div x-show="myLeagueIds.length" class="space-y-3">
-                    <h3 class="serif-heading text-2xl text-stone-900">Your leagues</h3>
-                    <template x-for="id in myLeagueIds" :key="'mine-' + id">
-                        <div x-show="leaguesById[id]" class="flex flex-wrap items-center gap-3 bg-white rounded-2xl border border-stone-200 shadow-sm px-4 py-3">
-                            <div class="flex-1 min-w-[12rem]">
-                                <div class="font-black text-lg text-stone-900" x-text="(leaguesById[id] && leaguesById[id].isPrivate ? '🔒 ' : '🌐 ') + (leaguesById[id] ? leaguesById[id].name : '')"></div>
-                                <div class="text-xs text-stone-500" x-text="leagueBallotsLabel(id)"></div>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                <button @click="selectedLeague = id" class="small-btn">View</button>
-                                <button x-show="!locked" @click="openLeagueModal(id)" class="small-btn">Choose ballots</button>
-                                <button @click="copyShareLink(id)" class="small-btn">🔗 Share</button>
-                                <button x-show="isLeagueOwner(id) || isAdmin" @click="deleteLeague(id)" class="small-btn text-red-700">Delete</button>
-                                <button x-show="!isLeagueOwner(id)" @click="leaveLeague(id)" class="small-btn text-red-700">Leave</button>
-                            </div>
-                        </div>
-                    </template>
-                </div>
+        </div>
 
+        <!-- ============================ LEAGUES ============================ -->
+        <div x-show="view === 'leagues'" class="max-w-5xl mx-auto space-y-6" style="display:none">
+            <h2 class="serif-heading text-4xl text-stone-900">👥 Leagues</h2>
+            <div class="space-y-6">
                 <div class="grid md:grid-cols-2 gap-5">
                     <form @submit.prevent="createLeague()" class="bg-white rounded-2xl border border-stone-200 shadow-sm p-5 space-y-3">
                         <h3 class="serif-heading text-2xl text-stone-900">Start a league</h3>
@@ -589,6 +577,25 @@
                         <p class="text-xs text-stone-500">Password leagues: ask the organizer for their share link.</p>
                     </div>
                 </div>
+                <div x-show="myLeagueIds.length" class="space-y-3">
+                    <h3 class="serif-heading text-2xl text-stone-900">Your leagues</h3>
+                    <template x-for="id in myLeagueIds" :key="'mine-' + id">
+                        <div x-show="leaguesById[id]" class="flex flex-wrap items-center gap-3 bg-white rounded-2xl border border-stone-200 shadow-sm px-4 py-3">
+                            <div class="flex-1 min-w-[12rem]">
+                                <div class="font-black text-lg text-stone-900" x-text="(leaguesById[id] && leaguesById[id].isPrivate ? '🔒 ' : '🌐 ') + (leaguesById[id] ? leaguesById[id].name : '')"></div>
+                                <div class="text-xs text-stone-500" x-text="leagueBallotsLabel(id)"></div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button @click="selectedLeague = id; view = 'leaderboard'" class="small-btn">Standings</button>
+                                <button x-show="!locked" @click="openLeagueModal(id)" class="small-btn">Choose ballots</button>
+                                <button @click="copyShareLink(id)" class="small-btn">🔗 Share</button>
+                                <button x-show="isLeagueOwner(id) || isAdmin" @click="deleteLeague(id)" class="small-btn text-red-700">Delete</button>
+                                <button x-show="!isLeagueOwner(id)" @click="leaveLeague(id)" class="small-btn text-red-700">Leave</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
             </div>
         </div>
 
@@ -1063,7 +1070,7 @@
                         ];
                     }
                     this.myLeagueIds = ids;
-                    if (this.selectedLeague !== 'all' && this.selectedLeague !== 'manage' && !ids.includes(this.selectedLeague)) this.selectedLeague = 'all';
+                    if (this.selectedLeague !== 'all' && !ids.includes(this.selectedLeague)) this.selectedLeague = 'all';
                 },
 
                 isLeagueOwner(id) { const l = this.leaguesById[id]; return !!(l && this.user && l.ownerUid === this.user.uid); },
@@ -1193,7 +1200,7 @@
 
                 leaderboard() {
                     const sel = this.selectedLeague, ids = this.leagueEntries[sel];
-                    const pool = (sel !== 'all' && sel !== 'manage' && ids) ? this.allBallots.filter(b => ids.includes(b.id)) : this.allBallots;
+                    const pool = (sel !== 'all' && ids) ? this.allBallots.filter(b => ids.includes(b.id)) : this.allBallots;
                     const rows = pool.map(b => ({ ...b, score: this.scoreBallot(b) }))
                         .sort((x, y) => y.score.total - x.score.total || (x.name || '').localeCompare(y.name || ''));
                     let rank = 0, prev = null;
