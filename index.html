@@ -59,7 +59,7 @@
 </head>
 <body class="bg-amber-50/40 text-stone-900 min-h-screen flex flex-col font-sans" x-data="dogShowApp()">
     <div class="home-bg" :class="view === 'home' ? 'strong' : ''" x-show="view === 'home' || (view === 'ballot' && activeGroup === null)" x-transition.opacity.duration.500ms
-         :style="`background-image: url('images/home/${homePhoto}.jpg')`" aria-hidden="true"></div>
+         :style="`background-image: url('images/home/${homePhoto}.jpg'); background-position: ${homePhotoFocus[homePhoto] || 'center'}`" aria-hidden="true"></div>
 
     <!-- Header -->
     <header class="harvest-header text-amber-50 shadow-lg border-b-4 border-amber-500/60">
@@ -545,7 +545,8 @@
                 auth: null,
                 authReady: false,
                 db: null,
-                homePhotos: ['show-ring', 'city-hall'],   // photos in images/home; shown in turn, one per visit
+                homePhotos: ['show-ring', 'goldens-grooming', 'corgi', 'boxer-ribbon', 'city-hall'],
+                homePhotoFocus: { 'corgi': 'center 18%', 'boxer-ribbon': 'center 30%', 'goldens-grooming': 'center 40%' },   // keep faces/dogs in view   // photos in images/home; shown in turn, one per visit
                 homePhoto: null,
                 view: 'home',            // home | ballot | my | leaderboard | admin
                 isAdmin: false,
