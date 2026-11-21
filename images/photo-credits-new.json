@@ -88,5 +88,50 @@
   "page": "https://commons.wikimedia.org/wiki/File:Harrier_Hound_-Pedigree_Harrier.jpg",
   "file": "File:Harrier_Hound_-Pedigree_Harrier.jpg",
   "breed": "Harrier"
+ },
+ "kuvasz": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Kuvasz_named_Kan.jpg/500px-Kuvasz_named_Kan.jpg",
+  "author": "Erdelyi kopo",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Kuvasz_named_Kan.jpg",
+  "file": "File:Kuvasz_named_Kan.jpg",
+  "breed": "Kuvasz"
+ },
+ "nederlandse-kooikerhondje": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Kooiker03.jpg/500px-Kooiker03.jpg",
+  "author": "",
+  "license": "CC BY 2.5",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+  "page": "https://commons.wikimedia.org/wiki/File:Kooiker03.jpg",
+  "file": "File:Kooiker03.jpg",
+  "breed": "Nederlandse Kooikerhondje"
+ },
+ "norwegian-elkhound": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Elkhound2020_%28cropped%29.jpg/500px-Elkhound2020_%28cropped%29.jpg",
+  "author": "HawkNightingale175",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Elkhound2020_(cropped).jpg",
+  "file": "File:Elkhound2020_(cropped).jpg",
+  "breed": "Norwegian Elkhound"
+ },
+ "plott-hound": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Plotthund_Kynnagardens_Ziggy_Lundamo.JPG/500px-Plotthund_Kynnagardens_Ziggy_Lundamo.JPG",
+  "author": "Plotthund",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Plotthund_Kynnagardens_Ziggy_Lundamo.JPG",
+  "file": "File:Plotthund_Kynnagardens_Ziggy_Lundamo.JPG",
+  "breed": "Plott Hound"
+ },
+ "wire-fox-terrier": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Elias1%C4%8Derven2006.jpg/500px-Elias1%C4%8Derven2006.jpg",
+  "author": "Simona Nováková, owner",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Elias1%C4%8Derven2006.jpg",
+  "file": "File:Elias1červen2006.jpg",
+  "breed": "Wire Fox Terrier"
  }
 }
