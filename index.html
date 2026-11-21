@@ -1231,7 +1231,7 @@
                     if (i.isPrivate) t += (i.includePw && i.password) ? `\n(The link fills in the password for you: ${i.password})` : `\n(Ask me for the password.)`;
                     return t;
                 },
-                inviteSubject() { return `Join "${this.invite.name}" – Thanksgiving Dog Show Ballot`; },
+                inviteSubject() { return `Join “${this.invite.name}” – Thanksgiving Dog Show Ballot`; },
                 inviteMailto() {
                     const to = (this.invite.to || '').split(/[\s,;]+/).filter(Boolean).map(encodeURIComponent).join(',');
                     return `mailto:${to}?subject=${encodeURIComponent(this.inviteSubject())}&body=${encodeURIComponent(this.inviteMessage())}`;
