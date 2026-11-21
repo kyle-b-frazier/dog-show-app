@@ -15,21 +15,38 @@ UA = "dog-show-app-photo-fetch/1.0 (GitHub Actions; hobby project)"
 SRC = json.load(open("scripts/photo-sources.json"))
 
 
-def get(url, tries=3):
-    for i in range(tries):
+PACE = {"wait": 8}  # seconds between downloads; grows after refusals, shrinks after successes
+
+
+def get(url, tries=1):
+    """One polite attempt. On HTTP 429 (rate limited) back off and report failure; the photo is retried next run."""
+    time.sleep(PACE["wait"])
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        data = urllib.request.urlopen(req, timeout=60).read()
+        PACE["wait"] = max(8, PACE["wait"] * 0.8)
+        return data
+    except urllib.error.HTTPError as e:
+        if e.code == 429:
+            PACE["wait"] = min(120, PACE["wait"] * 1.6 + 10)
+            print(f"  429 rate limited; next wait {PACE['wait']:.0f}s", flush=True)
+        else:
+            print(f"  HTTP {e.code}", url, flush=True)
+        return None
+    except Exception as e:
+        print("  error", e, flush=True)
+        return None
+
+
+def api_get(url):
+    """Wikipedia API calls aren't the bottleneck; retry these a few times."""
+    for i in range(4):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": UA})
             return urllib.request.urlopen(req, timeout=60).read()
-        except urllib.error.HTTPError as e:
-            if e.code == 404:
-                print("  404", url, flush=True)
-                return None
-            wait = min(int(e.headers.get("Retry-After") or 10 * (i + 1)), 30)
-            print(f"  HTTP {e.code}, waiting {wait}s", flush=True)
-            time.sleep(wait + 2)
-        except Exception as e:  # network hiccup
-            print("  error", e, flush=True)
-            time.sleep(10)
+        except Exception as e:
+            print("  api error", e, flush=True)
+            time.sleep(15 * (i + 1))
     return None
 
 
@@ -58,7 +75,7 @@ def fetch_resized(url, width, path):
 
 def api(params):
     params = dict(params, format="json", formatversion=2)
-    raw = get("https://en.wikipedia.org/w/api.php?" + urllib.parse.urlencode(params))
+    raw = api_get("https://en.wikipedia.org/w/api.php?" + urllib.parse.urlencode(params))
     return json.loads(raw) if raw else {}
 
 
@@ -106,7 +123,6 @@ for slug, info in SRC.get("photos", {}).items():
     else:
         failed.append(slug)
         print("FAILED", slug, info["url"], flush=True)
-    time.sleep(1)
 
 os.makedirs("images/banners", exist_ok=True)
 for group, title in SRC.get("banners", {}).items():
@@ -130,7 +146,7 @@ for page in SRC.get("candidatePages", []):
     files = [i["title"] for p in d.get("query", {}).get("pages", []) for i in p.get("images", [])
              if i["title"].lower().endswith((".jpg", ".jpeg"))]
     manifest = {}
-    for n, f in enumerate(files[:40]):
+    for n, f in enumerate(files[:8]):
         d = api({"action": "query", "titles": f, "prop": "imageinfo", "iiprop": "url|size"})
         ii = (d.get("query", {}).get("pages", [{}])[0].get("imageinfo") or [None])[0]
         if not ii or ii.get("size", 0) > 25_000_000:
