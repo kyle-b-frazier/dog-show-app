@@ -133,5 +133,41 @@
   "page": "https://commons.wikimedia.org/wiki/File:Elias1%C4%8Derven2006.jpg",
   "file": "File:Elias1červen2006.jpg",
   "breed": "Wire Fox Terrier"
+ },
+ "bull-terrier-colored": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Bull_Terrier_2.JPG/500px-Bull_Terrier_2.JPG",
+  "author": "Томасина",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Bull_Terrier_2.JPG",
+  "file": "File:Bull Terrier 2.JPG",
+  "breed": "Bull Terrier (Colored)"
+ },
+ "chihuahua-smooth-coat": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Chihuahuasmoothcoat.jpg/500px-Chihuahuasmoothcoat.jpg",
+  "author": "Tatiana Borisova",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Chihuahuasmoothcoat.jpg",
+  "file": "File:Chihuahuasmoothcoat.jpg",
+  "breed": "Chihuahua (Smooth Coat)"
+ },
+ "english-toy-spaniel-b-pc": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/King_Charles_Spaniel_Blenheim_1.jpg/500px-King_Charles_Spaniel_Blenheim_1.jpg",
+  "author": "Canarian",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:King_Charles_Spaniel_Blenheim_1.jpg",
+  "file": "File:King Charles Spaniel Blenheim 1.jpg",
+  "breed": "English Toy Spaniel (B&PC)"
+ },
+ "cocker-spaniel-ascob": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/AmericanCockerSpaniel_wb.jpg/500px-AmericanCockerSpaniel_wb.jpg",
+  "author": "",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:AmericanCockerSpaniel_wb.jpg",
+  "file": "File:AmericanCockerSpaniel wb.jpg",
+  "breed": "Cocker Spaniel (ASCOB)"
  }
 }
