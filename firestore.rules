@@ -9,10 +9,16 @@ service cloud.firestore {
       return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
-    // The admin locks ballots on show day; after that, nobody can change picks.
+    // Ballots lock when the admin locks them, or automatically at results/current.autoLockAt
+    // (milliseconds; default Thanksgiving 2026, noon Eastern; null turns the automatic lock off).
     function locked() {
       return exists(/databases/$(database)/documents/results/current)
-        && get(/databases/$(database)/documents/results/current).data.get('locked', false) == true;
+        ? lockedBy(get(/databases/$(database)/documents/results/current).data)
+        : request.time.toMillis() >= 1795712400000;
+    }
+    function lockedBy(r) {
+      return r.get('locked', false) == true
+        || (r.get('autoLockAt', 1795712400000) != null && request.time.toMillis() >= r.get('autoLockAt', 1795712400000));
     }
 
     function validBallot() {
