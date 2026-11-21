@@ -545,7 +545,7 @@
                 auth: null,
                 authReady: false,
                 db: null,
-                homePhotos: ['show-ring', 'city-hall'],   // photos in images/home; one is picked per visit
+                homePhotos: ['show-ring', 'city-hall'],   // photos in images/home; shown in turn, one per visit
                 homePhoto: null,
                 view: 'home',            // home | ballot | my | leaderboard | admin
                 isAdmin: false,
@@ -585,7 +585,12 @@
                 },
 
                 async init() {
-                    this.homePhoto = this.homePhotos[Math.floor(Math.random() * this.homePhotos.length)];
+                    // Next photo in the list each visit (never the same one twice in a row).
+                    try {
+                        const last = this.homePhotos.indexOf(localStorage.getItem('dogShowHomePhoto'));
+                        this.homePhoto = this.homePhotos[(last + 1) % this.homePhotos.length];
+                        localStorage.setItem('dogShowHomePhoto', this.homePhoto);
+                    } catch (e) { this.homePhoto = this.homePhotos[Math.floor(Math.random() * this.homePhotos.length)]; }
                     fetch('images/photos.json').then(r => r.json()).then(j => { this.photos = j; }).catch(e => console.warn('No photo list', e));
                     // Before sign-in, picks are kept in this browser.
                     try { const saved = JSON.parse(localStorage.getItem('dogShowBallot') || 'null'); if (saved && saved.picks) this.ballot = this.fullBallot(saved); } catch (e) {}
