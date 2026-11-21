@@ -104,6 +104,42 @@ def resolve(info):
             "licenseUrl": strip(md.get("LicenseUrl", {}).get("value")), "page": ii.get("descriptionurl"), "file": title}
 
 
+def commons(params):
+    params = dict(params, format="json", formatversion=2)
+    raw = api_get("https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode(params))
+    return json.loads(raw) if raw else {}
+
+
+# candidateSearches: folder name -> Commons search text. Saves up to 6 small (330px, a standard
+# thumbnail size) search results per folder to photo-candidates/<folder>/ for manual review.
+for name, query in SRC.get("candidateSearches", {}).items():
+    folder = "photo-candidates/" + name
+    if os.path.isdir(folder):
+        continue
+    d = commons({"action": "query", "generator": "search", "gsrsearch": query + " filetype:bitmap", "gsrnamespace": 6,
+                 "gsrlimit": 12, "prop": "imageinfo", "iiprop": "url|size", "iiurlwidth": 330})
+    pages = sorted(d.get("query", {}).get("pages", []), key=lambda p: p.get("index", 99))
+    os.makedirs(folder, exist_ok=True)
+    manifest = {}
+    for p in pages:
+        ii = (p.get("imageinfo") or [None])[0]
+        if not ii or not p["title"].lower().endswith((".jpg", ".jpeg")) or not ii.get("thumburl"):
+            continue
+        data = get(ii["thumburl"])
+        if not data:
+            continue
+        fn = f"{len(manifest):02d}.jpg"
+        try:
+            Image.open(io.BytesIO(data)).convert("RGB").save(f"{folder}/{fn}", "JPEG", quality=80)
+            manifest[fn] = p["title"]
+        except Exception as e:
+            print("  bad image", e, flush=True)
+        if len(manifest) >= 6:
+            break
+    json.dump(manifest, open(f"{folder}/files.json", "w"), indent=1, ensure_ascii=False)
+    print("search candidates", name, len(manifest), flush=True)
+
+
 resolved = json.load(open("images/photo-credits-new.json")) if os.path.exists("images/photo-credits-new.json") else {}
 for slug, info in SRC.get("photos", {}).items():
     path = f"images/photos/{slug}.jpg"

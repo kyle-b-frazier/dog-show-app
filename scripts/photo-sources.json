@@ -850,5 +850,10 @@
   "Bloodhound",
   "Dachshund",
   "Akita (dog)"
- ]
+ ],
+ "candidateSearches": {
+  "bull-terrier-colored": "brindle bull terrier",
+  "chihuahua-smooth-coat": "smooth coat chihuahua",
+  "english-toy-spaniel-b-pc": "blenheim king charles spaniel"
+ }
 }

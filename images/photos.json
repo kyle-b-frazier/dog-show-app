@@ -1606,5 +1606,13 @@
   "license": "CC BY-SA 3.0",
   "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
   "page": "https://commons.wikimedia.org/wiki/File:Finnish_Spitz_600.jpg"
+ },
+ "wire-fox-terrier": {
+  "breed": "Wire Fox Terrier",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Elias1%C4%8Derven2006.jpg/500px-Elias1%C4%8Derven2006.jpg",
+  "author": "Simona Nováková, owner",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Elias1%C4%8Derven2006.jpg"
  }
 }
