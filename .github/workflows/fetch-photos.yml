@@ -5,12 +5,14 @@ on:
     branches: ["claude/**"]
     paths: ["scripts/photo-sources.json", "scripts/fetch_photos.py", ".github/workflows/fetch-photos.yml"]
   workflow_dispatch:
+  schedule:
+    - cron: "23 * * * *"   # hourly; Wikimedia allows only a few photos per hour, so this finishes over about a day
 
 permissions:
   contents: write
 
 concurrency:
-  group: fetch-photos-${{ github.ref }}
+  group: fetch-photos
   cancel-in-progress: false
 
 jobs:
@@ -20,7 +22,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}   # latest branch tip, so photos from earlier runs are kept and skipped
+          # Always work on the review branch (scheduled runs start from main); photos go live only after review.
+          ref: claude/exciting-shannon-aw3cb3
       - name: Install Pillow
         run: pip install --quiet pillow
       - name: Download photos from Wikimedia (stops after 50 min; progress is saved)
@@ -35,5 +38,5 @@ jobs:
           done
           if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
           git commit -m "Fetch dog photos from Wikimedia"
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git pull --rebase origin claude/exciting-shannon-aw3cb3
+          git push origin HEAD:claude/exciting-shannon-aw3cb3

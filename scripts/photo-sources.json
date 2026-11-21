@@ -1,5 +1,9 @@
 {
  "photos": {
+  "german-shepherd-dog": {
+   "breed": "German Shepherd Dog",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/d/d0/German_Shepherd_-_DSC_0346_%2810096362833%29.jpg"
+  },
   "barbet": {
    "breed": "Barbet",
    "url": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Chien_de_race_Barbet.jpg"
@@ -675,10 +679,6 @@
   "finnish-lapphund": {
    "breed": "Finnish Lapphund",
    "url": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Finnish_Lapphund_Glenchess_Revontuli.jpg"
-  },
-  "german-shepherd-dog": {
-   "breed": "German Shepherd Dog",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/d/d0/German_Shepherd_-_DSC_0346_%2810096362833%29.jpg"
   },
   "icelandic-sheepdog": {
    "breed": "Icelandic Sheepdog",

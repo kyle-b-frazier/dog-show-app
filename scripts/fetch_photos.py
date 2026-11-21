@@ -146,7 +146,7 @@ for page in SRC.get("candidatePages", []):
     files = [i["title"] for p in d.get("query", {}).get("pages", []) for i in p.get("images", [])
              if i["title"].lower().endswith((".jpg", ".jpeg"))]
     manifest = {}
-    for n, f in enumerate(files[:8]):
+    for n, f in enumerate(files[:4]):
         d = api({"action": "query", "titles": f, "prop": "imageinfo", "iiprop": "url|size"})
         ii = (d.get("query", {}).get("pages", [{}])[0].get("imageinfo") or [None])[0]
         if not ii or ii.get("size", 0) > 25_000_000:
