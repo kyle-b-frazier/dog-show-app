@@ -1726,5 +1726,13 @@
   "license": "CC BY-SA 3.0",
   "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
   "page": "https://commons.wikimedia.org/wiki/File:SwedishVallhundAgility_wb.jpg"
+ },
+ "grand-basset-griffon-vendeen": {
+  "breed": "Grand Basset Griffon Vendéen",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/GrandBassettGriffonVend%C3%A9en.jpg/500px-GrandBassettGriffonVend%C3%A9en.jpg",
+  "author": "Walbharri",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:GrandBassettGriffonVend%C3%A9en.jpg"
  }
 }
