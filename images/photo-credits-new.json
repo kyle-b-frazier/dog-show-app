@@ -304,5 +304,14 @@
   "page": "https://commons.wikimedia.org/wiki/File:Lhasa-apso-rolly.jpg",
   "file": "File:Lhasa-apso-rolly.jpg",
   "breed": "Lhasa Apso"
+ },
+ "shih-tzu": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Shih_Tzu_lion_dog.jpg/500px-Shih_Tzu_lion_dog.jpg",
+  "author": "Marcelo RosaMelo",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Shih_Tzu_lion_dog.jpg",
+  "file": "File:Shih Tzu lion dog.jpg",
+  "breed": "Shih Tzu"
  }
 }
