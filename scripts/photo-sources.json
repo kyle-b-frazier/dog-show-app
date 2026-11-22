@@ -1,5 +1,25 @@
 {
  "photos": {
+  "american-english-coonhound": {
+   "breed": "American English Coonhound",
+   "file": "File:Maddie (8416820450).jpg"
+  },
+  "affenpinscher": {
+   "breed": "Affenpinscher",
+   "file": "File:2013 Westminster Kennel Club Dog Show- Affenpinscher Joey aka GCH Banana Joe V Tani Kazari (8471258772).jpg"
+  },
+  "havanese": {
+   "breed": "Havanese",
+   "file": "File:A havanese dog.jpg"
+  },
+  "lowchen": {
+   "breed": "Löwchen",
+   "file": "File:Lowchen at 2019 American Kennel Club National Championship.jpg"
+  },
+  "lhasa-apso": {
+   "breed": "Lhasa Apso",
+   "file": "File:Lhasa-apso-rolly.jpg"
+  },
   "dachshund-wirehaired": {
    "breed": "Dachshund (Wirehaired)",
    "file": "File:Wirehaired Dachshund.jpg"
@@ -199,10 +219,6 @@
   "afghan-hound": {
    "breed": "Afghan Hound",
    "url": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Afghan_dog_-_cropped.jpg"
-  },
-  "american-english-coonhound": {
-   "breed": "American English Coonhound",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/English_Coonhound.jpg"
   },
   "american-foxhound": {
    "breed": "American Foxhound",
@@ -544,10 +560,6 @@
    "breed": "English Toy Spaniel (KC&R)",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/King_Charles_Spaniel_200.jpg/500px-King_Charles_Spaniel_200.jpg"
   },
-  "havanese": {
-   "breed": "Havanese",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/A_Havanese_judging.jpg/500px-A_Havanese_judging.jpg"
-  },
   "italian-greyhound": {
    "breed": "Italian Greyhound",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Italian_Greyhound_standing_gray_%28cropped%29.jpg/500px-Italian_Greyhound_standing_gray_%28cropped%29.jpg"
@@ -639,14 +651,6 @@
   "keeshond": {
    "breed": "Keeshond",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Keeshond_Majic_standing_cropped.jpg/500px-Keeshond_Majic_standing_cropped.jpg"
-  },
-  "lhasa-apso": {
-   "breed": "Lhasa Apso",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/8/87/Aishia.jpg"
-  },
-  "lowchen": {
-   "breed": "Löwchen",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Adult_Lowchen_Gaiting.jpg/500px-Adult_Lowchen_Gaiting.jpg"
   },
   "norwegian-lundehund": {
    "breed": "Norwegian Lundehund",
@@ -828,10 +832,6 @@
    "breed": "West Highland White Terrier",
    "url": "https://upload.wikimedia.org/wikipedia/commons/2/2c/West_Highland_White_Terrier_Krakow.jpg"
   },
-  "affenpinscher": {
-   "breed": "Affenpinscher",
-   "article": "Affenpinscher"
-  },
   "american-water-spaniel": {
    "breed": "American Water Spaniel",
    "article": "American Water Spaniel"
@@ -871,11 +871,6 @@
  },
  "candidatePages": [],
  "candidateSearches": {
-  "american-english-coonhound": "american english coonhound",
-  "affenpinscher": "affenpinscher dog show",
-  "havanese": "havanese dog",
-  "shih-tzu": "shih tzu dog face",
-  "lowchen": "lowchen dog",
-  "lhasa-apso": "lhasa apso dog"
+  "shih-tzu-2": "shih tzu"
  }
 }
