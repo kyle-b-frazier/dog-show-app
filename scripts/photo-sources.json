@@ -870,5 +870,12 @@
   }
  },
  "candidatePages": [],
- "candidateSearches": {}
+ "candidateSearches": {
+  "american-english-coonhound": "american english coonhound",
+  "affenpinscher": "affenpinscher dog show",
+  "havanese": "havanese dog",
+  "shih-tzu": "shih tzu dog face",
+  "lowchen": "lowchen dog",
+  "lhasa-apso": "lhasa apso dog"
+ }
 }
