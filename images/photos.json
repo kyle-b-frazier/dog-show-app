@@ -327,14 +327,6 @@
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
   "page": "https://commons.wikimedia.org/wiki/File:Jamnik_d%C5%82ugow%C5%82osy_standardowy_LM_671.jpg"
  },
- "dachshund-wirehaired": {
-  "breed": "Dachshund (Wirehaired)",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Wirehaired_Dachshund.jpg/500px-Wirehaired_Dachshund.jpg",
-  "author": "Janne Seppänen",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Wirehaired_Dachshund.jpg"
- },
  "english-foxhound": {
   "breed": "English Foxhound",
   "url": "https://upload.wikimedia.org/wikipedia/commons/4/44/English_Foxhound_portrait.jpg",
@@ -1247,14 +1239,6 @@
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
   "page": "https://commons.wikimedia.org/wiki/File:Malinois_Shepherd3.JPG"
  },
- "belgian-sheepdog": {
-  "breed": "Belgian Sheepdog",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Groenendael.jpg/500px-Groenendael.jpg",
-  "author": "Acemetrical",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Groenendael.jpg"
- },
  "belgian-tervuren": {
   "breed": "Belgian Tervuren",
   "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Tervuren.jpg",
@@ -1455,14 +1439,6 @@
   "licenseUrl": "",
   "page": "https://commons.wikimedia.org/wiki/File:Perro_agua_(cropped).jpg"
  },
- "swedish-vallhund": {
-  "breed": "Swedish Vallhund",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/V%C3%A4stg%C3%B6taspets_hane_5_%C3%A5r.jpg/500px-V%C3%A4stg%C3%B6taspets_hane_5_%C3%A5r.jpg",
-  "author": "TS Eriksson",
-  "license": "CC BY 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
-  "page": "https://commons.wikimedia.org/wiki/File:V%C3%A4stg%C3%B6taspets_hane_5_%C3%A5r.jpg"
- },
  "irish-red-and-white-setter": {
   "breed": "Irish Red and White Setter",
   "url": "https://upload.wikimedia.org/wikipedia/commons/0/04/Irish_Red_And_White_Setter_2005.jpg",
@@ -1494,14 +1470,6 @@
   "license": "CC BY-SA 3.0",
   "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
   "page": "https://commons.wikimedia.org/wiki/File:Chihuahua1_bvdb.jpg"
- },
- "manchester-terrier-toy": {
-  "breed": "Manchester Terrier (Toy)",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Toy_manchesters_lg.jpg/500px-Toy_manchesters_lg.jpg",
-  "author": "Kenneth R. Pergrem (krp)",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:Toy_manchesters_lg.jpg"
  },
  "poodle-toy": {
   "breed": "Poodle (Toy)",
@@ -1702,5 +1670,61 @@
   "license": "CC BY-SA 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
   "page": "https://commons.wikimedia.org/wiki/File:Dachshund_mini_smooth.JPG"
+ },
+ "dachshund-wirehaired": {
+  "breed": "Dachshund (Wirehaired)",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Wirehaired_Dachshund.jpg/500px-Wirehaired_Dachshund.jpg",
+  "author": "Janne Seppänen",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Wirehaired_Dachshund.jpg"
+ },
+ "harrier": {
+  "breed": "Harrier",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Harrier_tricolour.jpg/500px-Harrier_tricolour.jpg",
+  "author": "Smcmilla (edited by Pharaoh Hound)",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Harrier_tricolour.jpg"
+ },
+ "plott-hound": {
+  "breed": "Plott Hound",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Plott_Hound_at_a_show.jpg/500px-Plott_Hound_at_a_show.jpg",
+  "author": "Canarian",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Plott_Hound_at_a_show.jpg"
+ },
+ "manchester-terrier-toy": {
+  "breed": "Manchester Terrier (Toy)",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/English_Toy_Terrier_600_01.jpg/500px-English_Toy_Terrier_600_01.jpg",
+  "author": "sannse (contrast by Pleple2000)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:English_Toy_Terrier_600_01.jpg"
+ },
+ "belgian-laekenois": {
+  "breed": "Belgian Laekenois",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Laekenois_Shepherd.JPG/500px-Laekenois_Shepherd.JPG",
+  "author": "Canarian",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Laekenois_Shepherd.JPG"
+ },
+ "belgian-sheepdog": {
+  "breed": "Belgian Sheepdog",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/c/c4/European_Groenendael_male.jpg",
+  "author": "Nachoferreyra",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:European_Groenendael_male.jpg"
+ },
+ "swedish-vallhund": {
+  "breed": "Swedish Vallhund",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/6/68/SwedishVallhundAgility_wb.jpg",
+  "author": "Wikimedia Commons contributor (see source)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:SwedishVallhundAgility_wb.jpg"
  }
 }
