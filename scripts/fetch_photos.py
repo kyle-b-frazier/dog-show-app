@@ -125,6 +125,35 @@ def commons(params):
     return json.loads(raw) if raw else {}
 
 
+# upgrades: slug -> {file, have}. Fetch a bigger copy (standard 960px thumbnail, else the original)
+# into photo-upgrades/<slug>.jpg for review; skipped once saved or when Wikimedia has nothing bigger.
+os.makedirs("photo-upgrades", exist_ok=True)
+for slug, u in SRC.get("upgrades", {}).items():
+    out = f"photo-upgrades/{slug}.jpg"
+    if os.path.exists(out) or os.path.exists(out + ".none"):
+        continue
+    d = commons({"action": "query", "titles": u["file"], "prop": "imageinfo", "iiprop": "url|size", "iiurlwidth": 960})
+    ii = (d.get("query", {}).get("pages", [{}])[0].get("imageinfo") or [None])[0]
+    if not ii:
+        print("upgrade: no info", slug, flush=True)
+        continue
+    if min(ii.get("width", 0), 960) <= u["have"] + 40:
+        open(out + ".none", "w").write(str(ii.get("width")))
+        print("upgrade: original too small", slug, ii.get("width"), flush=True)
+        continue
+    data = get(ii.get("thumburl") or ii["url"])
+    if not data:
+        continue
+    try:
+        im = Image.open(io.BytesIO(data)).convert("RGB")
+        if im.width > 640:
+            im = im.resize((640, round(im.height * 640 / im.width)), Image.LANCZOS)
+        im.save(out, "JPEG", quality=82, optimize=True, progressive=True)
+        print("upgrade ok", slug, im.size, flush=True)
+    except Exception as e:
+        print("  bad image", e, flush=True)
+
+
 # candidateSearches: folder name -> Commons search text. Saves up to 6 small (330px, a standard
 # thumbnail size) search results per folder to photo-candidates/<folder>/ for manual review.
 for name, query in SRC.get("candidateSearches", {}).items():

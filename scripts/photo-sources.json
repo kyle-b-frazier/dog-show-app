@@ -870,5 +870,139 @@
   }
  },
  "candidatePages": [],
- "candidateSearches": {}
+ "candidateSearches": {},
+ "upgrades": {
+  "afghan-hound": {
+   "file": "File:Afghan dog - cropped.jpg",
+   "have": 397
+  },
+  "airedale-terrier": {
+   "file": "File:Airedale Terrier.jpg",
+   "have": 250
+  },
+  "akita": {
+   "file": "File:Akita Americano v3.jpg",
+   "have": 330
+  },
+  "american-english-coonhound": {
+   "file": "File:Maddie (8416820450).jpg",
+   "have": 330
+  },
+  "american-foxhound": {
+   "file": "File:AmericanFoxhound2.jpg",
+   "have": 415
+  },
+  "barbet": {
+   "file": "File:Chien de race Barbet.jpg",
+   "have": 312
+  },
+  "beagle-15-inches": {
+   "file": "File:Beagle 15 inch - Ch Tashtins Lookin For Trouble aka Miss P - Best in Show 03 (15984539793).jpg",
+   "have": 330
+  },
+  "belgian-laekenois": {
+   "file": "File:Laekenois Shepherd.JPG",
+   "have": 330
+  },
+  "belgian-sheepdog": {
+   "file": "File:European Groenendael male.jpg",
+   "have": 403
+  },
+  "brussels-griffon": {
+   "file": "File:Monkey Bizniz Drama Queen.jpg",
+   "have": 300
+  },
+  "bull-terrier-colored": {
+   "file": "File:Bull Terrier 2.JPG",
+   "have": 330
+  },
+  "cesky-terrier": {
+   "file": "File:Grupp 3, CESKYTERRIER, DK UCH NO JV-14 NO UCH NO V-15 NORD JV-14 NORD UCH SE UCH Sellandafjalls Teo (24310213205).jpg",
+   "have": 330
+  },
+  "chihuahua-long-coat": {
+   "file": "File:Chihuahua1 bvdb.jpg",
+   "have": 370
+  },
+  "chihuahua-smooth-coat": {
+   "file": "File:Chihuahuasmoothcoat.jpg",
+   "have": 330
+  },
+  "chinese-shar-pei": {
+   "file": "File:Adult sharpei.jpg",
+   "have": 300
+  },
+  "chinook": {
+   "file": "File:Mountan Laurel Ajax the Chinook dog.jpg",
+   "have": 250
+  },
+  "cocker-spaniel-black": {
+   "file": "File:Black cocker spaniel at Westminster Dog Show (24962553922).jpg",
+   "have": 330
+  },
+  "cocker-spaniel-parti-color": {
+   "file": "File:Parti-Color Cocker Spaniel-16-GCH-Gems Hot Little Liar CGC 03 (15962658254).jpg",
+   "have": 330
+  },
+  "dachshund-smooth": {
+   "file": "File:Dachshund mini smooth.JPG",
+   "have": 330
+  },
+  "dachshund-wirehaired": {
+   "file": "File:Wirehaired Dachshund.jpg",
+   "have": 330
+  },
+  "english-toy-spaniel-b-pc": {
+   "file": "File:King Charles Spaniel Blenheim 1.jpg",
+   "have": 330
+  },
+  "german-pinscher": {
+   "file": "File:Bvdb-duitse pincher.jpg",
+   "have": 398
+  },
+  "harrier": {
+   "file": "File:Harrier tricolour.jpg",
+   "have": 330
+  },
+  "irish-red-and-white-setter": {
+   "file": "File:Irish Red And White Setter 2005.jpg",
+   "have": 336
+  },
+  "lhasa-apso": {
+   "file": "File:Lhasa-apso-rolly.jpg",
+   "have": 330
+  },
+  "lowchen": {
+   "file": "File:Lowchen at 2019 American Kennel Club National Championship.jpg",
+   "have": 330
+  },
+  "manchester-terrier-toy": {
+   "file": "File:English Toy Terrier 600 01.jpg",
+   "have": 330
+  },
+  "plott-hound": {
+   "file": "File:Plott Hound at a show.jpg",
+   "have": 330
+  },
+  "shih-tzu": {
+   "file": "File:Shih Tzu lion dog.jpg",
+   "have": 330
+  },
+  "smooth-fox-terrier": {
+   "file": "File:Patrick the Smooth Fox Terrier.jpg",
+   "have": 349
+  },
+  "staffordshire-bull-terrier": {
+   "file": "File:סאטף אנגלי.jpg",
+   "have": 300
+  },
+  "swedish-vallhund": {
+   "file": "File:SwedishVallhundAgility wb.jpg",
+   "have": 330
+  },
+  "teddy-roosevelt-terrier": {
+   "file": "File:Teddyterrier.jpg",
+   "have": 281
+  }
+ }
 }

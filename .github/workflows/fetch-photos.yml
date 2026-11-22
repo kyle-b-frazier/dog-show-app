@@ -31,7 +31,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          for p in images/photos images/banners images/photo-credits-new.json photo-candidates; do
+          for p in images/photos images/banners images/photo-credits-new.json photo-candidates photo-upgrades; do
             if [ -e "$p" ]; then git add "$p"; fi
           done
           if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
