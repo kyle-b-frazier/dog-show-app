@@ -239,14 +239,6 @@
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "page": "https://commons.wikimedia.org/wiki/File:Afghan_dog_-_cropped.jpg"
  },
- "american-english-coonhound": {
-  "breed": "American English Coonhound",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/2/28/English_Coonhound.jpg",
-  "author": "",
-  "license": "Public domain",
-  "licenseUrl": "",
-  "page": "https://commons.wikimedia.org/wiki/File:English_Coonhound.jpg"
- },
  "american-foxhound": {
   "breed": "American Foxhound",
   "url": "https://upload.wikimedia.org/wikipedia/commons/e/e7/AmericanFoxhound2.jpg",
@@ -927,14 +919,6 @@
   "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
   "page": "https://commons.wikimedia.org/wiki/File:King_Charles_Spaniel_200.jpg"
  },
- "havanese": {
-  "breed": "Havanese",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/A_Havanese_judging.jpg/500px-A_Havanese_judging.jpg",
-  "author": "audrey_sel",
-  "license": "CC BY-SA 2.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
-  "page": "https://commons.wikimedia.org/wiki/File:A_Havanese_judging.jpg"
- },
  "italian-greyhound": {
   "breed": "Italian Greyhound",
   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Italian_Greyhound_standing_gray_%28cropped%29.jpg/500px-Italian_Greyhound_standing_gray_%28cropped%29.jpg",
@@ -1118,22 +1102,6 @@
   "license": "CC BY 2.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
   "page": "https://commons.wikimedia.org/wiki/File:Keeshond_Majic_standing_cropped.jpg"
- },
- "lhasa-apso": {
-  "breed": "Lhasa Apso",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/8/87/Aishia.jpg",
-  "author": "Elminjas at Dutch Wikipedia",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
-  "page": "https://commons.wikimedia.org/wiki/File:Aishia.jpg"
- },
- "lowchen": {
-  "breed": "Löwchen",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Adult_Lowchen_Gaiting.jpg/500px-Adult_Lowchen_Gaiting.jpg",
-  "author": "Jk9dat",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Adult_Lowchen_Gaiting.jpg"
  },
  "norwegian-lundehund": {
   "breed": "Norwegian Lundehund",
@@ -1503,14 +1471,6 @@
   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
   "page": "https://commons.wikimedia.org/wiki/File:West_Highland_White_Terrier_Krakow.jpg"
  },
- "affenpinscher": {
-  "breed": "Affenpinscher",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Affenpinscher.jpg/500px-Affenpinscher.jpg",
-  "author": "",
-  "license": "GPL",
-  "licenseUrl": "http://www.gnu.org/licenses/gpl.html",
-  "page": "https://commons.wikimedia.org/wiki/File:Affenpinscher.jpg"
- },
  "american-water-spaniel": {
   "breed": "American Water Spaniel",
   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Chien_d%27eau_americain_champion_1.JPG/500px-Chien_d%27eau_americain_champion_1.JPG",
@@ -1734,5 +1694,45 @@
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "page": "https://commons.wikimedia.org/wiki/File:GrandBassettGriffonVend%C3%A9en.jpg"
+ },
+ "american-english-coonhound": {
+  "breed": "American English Coonhound",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Maddie_%288416820450%29.jpg/500px-Maddie_%288416820450%29.jpg",
+  "author": "BurnAway",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Maddie_(8416820450).jpg"
+ },
+ "affenpinscher": {
+  "breed": "Affenpinscher",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/2013_Westminster_Kennel_Club_Dog_Show-_Affenpinscher_Joey_aka_GCH_Banana_Joe_V_Tani_Kazari_%288471258772%29.jpg/500px-2013_Westminster_Kennel_Club_Dog_Show-_Affenpinscher_Joey_aka_GCH_Banana_Joe_V_Tani_Kazari_%288471258772%29.jpg",
+  "author": "Kristy May for Pets Advisor www.petful.com - Uploaded at Petful",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:2013_Westminster_Kennel_Club_Dog_Show-_Affenpinscher_Joey_aka_GCH_Banana_Joe_V_Tani_Kazari_(8471258772).jpg"
+ },
+ "havanese": {
+  "breed": "Havanese",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/A_havanese_dog.jpg/500px-A_havanese_dog.jpg",
+  "author": "QHuge",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:A_havanese_dog.jpg"
+ },
+ "lowchen": {
+  "breed": "Löwchen",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Lowchen_at_2019_American_Kennel_Club_National_Championship.jpg/500px-Lowchen_at_2019_American_Kennel_Club_National_Championship.jpg",
+  "author": "Jk9dat",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Lowchen_at_2019_American_Kennel_Club_National_Championship.jpg"
+ },
+ "lhasa-apso": {
+  "breed": "Lhasa Apso",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Lhasa-apso-rolly.jpg/500px-Lhasa-apso-rolly.jpg",
+  "author": "Arnold C",
+  "license": "Attribution",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Lhasa-apso-rolly.jpg"
  }
 }
