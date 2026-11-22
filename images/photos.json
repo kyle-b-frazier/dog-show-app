@@ -999,14 +999,6 @@
   "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
   "page": "https://commons.wikimedia.org/wiki/File:RUSSKAYA_TSVETNAYA_BOLONKA,_Rayskoe_Sotsvetie_Tsevtik_(24264726856).jpg"
  },
- "shih-tzu": {
-  "breed": "Shih Tzu",
-  "url": "https://upload.wikimedia.org/wikipedia/commons/d/df/Shihtzu_%28cropped%29.jpg",
-  "author": "Canino21",
-  "license": "Public domain",
-  "licenseUrl": "",
-  "page": "https://commons.wikimedia.org/wiki/File:Shihtzu_(cropped).jpg"
- },
  "silky-terrier": {
   "breed": "Silky Terrier",
   "url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Australian_Silky_Terrier_Alana_Of_Silky%27s_Dream.jpg",
@@ -1734,5 +1726,13 @@
   "license": "Attribution",
   "licenseUrl": "",
   "page": "https://commons.wikimedia.org/wiki/File:Lhasa-apso-rolly.jpg"
+ },
+ "shih-tzu": {
+  "breed": "Shih Tzu",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Shih_Tzu_lion_dog.jpg/500px-Shih_Tzu_lion_dog.jpg",
+  "author": "Marcelo RosaMelo",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Shih_Tzu_lion_dog.jpg"
  }
 }
