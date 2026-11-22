@@ -870,5 +870,14 @@
   }
  },
  "candidatePages": [],
- "candidateSearches": {}
+ "candidateSearches": {
+  "dachshund-wirehaired": "wirehaired dachshund",
+  "grand-basset-griffon-vendeen": "grand basset griffon vendeen",
+  "harrier": "harrier dog breed",
+  "plott-hound": "plott hound",
+  "manchester-terrier-toy": "toy manchester terrier",
+  "belgian-laekenois": "laekenois",
+  "belgian-sheepdog": "groenendael",
+  "swedish-vallhund": "swedish vallhund"
+ }
 }
