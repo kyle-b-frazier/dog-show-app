@@ -36,12 +36,12 @@
   "breed": "Anatolian Shepherd Dog"
  },
  "belgian-laekenois": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Lakenios_Koira_2013.JPG/500px-Lakenios_Koira_2013.JPG",
-  "author": "Томасина",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Laekenois_Shepherd.JPG/500px-Laekenois_Shepherd.JPG",
+  "author": "Canarian",
   "license": "CC BY-SA 3.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Lakenios_Koira_2013.JPG",
-  "file": "File:Lakenios Koira 2013.JPG",
+  "page": "https://commons.wikimedia.org/wiki/File:Laekenois_Shepherd.JPG",
+  "file": "File:Laekenois Shepherd.JPG",
   "breed": "Belgian Laekenois"
  },
  "bluetick-coonhound": {
@@ -81,12 +81,12 @@
   "breed": "Grand Basset Griffon Vendéen"
  },
  "harrier": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Harrier_Hound_-Pedigree_Harrier.jpg/500px-Harrier_Hound_-Pedigree_Harrier.jpg",
-  "author": "Evforce",
-  "license": "CC BY-SA 4.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Harrier_Hound_-Pedigree_Harrier.jpg",
-  "file": "File:Harrier_Hound_-Pedigree_Harrier.jpg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Harrier_tricolour.jpg/500px-Harrier_tricolour.jpg",
+  "author": "Smcmilla (edited by Pharaoh Hound)",
+  "license": "Public domain",
+  "licenseUrl": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Harrier_tricolour.jpg",
+  "file": "File:Harrier tricolour.jpg",
   "breed": "Harrier"
  },
  "kuvasz": {
@@ -117,12 +117,12 @@
   "breed": "Norwegian Elkhound"
  },
  "plott-hound": {
-  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Plotthund_Kynnagardens_Ziggy_Lundamo.JPG/500px-Plotthund_Kynnagardens_Ziggy_Lundamo.JPG",
-  "author": "Plotthund",
-  "license": "CC BY-SA 3.0",
-  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Plotthund_Kynnagardens_Ziggy_Lundamo.JPG",
-  "file": "File:Plotthund_Kynnagardens_Ziggy_Lundamo.JPG",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Plott_Hound_at_a_show.jpg/500px-Plott_Hound_at_a_show.jpg",
+  "author": "Canarian",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Plott_Hound_at_a_show.jpg",
+  "file": "File:Plott Hound at a show.jpg",
   "breed": "Plott Hound"
  },
  "wire-fox-terrier": {
@@ -232,5 +232,41 @@
   "page": "https://commons.wikimedia.org/wiki/File:Dachshund_mini_smooth.JPG",
   "file": "File:Dachshund mini smooth.JPG",
   "breed": "Dachshund (Smooth)"
+ },
+ "dachshund-wirehaired": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Wirehaired_Dachshund.jpg/500px-Wirehaired_Dachshund.jpg",
+  "author": "Janne Seppänen",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Wirehaired_Dachshund.jpg",
+  "file": "File:Wirehaired Dachshund.jpg",
+  "breed": "Dachshund (Wirehaired)"
+ },
+ "manchester-terrier-toy": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/English_Toy_Terrier_600_01.jpg/500px-English_Toy_Terrier_600_01.jpg",
+  "author": "sannse (contrast by Pleple2000)",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:English_Toy_Terrier_600_01.jpg",
+  "file": "File:English Toy Terrier 600 01.jpg",
+  "breed": "Manchester Terrier (Toy)"
+ },
+ "belgian-sheepdog": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/c/c4/European_Groenendael_male.jpg",
+  "author": "Nachoferreyra",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:European_Groenendael_male.jpg",
+  "file": "File:European Groenendael male.jpg",
+  "breed": "Belgian Sheepdog"
+ },
+ "swedish-vallhund": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/6/68/SwedishVallhundAgility_wb.jpg",
+  "author": "",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:SwedishVallhundAgility_wb.jpg",
+  "file": "File:SwedishVallhundAgility wb.jpg",
+  "breed": "Swedish Vallhund"
  }
 }
