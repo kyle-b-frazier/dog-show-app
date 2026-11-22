@@ -1,5 +1,9 @@
 {
  "photos": {
+  "shih-tzu": {
+   "breed": "Shih Tzu",
+   "file": "File:Shih Tzu lion dog.jpg"
+  },
   "american-english-coonhound": {
    "breed": "American English Coonhound",
    "file": "File:Maddie (8416820450).jpg"
@@ -600,10 +604,6 @@
    "breed": "Russian Tsvetnaya Bolonka",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/RUSSKAYA_TSVETNAYA_BOLONKA%2C_Rayskoe_Sotsvetie_Tsevtik_%2824264726856%29.jpg/500px-RUSSKAYA_TSVETNAYA_BOLONKA%2C_Rayskoe_Sotsvetie_Tsevtik_%2824264726856%29.jpg"
   },
-  "shih-tzu": {
-   "breed": "Shih Tzu",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/d/df/Shihtzu_%28cropped%29.jpg"
-  },
   "silky-terrier": {
    "breed": "Silky Terrier",
    "url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Australian_Silky_Terrier_Alana_Of_Silky%27s_Dream.jpg"
@@ -870,7 +870,5 @@
   }
  },
  "candidatePages": [],
- "candidateSearches": {
-  "shih-tzu-2": "shih tzu"
- }
+ "candidateSearches": {}
 }
