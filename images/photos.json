@@ -1638,5 +1638,13 @@
   "license": "CC BY 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
   "page": "https://commons.wikimedia.org/wiki/File:Elkhound2020_(cropped).jpg"
+ },
+ "cocker-spaniel-ascob": {
+  "breed": "Cocker Spaniel (ASCOB)",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/AmericanCockerSpaniel_wb.jpg/500px-AmericanCockerSpaniel_wb.jpg",
+  "author": "",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "page": "https://commons.wikimedia.org/wiki/File:AmericanCockerSpaniel_wb.jpg"
  }
 }

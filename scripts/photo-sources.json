@@ -845,14 +845,14 @@
    "article": "Wire Fox Terrier"
   }
  },
- "candidatePages": [
-  "American Cocker Spaniel",
-  "King Charles Spaniel",
-  "Beagle",
-  "Chihuahua (dog)",
-  "Bull Terrier",
-  "Bloodhound",
-  "Dachshund",
-  "Akita (dog)"
- ]
+ "candidatePages": [],
+ "candidateSearches": {
+  "cesky-terrier": "cesky terrier dog",
+  "cocker-spaniel-black": "black american cocker spaniel",
+  "cocker-spaniel-parti-color": "parti-color american cocker spaniel",
+  "beagle-15-inches": "beagle dog show",
+  "bloodhound": "bloodhound dog",
+  "dachshund-smooth": "smooth dachshund",
+  "akita": "american akita dog"
+ }
 }

@@ -56,9 +56,24 @@ def original_url(url):
     return f"{m.group(1)}/{m.group(2)}" if m else url
 
 
+def standard_thumbs(url):
+    """Standard Wikimedia thumbnail widths (960, 500) are pre-made and rarely rate limited;
+    full-size originals are throttled hard. Try those first, the original last."""
+    m = re.match(r"(https://upload\.wikimedia\.org/wikipedia/commons)/thumb/(\w/\w\w/([^/]+))/[^/]+$", url)
+    if not m:
+        return [url]
+    base, path, name = m.groups()
+    return [f"{base}/thumb/{path}/{w}px-{name}" + (".jpg" if name.lower().endswith((".tif", ".tiff")) else "")
+            for w in (960, 500)] + [f"{base}/{path}"]
+
+
 def fetch_resized(url, width, path):
-    """Download the original image and save a JPEG resized to `width` px wide."""
-    data = get(original_url(url))
+    """Download the photo (standard thumbnail if possible) and save a JPEG resized to `width` px wide."""
+    data = None
+    for u in standard_thumbs(url):
+        data = get(u)
+        if data:
+            break
     if not data:
         return False
     try:
