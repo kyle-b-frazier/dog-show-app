@@ -12,6 +12,34 @@
    "breed": "English Toy Spaniel (B&PC)",
    "file": "File:King Charles Spaniel Blenheim 1.jpg"
   },
+  "akita": {
+   "breed": "Akita",
+   "file": "File:Akita Americano v3.jpg"
+  },
+  "cesky-terrier": {
+   "breed": "Cesky Terrier",
+   "file": "File:Grupp 3, CESKYTERRIER, DK UCH NO JV-14 NO UCH NO V-15 NORD JV-14 NORD UCH SE UCH Sellandafjalls Teo (24310213205).jpg"
+  },
+  "cocker-spaniel-black": {
+   "breed": "Cocker Spaniel (Black)",
+   "file": "File:Black cocker spaniel at Westminster Dog Show (24962553922).jpg"
+  },
+  "cocker-spaniel-parti-color": {
+   "breed": "Cocker Spaniel (Parti-Color)",
+   "file": "File:Parti-Color Cocker Spaniel-16-GCH-Gems Hot Little Liar CGC 03 (15962658254).jpg"
+  },
+  "beagle-15-inches": {
+   "breed": "Beagle (15 inches)",
+   "file": "File:Beagle 15 inch - Ch Tashtins Lookin For Trouble aka Miss P - Best in Show 03 (15984539793).jpg"
+  },
+  "bloodhound": {
+   "breed": "Bloodhound",
+   "file": "File:Perro de San Huberto.jpg"
+  },
+  "dachshund-smooth": {
+   "breed": "Dachshund (Smooth)",
+   "file": "File:Dachshund mini smooth.JPG"
+  },
   "cocker-spaniel-ascob": {
    "breed": "Cocker Spaniel (ASCOB)",
    "file": "File:AmericanCockerSpaniel wb.jpg"
@@ -808,10 +836,6 @@
    "breed": "Boerboel",
    "article": "Boerboel"
   },
-  "cesky-terrier": {
-   "breed": "Cesky Terrier",
-   "article": "Český Terrier"
-  },
   "finnish-spitz": {
    "breed": "Finnish Spitz",
    "article": "Finnish Spitz"
@@ -846,13 +870,5 @@
   }
  },
  "candidatePages": [],
- "candidateSearches": {
-  "cesky-terrier": "cesky terrier dog",
-  "cocker-spaniel-black": "black american cocker spaniel",
-  "cocker-spaniel-parti-color": "parti-color american cocker spaniel",
-  "beagle-15-inches": "beagle dog show",
-  "bloodhound": "bloodhound dog",
-  "dachshund-smooth": "smooth dachshund",
-  "akita": "american akita dog"
- }
+ "candidateSearches": {}
 }
