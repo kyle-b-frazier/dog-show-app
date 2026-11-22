@@ -169,5 +169,68 @@
   "page": "https://commons.wikimedia.org/wiki/File:AmericanCockerSpaniel_wb.jpg",
   "file": "File:AmericanCockerSpaniel wb.jpg",
   "breed": "Cocker Spaniel (ASCOB)"
+ },
+ "akita": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Akita_Americano_v3.jpg/500px-Akita_Americano_v3.jpg",
+  "author": "Edwin Campos",
+  "license": "CC0",
+  "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "page": "https://commons.wikimedia.org/wiki/File:Akita_Americano_v3.jpg",
+  "file": "File:Akita Americano v3.jpg",
+  "breed": "Akita"
+ },
+ "cesky-terrier": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Grupp_3%2C_CESKYTERRIER%2C_DK_UCH_NO_JV-14_NO_UCH_NO_V-15_NORD_JV-14_NORD_UCH_SE_UCH_Sellandafjalls_Teo_%2824310213205%29.jpg/500px-Grupp_3%2C_CESKYTERRIER%2C_DK_UCH_NO_JV-14_NO_UCH_NO_V-15_NORD_JV-14_NORD_UCH_SE_UCH_Sellandafjalls_Teo_%2824310213205%29.jpg",
+  "author": "Svenska Mässan from Sweden",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Grupp_3,_CESKYTERRIER,_DK_UCH_NO_JV-14_NO_UCH_NO_V-15_NORD_JV-14_NORD_UCH_SE_UCH_Sellandafjalls_Teo_(24310213205).jpg",
+  "file": "File:Grupp 3, CESKYTERRIER, DK UCH NO JV-14 NO UCH NO V-15 NORD JV-14 NORD UCH SE UCH Sellandafjalls Teo (24310213205).jpg",
+  "breed": "Cesky Terrier"
+ },
+ "cocker-spaniel-black": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Black_cocker_spaniel_at_Westminster_Dog_Show_%2824962553922%29.jpg/500px-Black_cocker_spaniel_at_Westminster_Dog_Show_%2824962553922%29.jpg",
+  "author": "Arturo Pardavila III from Hoboken, NJ, USA",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Black_cocker_spaniel_at_Westminster_Dog_Show_(24962553922).jpg",
+  "file": "File:Black cocker spaniel at Westminster Dog Show (24962553922).jpg",
+  "breed": "Cocker Spaniel (Black)"
+ },
+ "cocker-spaniel-parti-color": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Parti-Color_Cocker_Spaniel-16-GCH-Gems_Hot_Little_Liar_CGC_03_%2815962658254%29.jpg/500px-Parti-Color_Cocker_Spaniel-16-GCH-Gems_Hot_Little_Liar_CGC_03_%2815962658254%29.jpg",
+  "author": "Pets Adviser from Brooklyn, USA",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Parti-Color_Cocker_Spaniel-16-GCH-Gems_Hot_Little_Liar_CGC_03_(15962658254).jpg",
+  "file": "File:Parti-Color Cocker Spaniel-16-GCH-Gems Hot Little Liar CGC 03 (15962658254).jpg",
+  "breed": "Cocker Spaniel (Parti-Color)"
+ },
+ "beagle-15-inches": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Beagle_15_inch_-_Ch_Tashtins_Lookin_For_Trouble_aka_Miss_P_-_Best_in_Show_03_%2815984539793%29.jpg/500px-Beagle_15_inch_-_Ch_Tashtins_Lookin_For_Trouble_aka_Miss_P_-_Best_in_Show_03_%2815984539793%29.jpg",
+  "author": "Pets Adviser from Brooklyn, USA",
+  "license": "CC BY 2.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Beagle_15_inch_-_Ch_Tashtins_Lookin_For_Trouble_aka_Miss_P_-_Best_in_Show_03_(15984539793).jpg",
+  "file": "File:Beagle 15 inch - Ch Tashtins Lookin For Trouble aka Miss P - Best in Show 03 (15984539793).jpg",
+  "breed": "Beagle (15 inches)"
+ },
+ "bloodhound": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Perro_de_San_Huberto.jpg/500px-Perro_de_San_Huberto.jpg",
+  "author": "Mary Bloom, American Kennel Club",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Perro_de_San_Huberto.jpg",
+  "file": "File:Perro de San Huberto.jpg",
+  "breed": "Bloodhound"
+ },
+ "dachshund-smooth": {
+  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Dachshund_mini_smooth.JPG/500px-Dachshund_mini_smooth.JPG",
+  "author": "Томасина",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Dachshund_mini_smooth.JPG",
+  "file": "File:Dachshund mini smooth.JPG",
+  "breed": "Dachshund (Smooth)"
  }
 }
