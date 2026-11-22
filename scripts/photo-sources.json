@@ -1,5 +1,37 @@
 {
  "photos": {
+  "dachshund-wirehaired": {
+   "breed": "Dachshund (Wirehaired)",
+   "file": "File:Wirehaired Dachshund.jpg"
+  },
+  "grand-basset-griffon-vendeen": {
+   "breed": "Grand Basset Griffon Vendéen",
+   "file": "File:Grand Basset Griffon Vendéen in Tallinn 6.JPG"
+  },
+  "harrier": {
+   "breed": "Harrier",
+   "file": "File:Harrier tricolour.jpg"
+  },
+  "plott-hound": {
+   "breed": "Plott Hound",
+   "file": "File:Plott Hound at a show.jpg"
+  },
+  "manchester-terrier-toy": {
+   "breed": "Manchester Terrier (Toy)",
+   "file": "File:English Toy Terrier 600 01.jpg"
+  },
+  "belgian-laekenois": {
+   "breed": "Belgian Laekenois",
+   "file": "File:Laekenois Shepherd.JPG"
+  },
+  "belgian-sheepdog": {
+   "breed": "Belgian Sheepdog",
+   "file": "File:European Groenendael male.jpg"
+  },
+  "swedish-vallhund": {
+   "breed": "Swedish Vallhund",
+   "file": "File:SwedishVallhundAgility wb.jpg"
+  },
   "bull-terrier-colored": {
    "breed": "Bull Terrier (Colored)",
    "file": "File:Bull Terrier 2.JPG"
@@ -211,10 +243,6 @@
   "dachshund-longhaired": {
    "breed": "Dachshund (Longhaired)",
    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Jamnik_d%C5%82ugow%C5%82osy_standardowy_LM_671.jpg/500px-Jamnik_d%C5%82ugow%C5%82osy_standardowy_LM_671.jpg"
-  },
-  "dachshund-wirehaired": {
-   "breed": "Dachshund (Wirehaired)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Wirehaired_Dachshund.jpg/500px-Wirehaired_Dachshund.jpg"
   },
   "english-foxhound": {
    "breed": "English Foxhound",
@@ -672,10 +700,6 @@
    "breed": "Belgian Malinois",
    "url": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Malinois_Shepherd3.JPG"
   },
-  "belgian-sheepdog": {
-   "breed": "Belgian Sheepdog",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Groenendael.jpg/500px-Groenendael.jpg"
-  },
   "belgian-tervuren": {
    "breed": "Belgian Tervuren",
    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Tervuren.jpg"
@@ -772,10 +796,6 @@
    "breed": "Spanish Water Dog",
    "url": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Perro_agua_%28cropped%29.jpg"
   },
-  "swedish-vallhund": {
-   "breed": "Swedish Vallhund",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/V%C3%A4stg%C3%B6taspets_hane_5_%C3%A5r.jpg/500px-V%C3%A4stg%C3%B6taspets_hane_5_%C3%A5r.jpg"
-  },
   "irish-red-and-white-setter": {
    "breed": "Irish Red and White Setter",
    "url": "https://upload.wikimedia.org/wikipedia/commons/0/04/Irish_Red_And_White_Setter_2005.jpg"
@@ -791,10 +811,6 @@
   "chihuahua-long-coat": {
    "breed": "Chihuahua (Long Coat)",
    "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chihuahua1_bvdb.jpg"
-  },
-  "manchester-terrier-toy": {
-   "breed": "Manchester Terrier (Toy)",
-   "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Toy_manchesters_lg.jpg/500px-Toy_manchesters_lg.jpg"
   },
   "poodle-toy": {
    "breed": "Poodle (Toy)",
@@ -824,10 +840,6 @@
    "breed": "Anatolian Shepherd Dog",
    "article": "Anatolian Shepherd"
   },
-  "belgian-laekenois": {
-   "breed": "Belgian Laekenois",
-   "file": "File:Lakenios Koira 2013.JPG"
-  },
   "bluetick-coonhound": {
    "breed": "Bluetick Coonhound",
    "article": "Bluetick Coonhound"
@@ -839,14 +851,6 @@
   "finnish-spitz": {
    "breed": "Finnish Spitz",
    "article": "Finnish Spitz"
-  },
-  "grand-basset-griffon-vendeen": {
-   "breed": "Grand Basset Griffon Vendéen",
-   "article": "Grand Basset Griffon Vendéen"
-  },
-  "harrier": {
-   "breed": "Harrier",
-   "article": "Harrier (dog)"
   },
   "kuvasz": {
    "breed": "Kuvasz",
@@ -860,24 +864,11 @@
    "breed": "Norwegian Elkhound",
    "article": "Norwegian Elkhound"
   },
-  "plott-hound": {
-   "breed": "Plott Hound",
-   "article": "Plott Hound"
-  },
   "wire-fox-terrier": {
    "breed": "Wire Fox Terrier",
    "article": "Wire Fox Terrier"
   }
  },
  "candidatePages": [],
- "candidateSearches": {
-  "dachshund-wirehaired": "wirehaired dachshund",
-  "grand-basset-griffon-vendeen": "grand basset griffon vendeen",
-  "harrier": "harrier dog breed",
-  "plott-hound": "plott hound",
-  "manchester-terrier-toy": "toy manchester terrier",
-  "belgian-laekenois": "laekenois",
-  "belgian-sheepdog": "groenendael",
-  "swedish-vallhund": "swedish vallhund"
- }
+ "candidateSearches": {}
 }
