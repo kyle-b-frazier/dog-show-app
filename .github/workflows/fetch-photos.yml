@@ -5,8 +5,6 @@ on:
     branches: ["claude/**"]
     paths: ["scripts/photo-sources.json", "scripts/fetch_photos.py", ".github/workflows/fetch-photos.yml"]
   workflow_dispatch:
-  schedule:
-    - cron: "23 * * * *"   # hourly; Wikimedia allows only a few photos per hour, so this finishes over about a day
 
 permissions:
   contents: write
