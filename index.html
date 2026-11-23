@@ -904,6 +904,7 @@
                     if (!this.ballot.picks.sporting) this.ballot = this.fullBallot(this.ballot);
                     this.$watch('ballot', () => this.onBallotChanged(), { deep: true });
                     this.$watch('view', () => this.syncAllBallotsListener());
+                    this.$watch('activeGroup', () => { this.myPicksOnly = false; });
 
                     // The Firebase module script loads after Alpine starts, so wait for it.
                     for (let i = 0; i < 50 && !window.firebaseModules; i++) await new Promise(r => setTimeout(r, 100));
