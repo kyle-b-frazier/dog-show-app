@@ -333,12 +333,19 @@
                     </div>
                 </div>
 
-                <input type="search" x-model="searchQuery" placeholder="🔍 Search" aria-label="Search breeds"
-                       class="w-full sm:w-64 px-3 py-2 border border-stone-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-600">
+                <div class="flex gap-2 items-center">
+                    <input type="search" x-model="searchQuery" placeholder="🔍 Search" aria-label="Search breeds"
+                           class="flex-1 sm:flex-none w-full sm:w-64 px-3 py-2 border border-stone-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    <button @click="myPicksOnly = !myPicksOnly" :aria-pressed="myPicksOnly"
+                            class="shrink-0 px-3 py-2 rounded-lg text-sm font-bold border transition whitespace-nowrap"
+                            :class="myPicksOnly ? 'bg-amber-700 border-amber-700 text-white' : 'bg-white border-stone-300 text-stone-800 hover:bg-amber-50'"
+                            x-text="myPicksOnly ? 'Show all breeds' : 'Only my picks (' + getPicksCount(group.id) + ')'"></button>
+                </div>
+                <p x-show="myPicksOnly && getPicksCount(group.id) === 0" class="text-sm text-stone-600">No picks yet in this group. <button @click="myPicksOnly = false" class="font-bold text-amber-900 underline">Show all breeds</button></p>
 
                 <!-- Breed photo cards -->
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                    <template x-for="breed in filteredBreeds(group.breeds)" :key="breed">
+                    <template x-for="breed in filteredBreeds(group.breeds, group.id)" :key="breed">
                         <div class="rounded-xl border-2 bg-white overflow-hidden shadow-sm transition flex flex-col"
                              :class="isTopPick(group.id, breed) ? 'border-amber-500 ring-2 ring-amber-300' : (isShortlist(group.id, breed) ? 'border-orange-400' : 'border-stone-200')">
                             <div class="relative aspect-[4/3] bg-stone-200 flex items-center justify-center text-4xl text-stone-400">
@@ -860,6 +867,7 @@
                 notification: '',
                 activeGroup: null,
                 searchQuery: '',
+                myPicksOnly: false,
                 photos: {},
                 // Where to crop photos that don't fit the card, so the dog's face stays in view.
                 // A number is the vertical position (0 = top, 100 = bottom); a string is a full CSS position.
@@ -1392,9 +1400,14 @@
                     return breed.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
                 },
 
-                filteredBreeds(breeds) {
-                    if (!this.searchQuery) return breeds;
-                    return breeds.filter(b => b.toLowerCase().includes(this.searchQuery.toLowerCase()));
+                filteredBreeds(breeds, groupId) {
+                    let list = breeds;
+                    if (this.myPicksOnly && groupId) {
+                        list = list.filter(b => this.isTopPick(groupId, b) || this.isShortlist(groupId, b))
+                            .sort((a, b) => this.isTopPick(groupId, b) - this.isTopPick(groupId, a));
+                    }
+                    if (!this.searchQuery) return list;
+                    return list.filter(b => b.toLowerCase().includes(this.searchQuery.toLowerCase()));
                 },
 
                 // Read-only: never create data while the page is drawing (that left counters stale).
