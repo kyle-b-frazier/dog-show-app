@@ -649,29 +649,43 @@
                         <template x-if="picksRows().length === 0">
                             <div class="p-6 text-center text-sm text-stone-500">No ballots yet.</div>
                         </template>
-                        <template x-for="b in picksRows()" :key="'pr-' + b.id">
-                            <div class="px-4 py-2.5 border-b border-stone-100 last:border-0 sm:flex sm:gap-4"
-                                 :class="b.ownerUid === (user && user.uid) ? 'bg-amber-50' : ''">
-                                <div class="sm:w-44 shrink-0">
-                                    <div class="font-bold text-stone-900 truncate" x-text="b.name"></div>
-                                    <div class="text-[11px] text-stone-500 truncate" x-text="'by ' + (b.ownerName || 'someone')"></div>
-                                </div>
-                                <div class="text-sm min-w-0" x-show="picksGroup === 'bis'">
-                                    <span class="font-bold" :class="results.bestInShow && b.bestInShow === results.bestInShow ? 'text-emerald-700' : 'text-stone-900'"
-                                          x-text="'🏆 ' + (b.bestInShow || '—') + (results.bestInShow && b.bestInShow === results.bestInShow ? ' ✓' : '')"></span>
-                                </div>
-                                <div class="text-sm min-w-0" x-show="picksGroup !== 'bis'">
-                                    <div class="font-bold" :class="picksWin(b) ? 'text-emerald-700' : 'text-stone-900'"
-                                         x-text="'★ ' + (pickOf(b, picksGroup).topPick || '—') + (picksWin(b) ? ' ✓' : '')"></div>
-                                    <div class="text-stone-600">
-                                        <template x-for="(c, i) in (pickOf(b, picksGroup).shortlist || [])" :key="c">
-                                            <span :class="c === results.groupWinners[picksGroup] ? 'text-emerald-700 font-bold' : ''" x-text="(i ? ', ' : '') + c + (c === results.groupWinners[picksGroup] ? ' ✓' : '')"></span>
+                        <div x-show="picksRows().length" class="overflow-x-auto">
+                            <table class="w-full text-sm border-collapse">
+                                <thead class="bg-stone-50 text-[11px] uppercase tracking-wider text-stone-500">
+                                    <tr>
+                                        <th class="sticky left-0 z-10 bg-stone-50 text-left font-bold px-3 py-2 min-w-[8.5rem]">Ballot</th>
+                                        <th class="text-left font-bold px-3 py-2 whitespace-nowrap" x-text="picksGroup === 'bis' ? '🏆 Best in Show' : '★ Winner'"></th>
+                                        <template x-if="picksGroup !== 'bis'">
+                                            <th class="text-left font-bold px-3 py-2 whitespace-nowrap">Contender 1</th>
                                         </template>
-                                        <span x-show="!(pickOf(b, picksGroup).shortlist || []).length">—</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
+                                        <template x-if="picksGroup !== 'bis'">
+                                            <th class="text-left font-bold px-3 py-2 whitespace-nowrap">Contender 2</th>
+                                        </template>
+                                        <template x-if="picksGroup !== 'bis'">
+                                            <th class="text-left font-bold px-3 py-2 whitespace-nowrap">Contender 3</th>
+                                        </template>
+                                        <template x-if="picksGroup !== 'bis'">
+                                            <th class="text-left font-bold px-3 py-2 whitespace-nowrap">Contender 4</th>
+                                        </template>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="b in picksRows()" :key="'pr-' + b.id">
+                                        <tr class="border-t border-stone-100" :class="b.ownerUid === (user && user.uid) ? 'bg-amber-50' : 'bg-white'">
+                                            <td class="sticky left-0 z-10 px-3 py-2 align-top" :class="b.ownerUid === (user && user.uid) ? 'bg-amber-50' : 'bg-white'">
+                                                <div class="font-bold text-stone-900 leading-tight" x-text="b.name"></div>
+                                                <div class="text-[11px] text-stone-500" x-text="'by ' + (b.ownerName || 'someone')"></div>
+                                            </td>
+                                            <template x-for="(cell, ci) in picksCells(b)" :key="b.id + '-' + ci">
+                                                <td class="px-3 py-2 align-top whitespace-nowrap"
+                                                    :class="(cell.hit ? 'text-emerald-700 font-bold' : (ci === 0 ? 'font-bold text-stone-900' : 'text-stone-700'))"
+                                                    x-text="(cell.name || '—') + (cell.hit ? ' ✓' : '')"></td>
+                                            </template>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </template>
@@ -1415,6 +1429,16 @@
                     const sel = this.selectedLeague, ids = this.leagueEntries[sel];
                     const pool = (sel !== 'all' && ids) ? this.allBallots.filter(b => ids.includes(b.id)) : this.allBallots;
                     return [...pool].sort((x, y) => (x.name || '').localeCompare(y.name || ''));
+                },
+                // Cells for one row: winner first, then the 4 contenders (blank if not picked).
+                picksCells(b) {
+                    if (this.picksGroup === 'bis') {
+                        return [{ name: b.bestInShow, hit: !!this.results.bestInShow && b.bestInShow === this.results.bestInShow }];
+                    }
+                    const p = this.pickOf(b, this.picksGroup), w = this.results.groupWinners[this.picksGroup];
+                    const list = (p.shortlist || []).slice(0, 4);
+                    while (list.length < 4) list.push(null);
+                    return [p.topPick || null, ...list].map(n => ({ name: n, hit: !!w && !!n && n === w }));
                 },
                 picksWin(b) { const w = this.results.groupWinners[this.picksGroup]; return !!w && this.pickOf(b, this.picksGroup).topPick === w; },
                 pickOf(b, gid) { return (b.picks || {})[gid] || {}; },
