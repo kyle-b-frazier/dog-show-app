@@ -526,6 +526,9 @@
                     <div class="rounded-lg p-2.5 text-white text-xs" :style="`background-color: ${g.color}`">
                         <div class="font-bold uppercase tracking-wide opacity-80" x-text="g.name"></div>
                         <div class="font-black text-sm leading-tight mt-0.5" x-text="results.groupWinners[g.id] || '—'"></div>
+                        <template x-for="(pl, idx) in placesOf(g.id)" :key="g.id + 'pl' + idx">
+                            <div x-show="pl" class="text-[11px] leading-tight opacity-90" x-text="['2nd', '3rd', '4th'][idx] + ' ' + pl"></div>
+                        </template>
                     </div>
                 </template>
                 <div class="rounded-lg p-2.5 text-xs bg-amber-400 text-amber-950 col-span-2 sm:col-span-4 lg:col-span-1">
@@ -550,8 +553,8 @@
                         <div class="hidden sm:flex gap-1">
                             <template x-for="g in groups" :key="g.id">
                                 <span class="w-6 h-6 rounded text-[10px] font-black flex items-center justify-center" :title="g.name"
-                                      :class="row.score.groups[g.id] === 5 ? 'bg-emerald-600 text-white' : (row.score.groups[g.id] === 2 ? 'bg-emerald-200 text-emerald-900' : (results.groupWinners[g.id] ? 'bg-stone-100 text-stone-400' : 'bg-stone-50 text-stone-300'))"
-                                      x-text="results.groupWinners[g.id] ? row.score.groups[g.id] : '·'"></span>
+                                      :class="row.score.groups[g.id] >= 5 ? 'bg-emerald-600 text-white' : (row.score.groups[g.id] > 0 ? 'bg-emerald-200 text-emerald-900' : (groupHasResult(g.id) ? 'bg-stone-100 text-stone-400' : 'bg-stone-50 text-stone-300'))"
+                                      x-text="groupHasResult(g.id) ? row.score.groups[g.id] : '·'"></span>
                             </template>
                         </div>
                         <div class="w-14 text-right text-2xl font-black text-amber-900" x-text="row.score.total"></div>
@@ -678,8 +681,8 @@
                                             </td>
                                             <template x-for="(cell, ci) in picksCells(b)" :key="b.id + '-' + ci">
                                                 <td class="px-3 py-2 align-top whitespace-nowrap"
-                                                    :class="(cell.hit ? 'text-emerald-700 font-bold' : (ci === 0 ? 'font-bold text-stone-900' : 'text-stone-700'))"
-                                                    x-text="(cell.name || '—') + (cell.hit ? ' ✓' : '')"></td>
+                                                    :class="(cell.hit ? 'text-emerald-700 font-bold' : (cell.place ? 'text-amber-800 font-semibold' : (ci === 0 ? 'font-bold text-stone-900' : 'text-stone-700')))"
+                                                    x-text="(cell.name || '—') + (cell.hit ? ' ✓' : '') + (cell.place ? ' (' + cell.place + ')' : '')"></td>
                                             </template>
                                         </tr>
                                     </template>
@@ -721,6 +724,18 @@
                             <option value="">— not announced —</option>
                             <template x-for="b in g.breeds" :key="b"><option :value="b" x-text="b" :selected="results.groupWinners[g.id] === b"></option></template>
                         </select>
+                        <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-2 sm:pl-[7.75rem]">
+                            <template x-for="(lab, idx) in ['2nd', '3rd', '4th']" :key="g.id + lab">
+                                <label class="flex items-center gap-2 text-xs font-bold text-stone-600">
+                                    <span class="w-7" x-text="lab"></span>
+                                    <select class="flex-1 min-w-0 border border-stone-300 rounded-lg px-2 py-1.5 text-sm font-normal text-stone-900"
+                                            @change="setGroupPlace(g.id, idx, $event.target.value)">
+                                        <option value="">—</option>
+                                        <template x-for="b in g.breeds" :key="b"><option :value="b" x-text="b" :selected="placesOf(g.id)[idx] === b"></option></template>
+                                    </select>
+                                </label>
+                            </template>
+                        </div>
                     </div>
                 </template>
                 <div class="p-4 flex flex-wrap items-center gap-3 bg-amber-50">
@@ -755,6 +770,10 @@
                 <li class="flex justify-between border-b border-stone-50 pb-2">
                     <span>Group winner is one of your 4 contenders:</span>
                     <span class="font-bold text-amber-900 whitespace-nowrap pl-3">2 pts</span>
+                </li>
+                <li class="flex justify-between border-b border-stone-50 pb-2">
+                    <span>One of your 5 group picks places 2nd, 3rd or 4th:</span>
+                    <span class="font-bold text-amber-900 whitespace-nowrap pl-3">1 pt each</span>
                 </li>
                 <li class="flex justify-between border-b border-stone-50 pb-2">
                     <span>Best In Show (Exact Match):</span>
@@ -819,14 +838,14 @@
                             <div class="rounded-xl border border-stone-200 overflow-hidden">
                                 <div class="px-3 py-1.5 text-white text-xs font-black uppercase tracking-wider flex justify-between" :style="`background-color: ${g.color}`">
                                     <span x-text="g.name"></span>
-                                    <span x-show="results.groupWinners[g.id]" x-text="'+' + peek.score.groups[g.id]"></span>
+                                    <span x-show="groupHasResult(g.id)" x-text="'+' + peek.score.groups[g.id]"></span>
                                 </div>
                                 <div class="px-3 py-2 text-sm space-y-0.5">
                                     <div class="font-bold" :class="results.groupWinners[g.id] && pickOf(peek, g.id).topPick === results.groupWinners[g.id] ? 'text-emerald-700' : 'text-stone-900'"
-                                         x-text="'★ ' + (pickOf(peek, g.id).topPick || '—') + (results.groupWinners[g.id] && pickOf(peek, g.id).topPick === results.groupWinners[g.id] ? ' ✓' : '')"></div>
+                                         x-text="'★ ' + (pickOf(peek, g.id).topPick || '—') + (results.groupWinners[g.id] && pickOf(peek, g.id).topPick === results.groupWinners[g.id] ? ' ✓' : '') + (placeLabel(g.id, pickOf(peek, g.id).topPick) ? ' (' + placeLabel(g.id, pickOf(peek, g.id).topPick) + ')' : '')"></div>
                                     <div class="text-stone-600">
                                         <template x-for="(c, i) in (pickOf(peek, g.id).shortlist || [])" :key="c">
-                                            <span :class="c === results.groupWinners[g.id] ? 'text-emerald-700 font-bold' : ''" x-text="(i ? ', ' : '') + c + (c === results.groupWinners[g.id] ? ' ✓' : '')"></span>
+                                            <span :class="c === results.groupWinners[g.id] ? 'text-emerald-700 font-bold' : ''" x-text="(i ? ', ' : '') + c + (c === results.groupWinners[g.id] ? ' ✓' : '') + (placeLabel(g.id, c) ? ' (' + placeLabel(g.id, c) + ')' : '')"></span>
                                         </template>
                                         <span x-show="!(pickOf(peek, g.id).shortlist || []).length">—</span>
                                     </div>
@@ -919,7 +938,7 @@
                 isAdmin: false,
                 myBallots: [],
                 allBallots: [],
-                results: { groupWinners: {}, bestInShow: null, locked: false, autoLockAt: 1795712400000 },
+                results: { groupWinners: {}, groupPlaces: {}, bestInShow: null, locked: false, autoLockAt: 1795712400000 },
                 now: Date.now(), lockAtInput: '', peek: null,
                 currentBallotId: null,
                 currentBallotName: '',
@@ -1006,7 +1025,7 @@
                         // Results are public and live.
                         onSnapshot(doc(this.db, 'results', 'current'), snap => {
                             const d = snap.exists() ? snap.data() : {};
-                            this.results = { groupWinners: d.groupWinners || {}, bestInShow: d.bestInShow || null, locked: !!d.locked, autoLockAt: d.autoLockAt === undefined ? 1795712400000 : d.autoLockAt };
+                            this.results = { groupWinners: d.groupWinners || {}, groupPlaces: d.groupPlaces || {}, bestInShow: d.bestInShow || null, locked: !!d.locked, autoLockAt: d.autoLockAt === undefined ? 1795712400000 : d.autoLockAt };
                             this.lockAtInput = this.toLocalInput(this.results.autoLockAt);
                         }, e => console.warn('results listener', e));
                         onAuthStateChanged(this.auth, user => this.onUser(user));
@@ -1406,7 +1425,11 @@
                 },
 
                 // ---------- scoring ----------
-                resultsAnnounced() { return Object.values(this.results.groupWinners).some(Boolean) || !!this.results.bestInShow; },
+                resultsAnnounced() { return Object.values(this.results.groupWinners).some(Boolean) || !!this.results.bestInShow || Object.values(this.results.groupPlaces || {}).some(a => (a || []).some(Boolean)); },
+                placesOf(gid) { const a = (this.results.groupPlaces || {})[gid]; return Array.isArray(a) ? a : [null, null, null]; },
+                groupHasResult(gid) { return !!this.results.groupWinners[gid] || this.placesOf(gid).some(Boolean); },
+                // '2nd' / '3rd' / '4th' if this breed placed in the group, else ''.
+                placeLabel(gid, breed) { const i = breed ? this.placesOf(gid).indexOf(breed) : -1; return i < 0 ? '' : ['2nd', '3rd', '4th'][i]; },
 
                 scoreBallot(b) {
                     const r = this.results, out = { total: 0, groups: {}, bis: 0 };
@@ -1417,6 +1440,9 @@
                         (gp.shortlist || []).forEach(x => myPicks.add(x));
                         let pts = 0;
                         if (w) pts = gp.topPick === w ? 5 : ((gp.shortlist || []).includes(w) ? 2 : 0);
+                        // 2nd–4th place: 1 point for each of your five picks in the group that placed.
+                        const mine = [gp.topPick, ...(gp.shortlist || [])].filter(Boolean);
+                        pts += this.placesOf(g.id).filter(x => x && mine.includes(x)).length;
                         out.groups[g.id] = pts; out.total += pts;
                     }
                     if (r.bestInShow) out.bis = b.bestInShow === r.bestInShow ? 20 : (myPicks.has(r.bestInShow) ? 5 : 0);
@@ -1438,7 +1464,7 @@
                     const p = this.pickOf(b, this.picksGroup), w = this.results.groupWinners[this.picksGroup];
                     const list = (p.shortlist || []).slice(0, 4);
                     while (list.length < 4) list.push(null);
-                    return [p.topPick || null, ...list].map(n => ({ name: n, hit: !!w && !!n && n === w }));
+                    return [p.topPick || null, ...list].map(n => ({ name: n, hit: !!w && !!n && n === w, place: this.placeLabel(this.picksGroup, n) }));
                 },
                 picksWin(b) { const w = this.results.groupWinners[this.picksGroup]; return !!w && this.pickOf(b, this.picksGroup).topPick === w; },
                 pickOf(b, gid) { return (b.picks || {})[gid] || {}; },
@@ -1462,6 +1488,10 @@
                     const { doc, setDoc, serverTimestamp } = window.firebaseModules;
                     try { await setDoc(doc(this.db, 'results', 'current'), { ...patch, updatedAt: serverTimestamp() }, { merge: true }); this.showNotification('✅ Published'); }
                     catch (e) { console.error(e); this.showNotification("⚠️ Couldn't save. Are you signed in as admin?"); }
+                },
+                setGroupPlace(gid, idx, breed) {
+                    const a = [...this.placesOf(gid)]; a[idx] = breed || null;
+                    this.writeResults({ groupPlaces: { ...(this.results.groupPlaces || {}), [gid]: a } });
                 },
                 setGroupWinner(gid, breed) { this.writeResults({ groupWinners: { ...this.results.groupWinners, [gid]: breed || null } }); },
                 setBestInShowResult(breed) { this.writeResults({ bestInShow: breed || null }); },
