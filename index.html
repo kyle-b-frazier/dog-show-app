@@ -47,7 +47,7 @@
         .avatar { width: 2.4rem; height: 2.4rem; border-radius: 9999px; background: #fde68a; color: #7c2d12; font-weight: 800; border: 2px solid #fef3c7;
                   display: inline-flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,.3); }
         .bottombar { background: #2a1608; box-shadow: 0 -4px 14px rgba(0,0,0,.25); }
-        .bt { display: flex; flex-direction: column; align-items: center; gap: 1px; color: #fde68a; font-size: 11px; font-weight: 600; opacity: .75; flex: 1; padding: .2rem 0; }
+        .bt { display: flex; flex-direction: column; align-items: center; gap: 1px; color: #fde68a; font-size: 11px; white-space: nowrap; font-weight: 600; opacity: .75; flex: 1; padding: .2rem 0; }
         .bt .i { font-size: 21px; line-height: 1.2; }
         .bt.on { opacity: 1; color: #fff; }
         .bt.on .i { transform: scale(1.15); }
@@ -118,6 +118,7 @@
                     <button x-show="view !== 'home'" @click="goHome()" class="toplink">Home</button>
                     <button x-show="user && view !== 'my'" @click="goMyBallots()" class="toplink">My Ballots</button>
                     <button x-show="user && view !== 'leaderboard'" @click="view = 'leaderboard'" class="toplink">Leaderboard</button>
+                    <button x-show="user && view !== 'picks'" @click="view = 'picks'" class="toplink">All Picks</button>
                     <button x-show="user && view !== 'leagues'" @click="view = 'leagues'" class="toplink">Leagues</button>
                     <span class="w-px h-6 bg-amber-100/30 mx-2"></span>
                     <button @click="showScoringModal = true" class="iconbtn" title="How scoring works" aria-label="How scoring works">?</button>
@@ -150,9 +151,10 @@
     <!-- Phone: app-style bottom bar (current page highlighted) -->
     <nav class="sm:hidden fixed bottom-0 inset-x-0 z-50 bottombar flex justify-around px-1 pt-1.5" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom))">
         <button @click="goHome()" class="bt" :class="view === 'home' && 'on'"><span class="i">🏠</span>Home</button>
-        <button x-show="user" @click="goMyBallots()" class="bt" :class="(view === 'my' || view === 'ballot') && 'on'"><span class="i">📋</span>My Ballots</button>
+        <button x-show="user" @click="goMyBallots()" class="bt" :class="(view === 'my' || view === 'ballot') && 'on'"><span class="i">📋</span>Ballots</button>
         <button x-show="!user" @click="startPicking()" class="bt" :class="view === 'ballot' && 'on'"><span class="i">📋</span>Picks</button>
-        <button x-show="user" @click="view = 'leaderboard'" class="bt" :class="view === 'leaderboard' && 'on'"><span class="i">🏆</span>Leaderboard</button>
+        <button x-show="user" @click="view = 'leaderboard'" class="bt" :class="view === 'leaderboard' && 'on'"><span class="i">🏆</span>Leaders</button>
+        <button x-show="user" @click="view = 'picks'" class="bt" :class="view === 'picks' && 'on'"><span class="i">📝</span>Picks</button>
         <button x-show="user" @click="view = 'leagues'" class="bt" :class="view === 'leagues' && 'on'"><span class="i">👥</span>Leagues</button>
         <button @click="showScoringModal = true" class="bt"><span class="i">📊</span>Scoring</button>
         <button x-show="isAdmin" @click="openAdmin()" class="bt" :class="view === 'admin' && 'on'"><span class="i">🔧</span>Admin</button>
@@ -614,6 +616,67 @@
             </div>
         </div>
 
+        <!-- ========================== ALL PICKS ========================== -->
+        <div x-show="view === 'picks'" class="max-w-5xl mx-auto space-y-5" style="display:none">
+            <h2 class="serif-heading text-4xl text-stone-900">📝 All Picks</h2>
+            <div x-show="!locked && !isAdmin" class="rounded-xl bg-white border border-stone-200 shadow-sm p-5 text-stone-700">
+                🔒 Everyone's picks show here once ballots lock<span x-show="results.autoLockAt != null" x-text="' (' + lockTimeLabel() + ')'"></span>.
+            </div>
+            <template x-if="locked || isAdmin">
+                <div class="space-y-4">
+                    <div x-show="myLeagueIds.length" class="flex flex-wrap gap-2">
+                        <button @click="selectedLeague = 'all'" class="league-tab" :class="selectedLeague === 'all' && 'on'">Everyone</button>
+                        <template x-for="id in myLeagueIds" :key="'ptab-' + id">
+                            <button x-show="leaguesById[id]" @click="selectedLeague = id" class="league-tab" :class="selectedLeague === id && 'on'"
+                                    x-text="(leaguesById[id] && leaguesById[id].isPrivate ? '🔒 ' : '') + (leaguesById[id] ? leaguesById[id].name : '')"></button>
+                        </template>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <template x-for="g in groups" :key="'pg-' + g.id">
+                            <button @click="picksGroup = g.id" class="px-3 py-1.5 rounded-full text-sm font-bold border-2 transition"
+                                    :style="picksGroup === g.id ? `background-color: ${g.color}; border-color: ${g.color}; color: #fff` : `border-color: ${g.color}; color: ${g.color}; background: #fff`"
+                                    x-text="g.name"></button>
+                        </template>
+                        <button @click="picksGroup = 'bis'" class="px-3 py-1.5 rounded-full text-sm font-bold border-2 transition"
+                                :class="picksGroup === 'bis' ? 'bg-amber-500 border-amber-500 text-amber-950' : 'bg-white border-amber-500 text-amber-800'">🏆 Best in Show</button>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+                        <div class="px-4 py-2 text-xs font-black uppercase tracking-wider text-white flex justify-between"
+                             :style="`background-color: ${picksGroup === 'bis' ? '#b45309' : (groups.find(g => g.id === picksGroup) || {}).color}`">
+                            <span x-text="picksGroup === 'bis' ? 'Best in Show' : (groups.find(g => g.id === picksGroup) || {}).name + ' Group'"></span>
+                            <span x-text="picksRows().length + ' ballots'"></span>
+                        </div>
+                        <template x-if="picksRows().length === 0">
+                            <div class="p-6 text-center text-sm text-stone-500">No ballots yet.</div>
+                        </template>
+                        <template x-for="b in picksRows()" :key="'pr-' + b.id">
+                            <div class="px-4 py-2.5 border-b border-stone-100 last:border-0 sm:flex sm:gap-4"
+                                 :class="b.ownerUid === (user && user.uid) ? 'bg-amber-50' : ''">
+                                <div class="sm:w-44 shrink-0">
+                                    <div class="font-bold text-stone-900 truncate" x-text="b.name"></div>
+                                    <div class="text-[11px] text-stone-500 truncate" x-text="'by ' + (b.ownerName || 'someone')"></div>
+                                </div>
+                                <div class="text-sm min-w-0" x-show="picksGroup === 'bis'">
+                                    <span class="font-bold" :class="results.bestInShow && b.bestInShow === results.bestInShow ? 'text-emerald-700' : 'text-stone-900'"
+                                          x-text="'🏆 ' + (b.bestInShow || '—') + (results.bestInShow && b.bestInShow === results.bestInShow ? ' ✓' : '')"></span>
+                                </div>
+                                <div class="text-sm min-w-0" x-show="picksGroup !== 'bis'">
+                                    <div class="font-bold" :class="picksWin(b) ? 'text-emerald-700' : 'text-stone-900'"
+                                         x-text="'★ ' + (pickOf(b, picksGroup).topPick || '—') + (picksWin(b) ? ' ✓' : '')"></div>
+                                    <div class="text-stone-600">
+                                        <template x-for="(c, i) in (pickOf(b, picksGroup).shortlist || [])" :key="c">
+                                            <span :class="c === results.groupWinners[picksGroup] ? 'text-emerald-700 font-bold' : ''" x-text="(i ? ', ' : '') + c + (c === results.groupWinners[picksGroup] ? ' ✓' : '')"></span>
+                                        </template>
+                                        <span x-show="!(pickOf(b, picksGroup).shortlist || []).length">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+
         <!-- ============================ ADMIN ============================ -->
         <div x-show="view === 'admin' && isAdmin" class="max-w-3xl mx-auto space-y-5" style="display:none">
             <div>
@@ -868,6 +931,7 @@
                 activeGroup: null,
                 searchQuery: '',
                 myPicksOnly: false,
+                picksGroup: 'sporting',
                 photos: {},
                 // Where to crop photos that don't fit the card, so the dog's face stays in view.
                 // A number is the vertical position (0 = top, 100 = bottom); a string is a full CSS position.
@@ -1153,7 +1217,7 @@
                 // Everyone's ballots are only needed on the Leaderboard/Admin pages. Listening only there keeps
                 // database reads low (each pick anyone makes would otherwise be sent to every open page).
                 syncAllBallotsListener() {
-                    const want = !!this.user && (this.view === 'leaderboard' || this.view === 'admin');
+                    const want = !!this.user && (this.view === 'leaderboard' || this.view === 'admin' || this.view === 'picks');
                     if (want && !this._allBallotsUnsub) {
                         const { collection, onSnapshot } = window.firebaseModules;
                         this._allBallotsUnsub = onSnapshot(collection(this.db, 'ballots'), snap => {
@@ -1346,6 +1410,13 @@
                     return out;
                 },
 
+                // All Picks tab (read-only): ballots in the selected league, by name.
+                picksRows() {
+                    const sel = this.selectedLeague, ids = this.leagueEntries[sel];
+                    const pool = (sel !== 'all' && ids) ? this.allBallots.filter(b => ids.includes(b.id)) : this.allBallots;
+                    return [...pool].sort((x, y) => (x.name || '').localeCompare(y.name || ''));
+                },
+                picksWin(b) { const w = this.results.groupWinners[this.picksGroup]; return !!w && this.pickOf(b, this.picksGroup).topPick === w; },
                 pickOf(b, gid) { return (b.picks || {})[gid] || {}; },
 
                 leaderboard() {
